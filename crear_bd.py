@@ -1,6 +1,8 @@
 import sqlite3
+from pathlib import Path
 
-DB_PATH = r"D:\VS Code - Scripts\Zion Project 1\base_de_datos\sistema.db"
+BASE_DIR = Path(__file__).resolve()
+DB_PATH = BASE_DIR / "base_de_datos" / "sistema.db"
 
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
