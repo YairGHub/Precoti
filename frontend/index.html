@@ -1,0 +1,2828 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> PRECOTI - Sistema de Gestión</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #10b981;
+            --accent: #3b82f6;
+            --bg-light: #f3f4f6;
+            --text-dark: #1f2937;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            animation: wave 20s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .login-wrapper {
+            display: flex;
+            gap: 30px;
+            z-index: 1;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box,
+        .numpad-box {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 400px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -2px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .sidebar-logo span {
+            color: var(--secondary);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #eff6ff;
+            color: var(--primary);
+            border-left-color: var(--secondary);
+        }
+
+        .nav-item i {
+            width: 24px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .top-header {
+            background: var(--white);
+            padding: 15px 30px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            color: #6b7280;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .welcome-text p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-outline {
+            padding: 10px 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .mascot {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+        }
+
+        .mascot::after {
+            content: '👋';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(20deg);
+            }
+
+            75% {
+                transform: rotate(-20deg);
+            }
+        }
+
+        .pending-card,
+        .notifications-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .pending-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .pending-item.debate {
+            border-left-color: var(--accent);
+        }
+
+        .pending-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pending-icon {
+            width: 35px;
+            height: 35px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--secondary);
+        }
+
+        .pending-icon.debate {
+            color: var(--accent);
+        }
+
+        .pending-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .btn-view {
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-view:hover {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .courses-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .courses-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-image {
+            width: 150px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            flex-shrink: 0;
+        }
+
+        .course-image.grabado {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+
+        .course-badge.live {
+            background: var(--danger);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            width: fit-content;
+        }
+
+        .course-badge.recorded {
+            background: #6b7280;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .course-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .course-teacher {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            border-radius: 3px;
+            width: 0%;
+        }
+
+        .whatsapp-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: #25d366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            transition: all 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .promo-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
+        }
+
+        .promo-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #ef4444;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .promo-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .promo-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #93c5fd;
+        }
+
+        .promo-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .promo-list li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .promo-list li::before {
+            content: '✓';
+            margin-right: 8px;
+            color: #34d399;
+        }
+
+        .promo-price {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: center;
+        }
+
+        .price-tag {
+            background: #fbbf24;
+            color: #1e3a8a;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .price-note {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .promo-offer {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            text-align: center;
+        }
+
+        .offer-big {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .offer-text {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .support-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25d366;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        .support-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+        }
+
+        /* MODAL CREAR USUARIO */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 1024px) {
+
+            .dashboard-grid,
+            .courses-section {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+
+            .welcome-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .course-card {
+                flex-direction: column;
+            }
+
+            .course-image {
+                width: 100%;
+                height: 150px;
+            }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .stat-icon.green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stat-icon.yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stat-icon.red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .orders-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .orders-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .chart-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div class="login-container" id="loginPage">
+        <div class="login-wrapper">
+            <div class="login-box">
+                <div class="logo-section">
+                    <div class="logo">PREC<span>OTI</span></div>
+                    <div class="subtitle">Sistema de Gestión de Requerimientos</div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Usuario" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Contraseña" required
+                        onkeydown="if(event.key==='Enter') login()">
+                </div>
+
+                <div id="login-error"
+                    style="display:none;color:#ef4444;font-size:0.85rem;margin-bottom:12px;text-align:center">
+                    Usuario o contraseña incorrectos
+                </div>
+
+                <button class="btn-primary" onclick="login()">
+                    <i class="fas fa-sign-in-alt"></i> Ingresar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR USUARIO -->
+    <div class="modal" id="createUserModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="modal-header">
+                <div class="logo" style="font-size: 2rem;">PREC<span>OTI</span></div>
+                <h2 class="modal-title">Crear Nuevo Usuario</h2>
+                <p style="color: #6b7280;">Complete los datos para registrarse</p>
+            </div>
+
+            <form onsubmit="event.preventDefault(); registerUser();">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-user" style="top: 35%;"></i>
+                        <input type="text" placeholder="Nombres" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" placeholder="Apellidos" required style="padding-left: 15px;">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-envelope" style="top: 35%;"></i>
+                    <input type="email" placeholder="Correo electrónico" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-phone" style="top: 35%;"></i>
+                    <input type="tel" placeholder="Teléfono" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-building" style="top: 35%;"></i>
+                    <input type="text" placeholder="Empresa / Razón Social">
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-lock" style="top: 35%;"></i>
+                        <input type="password" placeholder="Contraseña" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" placeholder="Confirmar contraseña" required style="padding-left: 15px;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">
+                    <i class="fas fa-user-check"></i> Registrarse
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">PREC<span>OTI</span></div>
+                <div style="font-size: 0.8rem; color: #6b7280; margin-top: 5px;">Sistema de Gestión</div>
+            </div>
+
+            <nav>
+                <a class="nav-item active" onclick="showSection('general')">
+                    <i class="fas fa-home"></i>
+                    <span>General</span>
+                </a>
+                <a class="nav-item" onclick="showSection('perfil')">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </a>
+                <a class="nav-item" onclick="showSection('documentos')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+                <a class="nav-item" onclick="showSection('no-llego')">
+                    <i class="fas fa-times-circle"></i>
+                    <span>No llegó Orden</span>
+                </a>
+                <a class="nav-item" onclick="showSection('llego')">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Llegó Orden</span>
+                </a>
+                <a class="nav-item" onclick="showSection('noexterOrden')">
+                    <i class="fas fa-times-circle"></i>
+                    <span>No llegó Orden Externa</span>
+                </a>
+                <a class="nav-item" onclick="showSection('exterOrden')">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Llegó Orden Externa</span>
+                </a>
+                <a class="nav-item" onclick="showSection('calendario')">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendario</span>
+                </a>
+                <a class="nav-item" onclick="showSection('mensajes')">
+                    <i class="fas fa-envelope"></i>
+                    <span>Mensajes</span>
+                </a>
+                <a class="nav-item" onclick="showSection('mercado')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Estudio de Mercado</span>
+                </a>
+                <a class="nav-item" onclick="showSection('pedidos')">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Gestión de Pedidos</span>
+                </a>
+                <a class="nav-item" onclick="showSection('financiero')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard Financiero</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- HEADER -->
+            <div class="top-header">
+                <div class="header-title">General</div>
+                <div class="header-actions">
+                    <button class="icon-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">4</span>
+                    </button>
+                    <button class="icon-btn">
+                        <i class="fas fa-envelope"></i>
+                    </button>
+                    <div class="user-avatar" onclick="logout()">TN</div>
+                </div>
+            </div>
+
+            <!-- SECTION: GENERAL -->
+            <div id="section-general" class="content-section active">
+                <div class="dashboard-grid">
+                    <div class="welcome-card">
+                        <div class="welcome-text">
+                            <h1>¡Hola <span id="userName">Tu Nombre</span>! 👋</h1>
+                            <p>Que tengas un excelente día :)</p>
+                            <p style="color: #9ca3af; margin-bottom: 20px;">¿Qué haremos hoy?</p>
+                            <div class="welcome-actions">
+                                <button class="btn-outline">
+                                    <i class="fas fa-folder-open"></i> Ir a Documentos
+                                </button>
+                                <button class="btn-outline">
+                                    <i class="fas fa-file-invoice"></i> Ver mis pedidos
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mascot">🦫</div>
+                    </div>
+
+                    <div>
+                        <div class="pending-card" style="margin-bottom: 20px;">
+                            <div class="card-header">
+                                <div>
+                                    <div class="card-title">Actividades Pendientes</div>
+                                    <div class="card-subtitle">Tienes 02 actividades pendientes</div>
+                                </div>
+                                <span style="font-size: 1.5rem;">😟</span>
+                            </div>
+
+                            <div class="pending-item">
+                                <div class="pending-info">
+                                    <div class="pending-icon">
+                                        <i class="fas fa-tasks"></i>
+                                    </div>
+                                    <span class="pending-text">PEDIDO #1024 - Pendiente</span>
+                                </div>
+                                <button class="btn-view">Ver</button>
+                            </div>
+
+                            <div class="pending-item debate">
+                                <div class="pending-info">
+                                    <div class="pending-icon debate">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <span class="pending-text">REUNIÓN - Cliente XYZ</span>
+                                </div>
+                                <button class="btn-view">Ver</button>
+                            </div>
+                        </div>
+
+                        <div class="notifications-card">
+                            <div class="card-header">
+                                <div class="card-title">Notificaciones</div>
+                                <a href="#" style="font-size: 0.8rem; color: var(--secondary);">Marcar como leído</a>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-dot"></div>
+                                <div class="notification-content">
+                                    <div class="notification-text">Se actualizó el estado del pedido #1024 a "En
+                                        proceso"</div>
+                                    <div class="notification-time">01/10/2025 12:30 p.m.</div>
+                                </div>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-dot"></div>
+                                <div class="notification-content">
+                                    <div class="notification-text">Nueva factura generada para el cliente ABC</div>
+                                    <div class="notification-time">01/10/2025 11:15 a.m.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="courses-section">
+                    <div class="courses-list">
+                        <div class="course-card">
+                            <div class="course-image">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div class="course-info">
+                                <span class="course-badge live">
+                                    <span class="pulse"></span> EN VIVO
+                                </span>
+                                <div class="course-title">Gestión de Documentos Comerciales</div>
+                                <div class="course-teacher">Responsable: Nevardo Alcides Alzamora Lara</div>
+                                <div class="course-meta">
+                                    <span><i class="fas fa-users"></i> 14 documentos</span>
+                                    <span><i class="fas fa-clock"></i> Último: hace 2h</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                            <button class="btn-outline" style="align-self: center;">
+                                <i class="fas fa-arrow-right"></i> Continuar
+                            </button>
+                            <div class="whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                        </div>
+
+                        <div class="course-card">
+                            <div class="course-image grabado">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="course-info">
+                                <span class="course-badge recorded">ARCHIVADO</span>
+                                <div class="course-title">Evaluación de Desempeño Anual</div>
+                                <div class="course-teacher">Responsable: Nevardo Alcides Alzamora Lara</div>
+                                <div class="course-meta">
+                                    <span><i class="fas fa-check-circle"></i> Completado</span>
+                                    <span><i class="fas fa-calendar"></i> 2024</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                            <button class="btn-outline" style="align-self: center;">
+                                <i class="fas fa-eye"></i> Ver reporte
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="promo-card">
+                        <span class="promo-badge">MÁS INFORMACIÓN AQUÍ</span>
+                        <div class="promo-price">
+                            <div class="price-tag">S/ 59.00</div>
+                            <div class="price-note">a solo</div>
+                        </div>
+
+                        <div class="promo-title">¡Optimiza tu Gestión!</div>
+                        <div class="promo-subtitle">PACK EMPRESARIAL</div>
+
+                        <ul class="promo-list">
+                            <li>Gestión de Documentos Electrónicos</li>
+                            <li>Facturación y Boletas Automáticas</li>
+                            <li>Control de Inventario en Tiempo Real</li>
+                            <li>Reportes Financieros Avanzados</li>
+                        </ul>
+
+                        <div class="promo-offer">
+                            <div class="offer-big">4X1</div>
+                            <div class="offer-text">04 MÓDULOS<br>INCLUIDOS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: DOCUMENTOS -->
+            <div id="section-documentos" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-alt"></i> Documentos
+                </h2>
+
+                <!-- Botón nuevo requerimiento + filtro búsqueda -->
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:15px">
+                    <button class="btn-primary" style="width:auto;padding:10px 24px"
+                        onclick="abrirModalNuevoReq()">
+                        <i class="fas fa-plus"></i> Nuevo Requerimiento
+                    </button>
+                    <input type="text" id="buscador-docs" placeholder="Buscar por descripción o área..."
+                        oninput="filtrarDocumentos()"
+                        style="padding:10px 15px;border:2px solid #e5e7eb;border-radius:10px;
+                            font-size:0.9rem;width:300px;outline:none">
+                </div>
+
+                <!-- Métricas -->
+                <div class="stats-grid" style="margin-bottom:20px">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-info">
+                            <h3 id="docs-total">0</h3>
+                            <p>Total requerimientos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-building"></i></div>
+                        <div class="stat-info">
+                            <h3 id="docs-propios">0</h3>
+                            <p>Propios</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fas fa-globe"></i></div>
+                        <div class="stat-info">
+                            <h3 id="docs-externos">0</h3>
+                            <p>Externos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="docs-sin-orden">0</h3>
+                            <p>Sin orden asignada</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de requerimientos -->
+                <div class="orders-table">
+                    <table id="tabla-documentos">
+                        <thead>
+                            <tr>
+                                <th>ID Req.</th>
+                                <th>Descripción</th>
+                                <th>Área / Unidad</th>
+                                <th>Plazo</th>
+                                <th>Fecha carga</th>
+                                <th>Tipo</th>
+                                <th>Ítems</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-documentos">
+                            <tr>
+                                <td colspan="7" style="text-align:center;color:#9ca3af;padding:30px">
+                                    <i class="fas fa-spinner fa-spin"></i> Cargando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL: Nuevo Requerimiento -->
+            <div id="modal-nuevo-req" class="modal">
+                <div class="modal-content" style="max-width:700px;max-height:90vh;overflow-y:auto">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <i class="fas fa-file-upload"></i> Nuevo Requerimiento
+                        </div>
+                        <button class="close-btn" onclick="cerrarModalNuevoReq()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- PASO 1: Subir PDF -->
+                    <div id="paso-subir-pdf">
+                        <p style="color:#6b7280;text-align:center;margin-bottom:20px">
+                            Sube el PDF del TDR para extraer los datos automáticamente
+                        </p>
+                        <div style="border:2px dashed #e5e7eb;border-radius:15px;padding:40px;
+                                    text-align:center;cursor:pointer;transition:all 0.3s"
+                            onclick="document.getElementById('input-pdf-req').click()"
+                            id="dropzone-req">
+                            <i class="fas fa-cloud-upload-alt"
+                                style="font-size:3rem;color:#9ca3af;margin-bottom:15px;display:block"></i>
+                            <p style="color:#6b7280;margin-bottom:5px">Haz clic para seleccionar el PDF</p>
+                            <p style="color:#9ca3af;font-size:0.8rem">Solo archivos PDF</p>
+                        </div>
+                        <input type="file" id="input-pdf-req" accept=".pdf"
+                            style="display:none" onchange="procesarPDFReq(this)">
+                        <div id="pdf-loading" style="display:none;text-align:center;margin-top:20px">
+                            <i class="fas fa-spinner fa-spin"
+                                style="font-size:2rem;color:var(--secondary)"></i>
+                            <p style="color:#6b7280;margin-top:10px">Leyendo PDF con IA...</p>
+                        </div>
+                    </div>
+
+                    <!-- PASO 2: Formulario prellenado (oculto hasta leer PDF) -->
+                    <div id="paso-formulario" style="display:none">
+                        <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;
+                                    padding:12px 15px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+                            <i class="fas fa-check-circle" style="color:#16a34a"></i>
+                            <span style="font-size:0.9rem;color:#166534">
+                                PDF leído correctamente. Revisa y completa los datos.
+                            </span>
+                        </div>
+
+                        <!-- Datos del requerimiento (prellenados por OCR) -->
+                        <div style="background:#f9fafb;border-radius:10px;padding:15px;margin-bottom:15px">
+                            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:12px">
+                                <i class="fas fa-robot"></i> Datos extraídos del PDF
+                            </p>
+                            <div class="form-row" style="margin-bottom:12px">
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        Descripción
+                                    </label>
+                                    <input type="text" id="req-descripcion"
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem">
+                                </div>
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        Área / Unidad
+                                    </label>
+                                    <input type="text" id="req-area"
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        Plazo
+                                    </label>
+                                    <input type="text" id="req-plazo"
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem">
+                                </div>
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        Fecha de registro
+                                    </label>
+                                    <input type="text" id="req-fecha" readonly
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem;background:#f3f4f6">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datos manuales -->
+                        <div style="background:#f9fafb;border-radius:10px;padding:15px;margin-bottom:15px">
+                            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:12px">
+                                <i class="fas fa-edit"></i> Completa los datos manuales
+                            </p>
+                            <div class="form-row" style="margin-bottom:12px">
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        N° Pedido
+                                    </label>
+                                    <input type="text" id="req-pedido" placeholder="Ej: 584"
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem">
+                                </div>
+                                <div class="input-group" style="margin-bottom:0">
+                                    <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                        Referencia
+                                    </label>
+                                    <input type="text" id="req-referencia" placeholder="Ej: PASACALLES BRISAS"
+                                        style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
+                                            border-radius:8px;font-size:0.9rem">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ítems extraídos -->
+                        <div style="background:#f9fafb;border-radius:10px;padding:15px;margin-bottom:15px">
+                            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:12px">
+                                <i class="fas fa-list"></i> Ítems del requerimiento
+                            </p>
+                            <div id="items-container"></div>
+                        </div>
+
+                        <!-- Tipo y botón guardar -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;
+                                    padding-top:15px;border-top:1px solid #e5e7eb;gap:15px">
+                            <div style="display:flex;gap:10px">
+                                <button id="btn-tipo-propio"
+                                    onclick="seleccionarTipo('Propio')"
+                                    style="padding:10px 20px;border-radius:10px;font-weight:600;
+                                        cursor:pointer;border:2px solid var(--secondary);
+                                        background:var(--secondary);color:white;transition:all 0.3s">
+                                    <i class="fas fa-building"></i> Propio
+                                </button>
+                                <button id="btn-tipo-externo"
+                                    onclick="seleccionarTipo('Externo')"
+                                    style="padding:10px 20px;border-radius:10px;font-weight:600;
+                                        cursor:pointer;border:2px solid #e5e7eb;
+                                        background:white;color:#374151;transition:all 0.3s">
+                                    <i class="fas fa-globe"></i> Externo
+                                </button>
+                            </div>
+                            <button onclick="guardarRequerimiento()"
+                                style="padding:10px 24px;background:var(--primary);color:white;
+                                    border:none;border-radius:10px;font-weight:600;
+                                    cursor:pointer;font-size:0.95rem">
+                                <i class="fas fa-save"></i> Guardar y derivar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: Ver ítems de un requerimiento -->
+            <div id="modal-ver-items" class="modal">
+                <div class="modal-content" style="max-width:800px;max-height:90vh;overflow-y:auto">
+                    <div class="modal-header">
+                        <div class="modal-title" id="modal-items-titulo">Ítems del requerimiento</div>
+                        <button class="close-btn" onclick="cerrarModalItems()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="modal-items-contenido"></div>
+                </div>
+            </div>
+
+            <!-- SECTION: NO LLEGÓ ORDEN -->
+            <div id="section-no-llego" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-times-circle"></i> No llegó Orden
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Órdenes retrasadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>En seguimiento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FECHA</th>
+                                <th>EMPRESA</th>
+                                <th>PLAZO</th>
+                                <th>PEDIDO</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>REFERENCIA</th>
+                                <th>ÁREA</th>
+                                <th>TOTAL</th>
+                                <th>FECHA ELABORACIÓN</th>
+                                <th>DE BAJA</th>
+                                <th>ID Requerimiento</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>18/07/2024</td>
+                                <td>SOLUCIONES</td>
+                                <td>10</td>
+                                <td>584</td>
+                                <td>PASACALLE</td>
+                                <td>PASACALLES PARA BRISAS</td>
+                                <td>DEPORTE</td>
+                                <td>S/ 1,400.00</td>
+                                <td>MAYO 2024</td>
+                                <td></td>
+                                <td></td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td>05/09/2024</td>
+                                <td>CCASANI</td>
+                                <td>5</td>
+                                <td>27181</td>
+                                <td>IMPRENTA</td>
+                                <td>VOLANTES TAMAÑO A5</td>
+                                <td>OF. GENER PLANT Y PRESU</td>
+                                <td>S/ 400.00</td>
+                                <td>SEPTIEMBRE 2024</td>
+                                <td></td>
+                                <td></td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>ROMALSS</td>
+                                <td>3</td>
+                                <td></td>
+                                <td>BANNER</td>
+                                <td>02 PARANTES DE METAL</td>
+                                <td>MUN. CALLAO</td>
+                                <td>S/ 650.00</td>
+                                <td>2</td>
+                                <td>24</td>
+                                <td>X</td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>CCASANI</td>
+                                <td>8</td>
+                                <td>284</td>
+                                <td>IMPRESIÓN</td>
+                                <td>FICHA A4 AUTOCOPIABLE</td>
+                                <td>D. SOCIAL</td>
+                                <td>S/ 215,000.00</td>
+                                <td></td>
+                                <td></td>
+                                <td>X</td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- SECTION: LLEGÓ ORDEN -->
+            <div id="section-llego" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-check-circle"></i> Llegó Orden
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>28</h3>
+                            <p>Recepciones este mes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>100%</h3>
+                            <p>Conformidad</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FECHA ORDEN</th>
+                                <th>EMPRESA</th>
+                                <th>PLAZO</th>
+                                <th>PEDIDO</th>
+                                <th>ORDEN</th>
+                                <th>SIAF</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>REFERENCIA</th>
+                                <th>ÁREA</th>
+                                <th>TOTAL</th>
+                                <th>FECHA ELABORACIÓN</th>
+                                <th>ESTADO</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>16/07/2024</td>
+                                <td>CCASANI</td>
+                                <td>4</td>
+                                <td>1961</td>
+                                <td>OS</td>
+                                <td>14028</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>INFORMATIVO DE MATRIMONIO CIVIL</td>
+                                <td>OF. SERV. GENERAL</td>
+                                <td>S/ 19,450.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>19/07/2024</td>
+                                <td>CCASANI</td>
+                                <td>4</td>
+                                <td>803</td>
+                                <td>OC</td>
+                                <td>676</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>200 POSTERAS</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 40,000.00</td>
+                                <td>MAYO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>19/07/2024</td>
+                                <td>CRUZ</td>
+                                <td>4</td>
+                                <td>800</td>
+                                <td>OC</td>
+                                <td>673</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>VENTA MINORISTA</td>
+                                <td>OF. SECRETARIA GENERAL</td>
+                                <td>S/ 40,036.70</td>
+                                <td>JULIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>CRUZ</td>
+                                <td>8</td>
+                                <td>2365</td>
+                                <td>OS</td>
+                                <td>16249</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>PASACALLES + POSTERAS</td>
+                                <td>D. URBANO</td>
+                                <td>S/ 40,450.00</td>
+                                <td>JULIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>CCASANI</td>
+                                <td>3</td>
+                                <td>866</td>
+                                <td>OC</td>
+                                <td>726</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>DEUDA DE PARQUES 3</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 39,600.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>DANIMAR</td>
+                                <td>3</td>
+                                <td>865</td>
+                                <td>OC</td>
+                                <td>724</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>DEUDA DE PARQUES 2</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 41,000.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- SECTION: No llegó Orden Externa -->
+            <div id="section-noexterna" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-times-circle"></i> No llegó Orden externa
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Órdenes retrasadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>En seguimiento</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FECHA</th>
+                                <th>EMPRESA</th>
+                                <th>PLAZO</th>
+                                <th>PEDIDO</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>REFERENCIA</th>
+                                <th>ÁREA</th>
+                                <th>TOTAL</th>
+                                <th>FECHA ELABORACIÓN</th>
+                                <th>DE BAJA</th>
+                                <th>ID Requerimiento</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>18/07/2024</td>
+                                <td>SOLUCIONES</td>
+                                <td>10</td>
+                                <td>584</td>
+                                <td>PASACALLE</td>
+                                <td>PASACALLES PARA BRISAS</td>
+                                <td>DEPORTE</td>
+                                <td>S/ 1,400.00</td>
+                                <td>MAYO 2024</td>
+                                <td></td>
+                                <td></td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td>05/09/2024</td>
+                                <td>CCASANI</td>
+                                <td>5</td>
+                                <td>27181</td>
+                                <td>IMPRENTA</td>
+                                <td>VOLANTES TAMAÑO A5</td>
+                                <td>OF. GENER PLANT Y PRESU</td>
+                                <td>S/ 400.00</td>
+                                <td>SEPTIEMBRE 2024</td>
+                                <td></td>
+                                <td></td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>ROMALSS</td>
+                                <td>3</td>
+                                <td></td>
+                                <td>BANNER</td>
+                                <td>02 PARANTES DE METAL</td>
+                                <td>MUN. CALLAO</td>
+                                <td>S/ 650.00</td>
+                                <td>2</td>
+                                <td>24</td>
+                                <td>X</td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>CCASANI</td>
+                                <td>8</td>
+                                <td>284</td>
+                                <td>IMPRESIÓN</td>
+                                <td>FICHA A4 AUTOCOPIABLE</td>
+                                <td>D. SOCIAL</td>
+                                <td>S/ 215,000.00</td>
+                                <td></td>
+                                <td></td>
+                                <td>X</td>
+                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- SECTION:Llegó Orden Externa -->
+            <div id="section-noexterna" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-check-circle"></i> Llegó Orden externa
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>28</h3>
+                            <p>Recepciones este mes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>100%</h3>
+                            <p>Conformidad</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>FECHA ORDEN</th>
+                                <th>EMPRESA</th>
+                                <th>PLAZO</th>
+                                <th>PEDIDO</th>
+                                <th>ORDEN</th>
+                                <th>SIAF</th>
+                                <th>DESCRIPCIÓN</th>
+                                <th>REFERENCIA</th>
+                                <th>ÁREA</th>
+                                <th>TOTAL</th>
+                                <th>FECHA ELABORACIÓN</th>
+                                <th>ESTADO</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>16/07/2024</td>
+                                <td>CCASANI</td>
+                                <td>4</td>
+                                <td>1961</td>
+                                <td>OS</td>
+                                <td>14028</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>INFORMATIVO DE MATRIMONIO CIVIL</td>
+                                <td>OF. SERV. GENERAL</td>
+                                <td>S/ 19,450.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>19/07/2024</td>
+                                <td>CCASANI</td>
+                                <td>4</td>
+                                <td>803</td>
+                                <td>OC</td>
+                                <td>676</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>200 POSTERAS</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 40,000.00</td>
+                                <td>MAYO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>19/07/2024</td>
+                                <td>CRUZ</td>
+                                <td>4</td>
+                                <td>800</td>
+                                <td>OC</td>
+                                <td>673</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>VENTA MINORISTA</td>
+                                <td>OF. SECRETARIA GENERAL</td>
+                                <td>S/ 40,036.70</td>
+                                <td>JULIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>CRUZ</td>
+                                <td>8</td>
+                                <td>2365</td>
+                                <td>OS</td>
+                                <td>16249</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>PASACALLES + POSTERAS</td>
+                                <td>D. URBANO</td>
+                                <td>S/ 40,450.00</td>
+                                <td>JULIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>CCASANI</td>
+                                <td>3</td>
+                                <td>866</td>
+                                <td>OC</td>
+                                <td>726</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>DEUDA DE PARQUES 3</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 39,600.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2024</td>
+                                <td>DANIMAR</td>
+                                <td>3</td>
+                                <td>865</td>
+                                <td>OC</td>
+                                <td>724</td>
+                                <td>BASTIDOR C/ BANNER</td>
+                                <td>DEUDA DE PARQUES 2</td>
+                                <td>COMU. IMAGEN</td>
+                                <td>S/ 41,000.00</td>
+                                <td>JUNIO 2024</td>
+                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
+                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- SECTION: DASHBOARD FINANCIERO -->
+            <div id="section-financiero" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-pie"></i> Dashboard Financiero
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>S/ 45,230</h3>
+                            <p>Ingresos del mes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>S/ 40,450</h3>
+                            <p>Egresos del mes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>S/ 16,780</h3>
+                            <p>Utilidad neta</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>37.1%</h3>
+                            <p>Margen de utilidad</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Gráfico de Tendencias Financieras</h3>
+                        <p>Visualización de ingresos vs egresos mensuales</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: GESTIÓN DE PEDIDOS -->
+            <div id="section-pedidos" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-list"></i> Gestión de Pedidos
+                </h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>42</h3>
+                            <p>Pedidos activos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>18</h3>
+                            <p>En tránsito</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>156</h3>
+                            <p>Entregados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N° Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PED-2026-0156</td>
+                                <td>Cliente Importante S.A.</td>
+                                <td>15/03/2026</td>
+                                <td>S/ 3,450.00</td>
+                                <td><span class="status-badge status-pending">Procesando</span></td>
+                                <td><button class="btn-view">Detalle</button></td>
+                            </tr>
+                            <tr>
+                                <td>PED-2026-0155</td>
+                                <td>Distribuidora XYZ</td>
+                                <td>14/03/2026</td>
+                                <td>S/ 8,200.00</td>
+                                <td><span class="status-badge status-completed">Entregado</span></td>
+                                <td><button class="btn-view">Detalle</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION: ESTUDIO DE MERCADO -->
+            <div id="section-mercado" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i> Estudio de Mercado
+                </h2>
+                <div class="chart-container" style="margin-bottom: 20px;">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Análisis de Competencia</h3>
+                        <p>Comparativa de precios y posicionamiento</p>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>+15%</h3>
+                            <p>Crecimiento clientes</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>#3</h3>
+                            <p>Posición en mercado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: CALENDARIO -->
+            <div id="section-calendario" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-alt"></i> Calendario
+                </h2>
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <i class="fas fa-calendar"></i>
+                        <h3>Calendario de Actividades</h3>
+                        <p>Próximas reuniones y vencimientos</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: MENSAJES -->
+            <div id="section-mensajes" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-envelope"></i> Mensajes
+                </h2>
+                <div class="orders-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>De</th>
+                                <th>Asunto</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Administración</strong></td>
+                                <td>Actualización de políticas</td>
+                                <td>Hoy, 10:30 AM</td>
+                                <td><span class="status-badge status-pending">No leído</span></td>
+                            </tr>
+                            <tr>
+                                <td>Soporte Técnico</td>
+                                <td>Resolución de ticket #456</td>
+                                <td>Ayer, 4:15 PM</td>
+                                <td><span class="status-badge status-completed">Leído</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION: PERFIL -->
+            <div id="section-perfil" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-user"></i> Mi Perfil
+                </h2>
+                <div class="welcome-card" style="flex-direction: column; text-align: center; padding: 40px;">
+                    <div class="user-avatar"
+                        style="width: 100px; height: 100px; font-size: 2.5rem; margin-bottom: 20px;">TN</div>
+                    <h2>Tu Nombre Completo</h2>
+                    <p style="color: #6b7280;">Administrador del Sistema</p>
+                    <div style="margin-top: 20px; display: flex; gap: 15px;">
+                        <button class="btn-outline">Editar Perfil</button>
+                        <button class="btn-outline">Cambiar Contraseña</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="support-btn">
+            <i class="fab fa-whatsapp"></i>
+            <span>Atención al cliente</span>
+        </div>
+    </div>
+
+    <script>
+        let pin = '';
+        let currentUser = '';
+
+// URL base del backend — ajusta si cambias de puerto
+        const API = 'http://localhost:8000';
+
+        async function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-error').textContent = 'Ingresa usuario y contraseña';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.username;
+                    document.getElementById('userName').textContent = currentUser;
+                    document.getElementById('login-error').style.display = 'none';
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                } else {
+                    document.getElementById('login-error').style.display = 'block';
+                    document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos';
+                }
+            } catch (e) {
+                document.getElementById('login-error').style.display = 'block';
+                document.getElementById('login-error').textContent = 'No se pudo conectar con el servidor';
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Desea cerrar sesión?')) {
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                pin = '';
+                updateDots();
+            }
+        }
+
+        function openModal() {
+            document.getElementById('createUserModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('createUserModal').classList.remove('active');
+        }
+
+        function registerUser() {
+            alert('Usuario registrado exitosamente');
+            closeModal();
+        }
+
+        function showSection(sectionName) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Mostrar sección seleccionada
+            const targetSection = document.getElementById(`section-${sectionName}`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Actualizar navegación activa
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Actualizar título del header
+            const titles = {
+                'general': 'General',
+                'perfil': 'Perfil',
+                'documentos': 'Documentos',
+                'no-llego': 'No llegó Orden',
+                'llego': 'Llegó Orden',
+                'noexterOrden': 'No llegó Orden Externa',
+                'exterOrden': 'Llegó Orden Externa',
+                'calendario': 'Calendario',
+                'mensajes': 'Mensajes',
+                'mercado': 'Estudio de Mercado',
+                'pedidos': 'Gestión de Pedidos',
+                'financiero': 'Dashboard Financiero'
+            };
+            document.querySelector('.header-title').textContent = titles[sectionName] || 'General';
+
+            // Cargar datos según la sección
+            if (sectionName === 'documentos') cargarDocumentos();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function (event) {
+            const modal = document.getElementById('createUserModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Animación de entrada para elementos
+        document.addEventListener('DOMContentLoaded', function () {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function (entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observar tarjetas para animación
+            document.querySelectorAll('.stat-card, .course-card, .pending-item').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Funcionalidad de búsqueda rápida
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                const searchTerm = prompt('Buscar en el sistema:');
+                if (searchTerm) {
+                    alert('Buscando: ' + searchTerm);
+                }
+            }
+        });
+
+        // Actualizar progreso de documentos automáticamente
+        setInterval(function () {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const currentWidth = parseInt(bar.style.width) || 0;
+                if (currentWidth < 100 && Math.random() > 0.7) {
+                    bar.style.width = (currentWidth + Math.random() * 5) + '%';
+                }
+            });
+        }, 5000);
+
+        // Notificaciones en tiempo real simuladas
+        setInterval(function () {
+            if (Math.random() > 0.9 && document.getElementById('dashboard').style.display === 'block') {
+                const badge = document.querySelector('.badge');
+                let count = parseInt(badge.textContent);
+                badge.textContent = count + 1;
+
+                // Efecto visual de notificación
+                badge.style.animation = 'pulse 0.5s ease';
+                setTimeout(() => {
+                    badge.style.animation = '';
+                }, 500);
+            }
+        }, 30000);
+
+        // Función para exportar datos
+        function exportData(type) {
+            const data = {
+                timestamp: new Date().toLocaleString(),
+                type: type,
+                user: currentUser
+            };
+            console.log('Exportando datos:', data);
+            alert('Reporte exportado exitosamente');
+        }
+
+        // Manejo de errores global
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            console.error('Error: ' + msg + '\nURL: ' + url + '\nLinea: ' + lineNo);
+            return false;
+        };
+
+
+// ── Variables globales del flujo ──────────────────────────────────
+        let tipoSeleccionado = 'Propio';
+        let requerimientoActual = null;
+        let todosLosDocumentos = [];
+
+        // ── Modal Nuevo Requerimiento ─────────────────────────────────────
+        function abrirModalNuevoReq() {
+            document.getElementById('modal-nuevo-req').classList.add('active');
+            document.getElementById('paso-subir-pdf').style.display = 'block';
+            document.getElementById('paso-formulario').style.display = 'none';
+            document.getElementById('pdf-loading').style.display = 'none';
+            document.getElementById('input-pdf-req').value = '';
+            requerimientoActual = null;
+            seleccionarTipo('Propio');
+        }
+
+        function cerrarModalNuevoReq() {
+            document.getElementById('modal-nuevo-req').classList.remove('active');
+        }
+
+        function seleccionarTipo(tipo) {
+            tipoSeleccionado = tipo;
+            const btnPropio   = document.getElementById('btn-tipo-propio');
+            const btnExterno  = document.getElementById('btn-tipo-externo');
+            if (tipo === 'Propio') {
+                btnPropio.style.background  = 'var(--secondary)';
+                btnPropio.style.color       = 'white';
+                btnPropio.style.borderColor = 'var(--secondary)';
+                btnExterno.style.background = 'white';
+                btnExterno.style.color      = '#374151';
+                btnExterno.style.borderColor= '#e5e7eb';
+            } else {
+                btnExterno.style.background  = 'var(--primary)';
+                btnExterno.style.color       = 'white';
+                btnExterno.style.borderColor = 'var(--primary)';
+                btnPropio.style.background   = 'white';
+                btnPropio.style.color        = '#374151';
+                btnPropio.style.borderColor  = '#e5e7eb';
+            }
+        }
+
+        // ── Procesar PDF con OCR ──────────────────────────────────────────
+        async function procesarPDFReq(input) {
+            if (!input.files.length) return;
+            const archivo = input.files[0];
+
+            document.getElementById('dropzone-req').style.display  = 'none';
+            document.getElementById('pdf-loading').style.display   = 'block';
+
+            const formData = new FormData();
+            formData.append('archivo', archivo);
+            formData.append('tipo', tipoSeleccionado);
+
+            try {
+                const res  = await fetch(`${API}/ocr/procesar-requerimiento?tipo=${tipoSeleccionado}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error('Error al procesar el PDF');
+                const data = await res.json();
+                requerimientoActual = data;
+
+                // Prellenar formulario
+                document.getElementById('req-descripcion').value = data.descripcion || '';
+                document.getElementById('req-area').value        = data.area        || '';
+                document.getElementById('req-plazo').value       = data.plazo       || '';
+                document.getElementById('req-fecha').value       = data.fecha_req   || '';
+
+                // Renderizar ítems
+                renderizarItemsFormulario(data.items, data.requerimiento_id);
+
+                document.getElementById('pdf-loading').style.display   = 'none';
+                document.getElementById('paso-formulario').style.display = 'block';
+
+            } catch (e) {
+                document.getElementById('pdf-loading').style.display  = 'none';
+                document.getElementById('dropzone-req').style.display = 'block';
+                alert('Error al leer el PDF. Verifica que el backend esté corriendo.');
+            }
+        }
+
+        function renderizarItemsFormulario(items, requerimientoId) {
+            const container = document.getElementById('items-container');
+            container.innerHTML = items.map((it, idx) => `
+                <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;
+                            padding:12px;margin-bottom:10px">
+                    <div style="font-size:0.8rem;font-weight:600;color:var(--primary);margin-bottom:8px">
+                        Ítem ${it.numero_item} — ${it.descripcion}
+                        <span style="font-weight:400;color:#9ca3af">
+                            (${it.cantidad} ${it.unidad_medida})
+                        </span>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                Empresa ganadora
+                            </label>
+                            <input type="text" id="item-empresa-${idx}"
+                                placeholder="Nombre empresa"
+                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
+                                    border-radius:6px;font-size:0.85rem">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                Precio (con IGV)
+                            </label>
+                            <input type="number" id="item-precio-${idx}"
+                                placeholder="0.00" step="0.01"
+                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
+                                    border-radius:6px;font-size:0.85rem">
+                        </div>
+                    </div>
+                    <div class="form-row" style="margin-top:8px">
+                        <div>
+                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                Empresa perdedora 1
+                            </label>
+                            <input type="text" id="item-perd1-${idx}"
+                                placeholder="Nombre empresa"
+                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
+                                    border-radius:6px;font-size:0.85rem">
+                        </div>
+                        <div>
+                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                Empresa perdedora 2
+                            </label>
+                            <input type="text" id="item-perd2-${idx}"
+                                placeholder="Nombre empresa"
+                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
+                                    border-radius:6px;font-size:0.85rem">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Guardar requerimiento ─────────────────────────────────────────
+        async function guardarRequerimiento() {
+            if (!requerimientoActual) return;
+
+            const items = requerimientoActual.items;
+            console.log('Items recibidos:', JSON.stringify(items));
+
+            try {
+                // Paso 1: Actualizar datos del requerimiento
+                const resReq = await fetch(`${API}/requerimientos/${requerimientoActual.requerimiento_id}/datos`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        numero_pedido: document.getElementById('req-pedido').value,
+                        referencia:    document.getElementById('req-referencia').value,
+                        descripcion:   document.getElementById('req-descripcion').value,
+                        plazo:         document.getElementById('req-plazo').value,
+                        area:          document.getElementById('req-area').value,
+                    })
+                });
+                console.log('Requerimiento actualizado:', resReq.status);
+
+                // Paso 2: Actualizar cada ítem con empresa y precio
+                for (let i = 0; i < items.length; i++) {
+                    const empresa = document.getElementById(`item-empresa-${i}`).value;
+                    const precio  = parseFloat(document.getElementById(`item-precio-${i}`).value) || 0;
+                    const perd1   = document.getElementById(`item-perd1-${i}`).value;
+                    const perd2   = document.getElementById(`item-perd2-${i}`).value;
+
+                    console.log(`Ítem ${i} - id: ${items[i].id}, empresa: ${empresa}, precio: ${precio}`);
+
+                    if (empresa || precio > 0) {
+                        const resItem = await fetch(`${API}/ocr/actualizar-item/${items[i].id}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                empresa_ganadora:    empresa,
+                                precio:              precio,
+                                empresa_perdedora_1: perd1,
+                                empresa_perdedora_2: perd2,
+                            })
+                        });
+                        const texto = await resItem.text();
+                        console.log(`Respuesta ítem ${items[i].id}:`, resItem.status, texto);
+                    }
+                }
+
+                cerrarModalNuevoReq();
+                await cargarDocumentos();
+                alert(`✓ Requerimiento ${requerimientoActual.id_req} guardado y derivado a "${tipoSeleccionado}"`);
+
+            } catch (e) {
+                console.error('Error completo:', e);
+                alert('Error al guardar. Verifica la conexión con el backend.');
+            }
+        }
+
+        // ── Cargar tabla de documentos ────────────────────────────────────
+        async function cargarDocumentos() {
+            try {
+                const res  = await fetch(`${API}/requerimientos`);
+                const data = await res.json();
+                todosLosDocumentos = data;
+                renderizarTablaDocumentos(data);
+                actualizarMetricasDocumentos(data);
+            } catch (e) {
+                document.getElementById('tbody-documentos').innerHTML =
+                    '<tr><td colspan="7" style="text-align:center;color:#ef4444">Error al cargar datos</td></tr>';
+            }
+        }
+
+        function renderizarTablaDocumentos(data) {
+            const tbody = document.getElementById('tbody-documentos');
+            if (!data.length) {
+                tbody.innerHTML =
+                    '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:30px">No hay requerimientos registrados</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.map(r => `
+                <tr>
+                    <td><strong style="color:var(--primary)">${r.id_req}</strong></td>
+                    <td title="${r.descripcion}">${r.descripcion ? r.descripcion.substring(0, 50) + (r.descripcion.length > 50 ? '...' : '') : '—'}</td>
+                    <td>${r.area || '—'}</td>
+                    <td>${r.plazo || '—'}</td>
+                    <td>${r.fecha_registro || '—'}</td>
+                    <td>
+                        <span class="status-badge ${r.tipo === 'Propio' ? 'status-completed' : 'status-pending'}">
+                            ${r.tipo}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-view" onclick="verItems(${r.id}, '${r.id_req}')">
+                            <i class="fas fa-list"></i> Ver
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function actualizarMetricasDocumentos(data) {
+            document.getElementById('docs-total').textContent    = data.length;
+            document.getElementById('docs-propios').textContent  = data.filter(r => r.tipo === 'Propio').length;
+            document.getElementById('docs-externos').textContent = data.filter(r => r.tipo === 'Externo').length;
+            document.getElementById('docs-sin-orden').textContent= data.filter(r => r.tiene_orden === 0).length;
+        }
+
+        function filtrarDocumentos() {
+            const q = document.getElementById('buscador-docs').value.toLowerCase();
+            const filtrados = todosLosDocumentos.filter(r =>
+                (r.descripcion || '').toLowerCase().includes(q) ||
+                (r.area        || '').toLowerCase().includes(q) ||
+                (r.id_req      || '').toLowerCase().includes(q)
+            );
+            renderizarTablaDocumentos(filtrados);
+        }
+
+        // ── Ver ítems de un requerimiento ─────────────────────────────────
+        async function verItems(requerimientoId, idReq) {
+            document.getElementById('modal-items-titulo').textContent = `Ítems — ${idReq}`;
+            document.getElementById('modal-ver-items').classList.add('active');
+            document.getElementById('modal-items-contenido').innerHTML =
+                '<p style="text-align:center;padding:20px"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
+
+            try {
+                const res   = await fetch(`${API}/items/${requerimientoId}`);
+                const items = await res.json();
+
+                if (!items.length) {
+                    document.getElementById('modal-items-contenido').innerHTML =
+                        '<p style="text-align:center;color:#9ca3af;padding:20px">Sin ítems registrados</p>';
+                    return;
+                }
+
+                document.getElementById('modal-items-contenido').innerHTML = `
+                    <div style="overflow-x:auto">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+                            <thead>
+                                <tr style="background:#f3f4f6">
+                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Ítem</th>
+                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Descripción</th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Cant.</th>
+                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Unidad</th>
+                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Empresa ganadora</th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Precio</th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${items.map(it => `
+                                    <tr style="border-bottom:1px solid #f3f4f6">
+                                        <td style="padding:8px">${it.numero_item}</td>
+                                        <td style="padding:8px">${it.descripcion || '—'}</td>
+                                        <td style="padding:8px;text-align:right">${it.cantidad}</td>
+                                        <td style="padding:8px">${it.unidad_medida || '—'}</td>
+                                        <td style="padding:8px">${it.empresa_ganadora || '—'}</td>
+                                        <td style="padding:8px;text-align:right">S/ ${(it.precio || 0).toFixed(2)}</td>
+                                        <td style="padding:8px;text-align:right;font-weight:600;color:var(--primary)">
+                                            S/ ${(it.total_ganadora || 0).toFixed(2)}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                            <tfoot>
+                                <tr style="background:#f0fdf4">
+                                    <td colspan="6" style="padding:8px;text-align:right;font-weight:600">Total requerimiento:</td>
+                                    <td style="padding:8px;text-align:right;font-weight:700;color:var(--secondary)">
+                                        S/ ${items.reduce((s, it) => s + (it.total_ganadora || 0), 0).toFixed(2)}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                `;
+            } catch (e) {
+                document.getElementById('modal-items-contenido').innerHTML =
+                    '<p style="text-align:center;color:#ef4444;padding:20px">Error al cargar ítems</p>';
+            }
+        }
+
+        function cerrarModalItems() {
+            document.getElementById('modal-ver-items').classList.remove('active');
+        }
+
+    </script>
+</body>
+
+</html>
