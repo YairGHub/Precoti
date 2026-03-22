@@ -1133,23 +1133,23 @@
                 </a>
                 <a class="nav-item" onclick="showSection('documentos')">
                     <i class="fas fa-file-alt"></i>
-                    <span>Documentos</span>
+                    <span>Requerimientos</span>
                 </a>
                 <a class="nav-item" onclick="showSection('no-llego')">
                     <i class="fas fa-times-circle"></i>
-                    <span>No llegó Orden</span>
+                    <span>No llegó Orden Propio</span>
                 </a>
                 <a class="nav-item" onclick="showSection('llego')">
                     <i class="fas fa-check-circle"></i>
-                    <span>Llegó Orden</span>
+                    <span>Llegó Orden Propio</span>
                 </a>
                 <a class="nav-item" onclick="showSection('noexterOrden')">
                     <i class="fas fa-times-circle"></i>
-                    <span>No llegó Orden Externa</span>
+                    <span>No llegó Orden Externo</span>
                 </a>
                 <a class="nav-item" onclick="showSection('exterOrden')">
                     <i class="fas fa-check-circle"></i>
-                    <span>Llegó Orden Externa</span>
+                    <span>Llegó Orden Externo</span>
                 </a>
                 <a class="nav-item" onclick="showSection('calendario')">
                     <i class="fas fa-calendar-alt"></i>
@@ -1200,7 +1200,7 @@
                             <p style="color: #9ca3af; margin-bottom: 20px;">¿Qué haremos hoy?</p>
                             <div class="welcome-actions">
                                 <button class="btn-outline">
-                                    <i class="fas fa-folder-open"></i> Ir a Documentos
+                                    <i class="fas fa-folder-open"></i> Ir a Requerimientos
                                 </button>
                                 <button class="btn-outline">
                                     <i class="fas fa-file-invoice"></i> Ver mis pedidos
@@ -1345,7 +1345,7 @@
             <!-- SECTION: DOCUMENTOS -->
             <div id="section-documentos" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-file-alt"></i> Documentos
+                    <i class="fas fa-file-alt"></i> Requerimientos
                 </h2>
 
                 <!-- Botón nuevo requerimiento + filtro búsqueda -->
@@ -1530,12 +1530,81 @@
                             </div>
                         </div>
 
-                        <!-- Ítems extraídos -->
+                        <!-- Empresas (selección global) -->
+                        <div style="background:#f9fafb;border-radius:10px;padding:15px;margin-bottom:15px">
+                            <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:12px">
+                                <i class="fas fa-building"></i> Selección de empresas
+                            </p>
+                            <div class="form-row" style="margin-bottom:10px">
+                                <div>
+                                    <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                        Empresa ganadora
+                                    </label>
+                                    <select id="global-empresa-ganadora" onchange="actualizarNombresEmpresas()"
+                                        style="padding:8px 10px;width:100%;border:2px solid #10b981;
+                                            border-radius:6px;font-size:0.85rem;background:white">
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                        Empresa perdedora 1
+                                    </label>
+                                    <select id="global-empresa-perd1" onchange="actualizarNombresEmpresas()"
+                                        style="padding:8px 10px;width:100%;border:2px solid #f59e0b;
+                                            border-radius:6px;font-size:0.85rem;background:white">
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="max-width:50%;padding-right:6px">
+                                <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
+                                    Empresa perdedora 2
+                                </label>
+                                <select id="global-empresa-perd2" onchange="actualizarNombresEmpresas()"
+                                    style="padding:8px 10px;width:100%;border:2px solid #ef4444;
+                                        border-radius:6px;font-size:0.85rem;background:white">
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Ítems del requerimiento -->
                         <div style="background:#f9fafb;border-radius:10px;padding:15px;margin-bottom:15px">
                             <p style="font-size:0.85rem;font-weight:600;color:#374151;margin-bottom:12px">
                                 <i class="fas fa-list"></i> Ítems del requerimiento
                             </p>
                             <div id="items-container"></div>
+
+                            <!-- Totales en tiempo real -->
+                            <div id="totales-preview" style="display:none;margin-top:12px;border-radius:8px;
+                                overflow:hidden;border:1px solid #e5e7eb">
+                                <div style="background:#f3f4f6;padding:8px 12px;font-size:0.8rem;
+                                            font-weight:600;color:#374151">Resumen de totales</div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
+                                    <div style="padding:10px 12px;background:#f0fdf4;border-right:1px solid #e5e7eb">
+                                        <div id="label-total-ganadora"
+                                            style="font-size:0.75rem;color:#065f46;font-weight:600;margin-bottom:4px">
+                                            Total Ganadora
+                                        </div>
+                                        <div id="valor-total-ganadora"
+                                            style="font-size:1.1rem;font-weight:700;color:#065f46">S/ 0.00</div>
+                                    </div>
+                                    <div style="padding:10px 12px;background:#fffbeb;border-right:1px solid #e5e7eb">
+                                        <div id="label-total-perd1"
+                                            style="font-size:0.75rem;color:#92400e;font-weight:600;margin-bottom:4px">
+                                            Total Perdedora 1
+                                        </div>
+                                        <div id="valor-total-perd1"
+                                            style="font-size:1.1rem;font-weight:700;color:#92400e">S/ 0.00</div>
+                                    </div>
+                                    <div style="padding:10px 12px;background:#fff5f5">
+                                        <div id="label-total-perd2"
+                                            style="font-size:0.75rem;color:#991b1b;font-weight:600;margin-bottom:4px">
+                                            Total Perdedora 2
+                                        </div>
+                                        <div id="valor-total-perd2"
+                                            style="font-size:1.1rem;font-weight:700;color:#991b1b">S/ 0.00</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tipo y botón guardar -->
@@ -1581,257 +1650,474 @@
                 </div>
             </div>
 
-            <!-- SECTION: NO LLEGÓ ORDEN -->
+            <!-- SECTION: NO LLEGÓ ORDEN - PROPIO -->
             <div id="section-no-llego" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-times-circle"></i> No llegó Orden
+                    <i class="fas fa-times-circle"></i> No llegó Orden — Propio
                 </h2>
-                <div class="stats-grid">
+
+                <!-- Métricas -->
+                <div class="stats-grid" style="margin-bottom:20px">
                     <div class="stat-card">
-                        <div class="stat-icon red">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
+                        <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="stat-info">
-                            <h3>5</h3>
-                            <p>Órdenes retrasadas</p>
+                            <h3 id="nollego-p-total">0</h3>
+                            <p>Sin orden asignada</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon yellow">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                        <div class="stat-icon yellow"><i class="fas fa-arrow-down"></i></div>
                         <div class="stat-info">
-                            <h3>3</h3>
-                            <p>En seguimiento</p>
+                            <h3 id="nollego-p-baja">0</h3>
+                            <p>De baja</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="nollego-p-activos">0</h3>
+                            <p>Activos</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="orders-table">
-                    <table>
+                <!-- Filtros -->
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                    <input type="text" id="buscar-nollego-p"
+                        placeholder="Buscar por descripción, empresa o área..."
+                        oninput="filtrarBandeja('nollego-p')"
+                        style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;flex:1;min-width:200px;outline:none">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;
+                                color:#6b7280;cursor:pointer;white-space:nowrap">
+                        <input type="checkbox" id="filtro-baja-p"
+                            onchange="filtrarBandeja('nollego-p')"
+                            style="accent-color:var(--danger)">
+                        Solo de baja
+                    </label>
+                    <button onclick="cargarBandeja('nollego-p')"
+                        style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
+                            background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+
+                <!-- Tabla -->
+                <div class="orders-table" style="overflow-x:auto">
+                    <table style="min-width:1100px">
                         <thead>
                             <tr>
-                                <th>FECHA</th>
-                                <th>EMPRESA</th>
-                                <th>PLAZO</th>
-                                <th>PEDIDO</th>
-                                <th>DESCRIPCIÓN</th>
-                                <th>REFERENCIA</th>
-                                <th>ÁREA</th>
-                                <th>TOTAL</th>
-                                <th>FECHA ELABORACIÓN</th>
-                                <th>DE BAJA</th>
-                                <th>ID Requerimiento</th>
+                                <th>ID Req.</th>
+                                <th>Fecha</th>
+                                <th>Empresa</th>
+                                <th>Plazo</th>
+                                <th>Pedido</th>
+                                <th>Descripción</th>
+                                <th>Referencia</th>
+                                <th>Área</th>
+                                <th>Total</th>
+                                <th>Fecha Registro</th>
+                                <th>De baja</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>18/07/2024</td>
-                                <td>SOLUCIONES</td>
-                                <td>10</td>
-                                <td>584</td>
-                                <td>PASACALLE</td>
-                                <td>PASACALLES PARA BRISAS</td>
-                                <td>DEPORTE</td>
-                                <td>S/ 1,400.00</td>
-                                <td>MAYO 2024</td>
-                                <td></td>
-                                <td></td>
-                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
-                            </tr>
-                            <tr>
-                                <td>05/09/2024</td>
-                                <td>CCASANI</td>
-                                <td>5</td>
-                                <td>27181</td>
-                                <td>IMPRENTA</td>
-                                <td>VOLANTES TAMAÑO A5</td>
-                                <td>OF. GENER PLANT Y PRESU</td>
-                                <td>S/ 400.00</td>
-                                <td>SEPTIEMBRE 2024</td>
-                                <td></td>
-                                <td></td>
-                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>ROMALSS</td>
-                                <td>3</td>
-                                <td></td>
-                                <td>BANNER</td>
-                                <td>02 PARANTES DE METAL</td>
-                                <td>MUN. CALLAO</td>
-                                <td>S/ 650.00</td>
-                                <td>2</td>
-                                <td>24</td>
-                                <td>X</td>
-                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td>CCASANI</td>
-                                <td>8</td>
-                                <td>284</td>
-                                <td>IMPRESIÓN</td>
-                                <td>FICHA A4 AUTOCOPIABLE</td>
-                                <td>D. SOCIAL</td>
-                                <td>S/ 215,000.00</td>
-                                <td></td>
-                                <td></td>
-                                <td>X</td>
-                                <td><button class="btn-view"><i class="fas fa-upload"></i> Cargar PDF</button></td>
-                            </tr>
+                        <tbody id="tbody-nollego-p">
+                            <tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <!-- SECTION: LLEGÓ ORDEN -->
+
+            <!-- SECTION: NO LLEGÓ ORDEN - EXTERNO -->
+            <div id="section-noexterOrden" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-times-circle"></i> No llegó Orden — Externo
+                </h2>
+
+                <div class="stats-grid" style="margin-bottom:20px">
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="stat-info">
+                            <h3 id="nollego-e-total">0</h3>
+                            <p>Sin orden asignada</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fas fa-arrow-down"></i></div>
+                        <div class="stat-info">
+                            <h3 id="nollego-e-baja">0</h3>
+                            <p>De baja</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="nollego-e-activos">0</h3>
+                            <p>Activos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                    <input type="text" id="buscar-nollego-e"
+                        placeholder="Buscar por descripción, empresa o área..."
+                        oninput="filtrarBandeja('nollego-e')"
+                        style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;flex:1;min-width:200px;outline:none">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;
+                                color:#6b7280;cursor:pointer;white-space:nowrap">
+                        <input type="checkbox" id="filtro-baja-e"
+                            onchange="filtrarBandeja('nollego-e')"
+                            style="accent-color:var(--danger)">
+                        Solo de baja
+                    </label>
+                    <button onclick="cargarBandeja('nollego-e')"
+                        style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
+                            background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+
+                <div class="orders-table" style="overflow-x:auto">
+                    <table style="min-width:1100px">
+                        <thead>
+                            <tr>
+                                <th>ID Req.</th>
+                                <th>Fecha</th>
+                                <th>Empresa</th>
+                                <th>Plazo</th>
+                                <th>Pedido</th>
+                                <th>Descripción</th>
+                                <th>Referencia</th>
+                                <th>Área</th>
+                                <th>Total</th>
+                                <th>Fecha Registro</th>
+                                <th>De baja</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-nollego-e">
+                            <tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL: Asignar Orden (OS/OC) -->
+            <div id="modal-asignar-orden" class="modal">
+                <div class="modal-content" style="max-width:500px">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <i class="fas fa-file-upload"></i> Asignar Orden
+                        </div>
+                        <button class="close-btn" onclick="cerrarModalOrden()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div id="orden-req-info"
+                        style="background:#f3f4f6;border-radius:8px;padding:10px 14px;
+                            margin-bottom:16px;font-size:0.85rem;color:#374151">
+                    </div>
+
+                    <!-- Subir PDF de orden -->
+                    <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:20px;
+                                text-align:center;margin-bottom:16px;cursor:pointer"
+                        onclick="document.getElementById('input-pdf-orden').click()">
+                        <i class="fas fa-cloud-upload-alt"
+                            style="font-size:2rem;color:#9ca3af;display:block;margin-bottom:8px"></i>
+                        <p id="pdf-orden-nombre" style="color:#6b7280;font-size:0.85rem">
+                            Haz clic para subir el PDF de la orden <span style="color:red">*</span>
+                        </p>
+                    </div>
+                    <input type="file" id="input-pdf-orden" accept=".pdf"
+                        style="display:none" onchange="seleccionarPDFOrden(this)">
+
+                    <!-- Campos manuales -->
+                    <div class="form-row" style="margin-bottom:12px">
+                        <div>
+                            <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                Tipo de orden <span style="color:red">*</span>
+                            </label>
+                            <select id="orden-tipo"
+                                style="padding:10px;width:100%;border:2px solid #e5e7eb;
+                                    border-radius:8px;font-size:0.9rem;background:white">
+                                <option value="OS">Orden de Servicio (OS)</option>
+                                <option value="OC">Orden de Compra (OC)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                N° de orden <span style="color:red">*</span>
+                            </label>
+                            <input type="text" id="orden-numero" placeholder="Ej: OS-0042"
+                                style="padding:10px;width:100%;border:2px solid #e5e7eb;
+                                    border-radius:8px;font-size:0.9rem">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                Código SIAF <span style="color:red">*</span>
+                            </label>
+                            <input type="text" id="orden-siaf" placeholder="Ej: 2026-00341"
+                                style="padding:10px;width:100%;border:2px solid #e5e7eb;
+                                    border-radius:8px;font-size:0.9rem">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
+                                Fecha de orden <span style="color:red">*</span>
+                            </label>
+                            <input type="date" id="orden-fecha"
+                                style="padding:10px;width:100%;border:2px solid #e5e7eb;
+                                    border-radius:8px;font-size:0.9rem">
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:10px;
+                                margin-top:20px;padding-top:15px;border-top:1px solid #e5e7eb">
+                        <button class="btn-secondary" onclick="cerrarModalOrden()">Cancelar</button>
+                        <button class="btn-primary" style="width:auto;padding:10px 24px"
+                            onclick="confirmarOrden()">
+                            <i class="fas fa-check"></i> Confirmar y trasladar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: LLEGÓ ORDEN - PROPIO -->
             <div id="section-llego" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-check-circle"></i> Llegó Orden
+                    <i class="fas fa-check-circle"></i> Llegó Orden — Propio
                 </h2>
-                <div class="stats-grid">
+
+                <!-- Métricas -->
+                <div class="stats-grid" style="margin-bottom:20px">
                     <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-box"></i>
-                        </div>
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
                         <div class="stat-info">
-                            <h3>28</h3>
-                            <p>Recepciones este mes</p>
+                            <h3 id="llego-p-total">0</h3>
+                            <p>Total con orden</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-clipboard-check"></i>
-                        </div>
+                        <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
-                            <h3>100%</h3>
-                            <p>Conformidad</p>
+                            <h3 id="llego-p-espera">0</h3>
+                            <p>Espera pago</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="stat-info">
+                            <h3 id="llego-p-pagado">0</h3>
+                            <p>Llegó pago</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="orders-table">
-                    <table>
+                <!-- Filtros -->
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                    <input type="text" id="buscar-llego-p"
+                        placeholder="Buscar por descripción, empresa, SIAF..."
+                        oninput="filtrarLlego('llego-p')"
+                        style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;flex:1;min-width:200px;outline:none">
+                    <select id="filtro-estado-p" onchange="filtrarLlego('llego-p')"
+                        style="padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;background:white;cursor:pointer">
+                        <option value="">Todos los estados</option>
+                        <option value="Espera pago">Espera pago</option>
+                        <option value="Llegó pago">Llegó pago</option>
+                    </select>
+                    <button onclick="cargarLlego('llego-p')"
+                        style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
+                            background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+
+                <!-- Tabla -->
+                <div class="orders-table" style="overflow-x:auto">
+                    <table style="min-width:1200px">
                         <thead>
                             <tr>
-                                <th>FECHA ORDEN</th>
-                                <th>EMPRESA</th>
-                                <th>PLAZO</th>
-                                <th>PEDIDO</th>
-                                <th>ORDEN</th>
+                                <th>ID Req.</th>
+                                <th>Fecha Orden</th>
+                                <th>Empresa</th>
+                                <th>Plazo</th>
+                                <th>Pedido</th>
+                                <th>Tipo Orden</th>
+                                <th>N° Orden</th>
                                 <th>SIAF</th>
-                                <th>DESCRIPCIÓN</th>
-                                <th>REFERENCIA</th>
-                                <th>ÁREA</th>
-                                <th>TOTAL</th>
-                                <th>FECHA ELABORACIÓN</th>
-                                <th>ESTADO</th>
+                                <th>Descripción</th>
+                                <th>Área</th>
+                                <th>Total</th>
+                                <th>Estado</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>16/07/2024</td>
-                                <td>CCASANI</td>
-                                <td>4</td>
-                                <td>1961</td>
-                                <td>OS</td>
-                                <td>14028</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>INFORMATIVO DE MATRIMONIO CIVIL</td>
-                                <td>OF. SERV. GENERAL</td>
-                                <td>S/ 19,450.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19/07/2024</td>
-                                <td>CCASANI</td>
-                                <td>4</td>
-                                <td>803</td>
-                                <td>OC</td>
-                                <td>676</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>200 POSTERAS</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 40,000.00</td>
-                                <td>MAYO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19/07/2024</td>
-                                <td>CRUZ</td>
-                                <td>4</td>
-                                <td>800</td>
-                                <td>OC</td>
-                                <td>673</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>VENTA MINORISTA</td>
-                                <td>OF. SECRETARIA GENERAL</td>
-                                <td>S/ 40,036.70</td>
-                                <td>JULIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>CRUZ</td>
-                                <td>8</td>
-                                <td>2365</td>
-                                <td>OS</td>
-                                <td>16249</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>PASACALLES + POSTERAS</td>
-                                <td>D. URBANO</td>
-                                <td>S/ 40,450.00</td>
-                                <td>JULIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>CCASANI</td>
-                                <td>3</td>
-                                <td>866</td>
-                                <td>OC</td>
-                                <td>726</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>DEUDA DE PARQUES 3</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 39,600.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>DANIMAR</td>
-                                <td>3</td>
-                                <td>865</td>
-                                <td>OC</td>
-                                <td>724</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>DEUDA DE PARQUES 2</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 41,000.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
+                        <tbody id="tbody-llego-p">
+                            <tr><td colspan="13" style="text-align:center;padding:30px;color:#9ca3af">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- SECTION: LLEGÓ ORDEN - EXTERNO -->
+            <div id="section-exterOrden" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-check-circle"></i> Llegó Orden — Externo
+                </h2>
+
+                <div class="stats-grid" style="margin-bottom:20px">
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3 id="llego-e-total">0</h3>
+                            <p>Total con orden</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3 id="llego-e-espera">0</h3>
+                            <p>Espera pago</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="stat-info">
+                            <h3 id="llego-e-pagado">0</h3>
+                            <p>Llegó pago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
+                    <input type="text" id="buscar-llego-e"
+                        placeholder="Buscar por descripción, empresa, SIAF..."
+                        oninput="filtrarLlego('llego-e')"
+                        style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;flex:1;min-width:200px;outline:none">
+                    <select id="filtro-estado-e" onchange="filtrarLlego('llego-e')"
+                        style="padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;background:white;cursor:pointer">
+                        <option value="">Todos los estados</option>
+                        <option value="Espera pago">Espera pago</option>
+                        <option value="Llegó pago">Llegó pago</option>
+                    </select>
+                    <button onclick="cargarLlego('llego-e')"
+                        style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
+                            background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                </div>
+
+                <div class="orders-table" style="overflow-x:auto">
+                    <table style="min-width:1200px">
+                        <thead>
+                            <tr>
+                                <th>ID Req.</th>
+                                <th>Fecha Orden</th>
+                                <th>Empresa</th>
+                                <th>Plazo</th>
+                                <th>Pedido</th>
+                                <th>Tipo Orden</th>
+                                <th>N° Orden</th>
+                                <th>SIAF</th>
+                                <th>Descripción</th>
+                                <th>Área</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-llego-e">
+                            <tr><td colspan="13" style="text-align:center;padding:30px;color:#9ca3af">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MODAL: Actualizar estado + cargar factura -->
+            <div id="modal-estado-pago" class="modal">
+                <div class="modal-content" style="max-width:460px">
+                    <div class="modal-header">
+                        <div class="modal-title">
+                            <i class="fas fa-money-bill-wave"></i> Actualizar estado de pago
+                        </div>
+                        <button class="close-btn" onclick="cerrarModalEstado()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div id="estado-req-info"
+                        style="background:#f3f4f6;border-radius:8px;padding:10px 14px;
+                            margin-bottom:16px;font-size:0.85rem;color:#374151">
+                    </div>
+
+                    <!-- Selector de estado -->
+                    <div style="margin-bottom:16px">
+                        <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:6px">
+                            Estado de pago <span style="color:red">*</span>
+                        </label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                            <button id="btn-espera-pago"
+                                onclick="seleccionarEstadoPago('Espera pago')"
+                                style="padding:12px;border-radius:8px;font-weight:600;cursor:pointer;
+                                    border:2px solid #f59e0b;background:#fef3c7;
+                                    color:#92400e;transition:all 0.2s">
+                                <i class="fas fa-clock"></i> Espera pago
+                            </button>
+                            <button id="btn-llego-pago"
+                                onclick="seleccionarEstadoPago('Llegó pago')"
+                                style="padding:12px;border-radius:8px;font-weight:600;cursor:pointer;
+                                    border:2px solid #e5e7eb;background:white;
+                                    color:#6b7280;transition:all 0.2s">
+                                <i class="fas fa-check-circle"></i> Llegó pago
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Cargar factura (solo visible si llegó pago) -->
+                    <div id="seccion-factura" style="display:none;margin-bottom:16px">
+                        <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:6px">
+                            Cargar factura PDF
+                        </label>
+                        <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:16px;
+                                    text-align:center;cursor:pointer"
+                            onclick="document.getElementById('input-pdf-factura').click()">
+                            <i class="fas fa-file-invoice"
+                                style="font-size:1.8rem;color:#9ca3af;display:block;margin-bottom:8px"></i>
+                            <p id="pdf-factura-nombre"
+                                style="color:#6b7280;font-size:0.85rem">
+                                Haz clic para subir la factura (opcional)
+                            </p>
+                        </div>
+                        <input type="file" id="input-pdf-factura" accept=".pdf"
+                            style="display:none" onchange="seleccionarFactura(this)">
+                    </div>
+
+                    <div style="display:flex;justify-content:flex-end;gap:10px;
+                                padding-top:15px;border-top:1px solid #e5e7eb">
+                        <button class="btn-secondary" onclick="cerrarModalEstado()">Cancelar</button>
+                        <button class="btn-primary" style="width:auto;padding:10px 24px"
+                            onclick="confirmarEstadoPago()">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- SECTION: No llegó Orden Externa -->
             <div id="section-noexterna" class="content-section">
                 <h2 class="section-title">
@@ -1937,152 +2223,7 @@
                     </table>
                 </div>
             </div>
-            <!-- SECTION:Llegó Orden Externa -->
-            <div id="section-noexterna" class="content-section">
-                <h2 class="section-title">
-                    <i class="fas fa-check-circle"></i> Llegó Orden externa
-                </h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-box"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>28</h3>
-                            <p>Recepciones este mes</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-clipboard-check"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>100%</h3>
-                            <p>Conformidad</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="orders-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>FECHA ORDEN</th>
-                                <th>EMPRESA</th>
-                                <th>PLAZO</th>
-                                <th>PEDIDO</th>
-                                <th>ORDEN</th>
-                                <th>SIAF</th>
-                                <th>DESCRIPCIÓN</th>
-                                <th>REFERENCIA</th>
-                                <th>ÁREA</th>
-                                <th>TOTAL</th>
-                                <th>FECHA ELABORACIÓN</th>
-                                <th>ESTADO</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>16/07/2024</td>
-                                <td>CCASANI</td>
-                                <td>4</td>
-                                <td>1961</td>
-                                <td>OS</td>
-                                <td>14028</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>INFORMATIVO DE MATRIMONIO CIVIL</td>
-                                <td>OF. SERV. GENERAL</td>
-                                <td>S/ 19,450.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19/07/2024</td>
-                                <td>CCASANI</td>
-                                <td>4</td>
-                                <td>803</td>
-                                <td>OC</td>
-                                <td>676</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>200 POSTERAS</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 40,000.00</td>
-                                <td>MAYO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>19/07/2024</td>
-                                <td>CRUZ</td>
-                                <td>4</td>
-                                <td>800</td>
-                                <td>OC</td>
-                                <td>673</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>VENTA MINORISTA</td>
-                                <td>OF. SECRETARIA GENERAL</td>
-                                <td>S/ 40,036.70</td>
-                                <td>JULIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>CRUZ</td>
-                                <td>8</td>
-                                <td>2365</td>
-                                <td>OS</td>
-                                <td>16249</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>PASACALLES + POSTERAS</td>
-                                <td>D. URBANO</td>
-                                <td>S/ 40,450.00</td>
-                                <td>JULIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>CCASANI</td>
-                                <td>3</td>
-                                <td>866</td>
-                                <td>OC</td>
-                                <td>726</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>DEUDA DE PARQUES 3</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 39,600.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-pending">ESPERA PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>22/08/2024</td>
-                                <td>DANIMAR</td>
-                                <td>3</td>
-                                <td>865</td>
-                                <td>OC</td>
-                                <td>724</td>
-                                <td>BASTIDOR C/ BANNER</td>
-                                <td>DEUDA DE PARQUES 2</td>
-                                <td>COMU. IMAGEN</td>
-                                <td>S/ 41,000.00</td>
-                                <td>JUNIO 2024</td>
-                                <td><span class="status-badge status-completed">LLEGÓ PAGO</span></td>
-                                <td><button class="btn-view"><i class="fas fa-file-invoice"></i> Cargar Factura</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
             <!-- SECTION: DASHBOARD FINANCIERO -->
             <div id="section-financiero" class="content-section">
                 <h2 class="section-title">
@@ -2314,7 +2455,7 @@
         let pin = '';
         let currentUser = '';
 
-// URL base del backend — ajusta si cambias de puerto
+        // URL base del backend — ajusta si cambias de puerto
         const API = 'http://localhost:8000';
 
         async function login() {
@@ -2376,6 +2517,12 @@
         }
 
         function showSection(sectionName) {
+
+            if (sectionName === 'no-llego')       cargarBandeja('nollego-p');
+            if (sectionName === 'noexterOrden')   cargarBandeja('nollego-e');
+            if (sectionName === 'llego')       cargarLlego('llego-p');
+            if (sectionName === 'exterOrden')  cargarLlego('llego-e');
+
             // Ocultar todas las secciones
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
@@ -2502,13 +2649,13 @@
         };
 
 
-// ── Variables globales del flujo ──────────────────────────────────
+        // ── Variables globales del flujo ──────────────────────────────────
         let tipoSeleccionado = 'Propio';
         let requerimientoActual = null;
         let todosLosDocumentos = [];
 
         // ── Modal Nuevo Requerimiento ─────────────────────────────────────
-        function abrirModalNuevoReq() {
+        async function abrirModalNuevoReq() {
             document.getElementById('modal-nuevo-req').classList.add('active');
             document.getElementById('paso-subir-pdf').style.display = 'block';
             document.getElementById('paso-formulario').style.display = 'none';
@@ -2516,6 +2663,52 @@
             document.getElementById('input-pdf-req').value = '';
             requerimientoActual = null;
             seleccionarTipo('Propio');
+            await cargarEmpresasSelector();
+        }
+
+        let empresasLista = [];
+
+        async function cargarEmpresasSelector() {
+            try {
+                const res = await fetch(`${API}/empresas`);
+                empresasLista = await res.json();
+            } catch (e) {
+                empresasLista = [];
+            }
+
+            const placeholder = `<option value="">-- Seleccionar empresa --</option>`;
+            const opciones = empresasLista.map(e =>
+                `<option value="${e.desc_empresa}">${e.desc_empresa}${e.rubro ? ' (' + e.rubro + ')' : ''}</option>`
+            ).join('');
+            const html = placeholder + opciones;
+
+            ['global-empresa-ganadora', 'global-empresa-perd1', 'global-empresa-perd2']
+                .forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = html;
+                });
+        }
+
+        function actualizarNombresEmpresas() {
+            const g  = document.getElementById('global-empresa-ganadora').value || 'Ganadora';
+            const p1 = document.getElementById('global-empresa-perd1').value    || 'Perdedora 1';
+            const p2 = document.getElementById('global-empresa-perd2').value    || 'Perdedora 2';
+
+            document.getElementById('label-total-ganadora').textContent = `Total ${g}`;
+            document.getElementById('label-total-perd1').textContent    = `Total ${p1}`;
+            document.getElementById('label-total-perd2').textContent    = `Total ${p2}`;
+
+            recalcularTotales();
+        }       
+
+        function opcionesEmpresas(idSeleccionado = '') {
+            const placeholder = `<option value="">-- Seleccionar empresa --</option>`;
+            const opciones = empresasLista.map(e =>
+                `<option value="${e.desc_empresa}" ${e.desc_empresa === idSeleccionado ? 'selected' : ''}>
+                    ${e.desc_empresa} (${e.rubro || 'Sin rubro'})
+                </option>`
+            ).join('');
+            return placeholder + opciones;
         }
 
         function cerrarModalNuevoReq() {
@@ -2556,23 +2749,29 @@
             formData.append('tipo', tipoSeleccionado);
 
             try {
-                const res  = await fetch(`${API}/ocr/procesar-requerimiento?tipo=${tipoSeleccionado}`, {
+                const res = await fetch(`${API}/ocr/leer-requerimiento`, {
                     method: 'POST',
                     body: formData
                 });
 
                 if (!res.ok) throw new Error('Error al procesar el PDF');
                 const data = await res.json();
-                requerimientoActual = data;
+                // Solo guarda los datos del OCR, sin requerimiento_id aún
+                requerimientoActual = {
+                    descripcion: data.denominacion   || data.descripcion || '',
+                    area:        data.organo_unidad  || data.area        || '',
+                    plazo:       data.plazo          || '',
+                    items:       data.items          || [],
+                };
 
                 // Prellenar formulario
-                document.getElementById('req-descripcion').value = data.descripcion || '';
-                document.getElementById('req-area').value        = data.area        || '';
-                document.getElementById('req-plazo').value       = data.plazo       || '';
-                document.getElementById('req-fecha').value       = data.fecha_req   || '';
+                document.getElementById('req-descripcion').value = requerimientoActual.descripcion;
+                document.getElementById('req-area').value        = requerimientoActual.area;
+                document.getElementById('req-plazo').value       = requerimientoActual.plazo;
+                document.getElementById('req-fecha').value       = new Date().toLocaleDateString('es-PE');
 
                 // Renderizar ítems
-                renderizarItemsFormulario(data.items, data.requerimiento_id);
+                renderizarItemsFormulario(requerimientoActual.items);
 
                 document.getElementById('pdf-loading').style.display   = 'none';
                 document.getElementById('paso-formulario').style.display = 'block';
@@ -2584,114 +2783,198 @@
             }
         }
 
-        function renderizarItemsFormulario(items, requerimientoId) {
+        function renderizarItemsFormulario(items) {
             const container = document.getElementById('items-container');
             container.innerHTML = items.map((it, idx) => `
                 <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;
                             padding:12px;margin-bottom:10px">
                     <div style="font-size:0.8rem;font-weight:600;color:var(--primary);margin-bottom:8px">
-                        Ítem ${it.numero_item} — ${it.descripcion}
+                        Ítem ${it.item || it.numero_item} — ${it.descripcion}
                         <span style="font-weight:400;color:#9ca3af">
-                            (${it.cantidad} ${it.unidad_medida})
+                            (${it.cantidad} ${it.unidad_de_medida || it.unidad_medida || ''})
                         </span>
                     </div>
-                    <div class="form-row">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
                         <div>
                             <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                Empresa ganadora
-                            </label>
-                            <input type="text" id="item-empresa-${idx}"
-                                placeholder="Nombre empresa"
-                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
-                                    border-radius:6px;font-size:0.85rem">
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                Precio (con IGV)
+                                Precio con IGV (Ganadora)
                             </label>
                             <input type="number" id="item-precio-${idx}"
                                 placeholder="0.00" step="0.01"
-                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
+                                oninput="recalcularTotales()"
+                                style="padding:8px 10px;width:100%;border:2px solid #10b981;
                                     border-radius:6px;font-size:0.85rem">
+                        </div>
+                        <div style="background:#f0fdf4;border-radius:6px;padding:8px 10px">
+                            <div style="font-size:0.7rem;color:#065f46;margin-bottom:3px">
+                                Total ganadora
+                            </div>
+                            <div id="item-total-g-${idx}"
+                                style="font-size:0.9rem;font-weight:700;color:#065f46">
+                                S/ 0.00
+                            </div>
+                        </div>
+                        <div style="background:#f9fafb;border-radius:6px;padding:8px 10px">
+                            <div style="font-size:0.7rem;color:#6b7280;margin-bottom:3px">
+                                Valor unitario / IGV
+                            </div>
+                            <div id="item-calc-${idx}"
+                                style="font-size:0.8rem;color:#6b7280">
+                                S/ 0.00 / S/ 0.00
+                            </div>
                         </div>
                     </div>
-                    <div class="form-row" style="margin-top:8px">
-                        <div>
-                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                Empresa perdedora 1
-                            </label>
-                            <input type="text" id="item-perd1-${idx}"
-                                placeholder="Nombre empresa"
-                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
-                                    border-radius:6px;font-size:0.85rem">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                        <div style="background:#fffbeb;border-radius:6px;padding:8px 10px">
+                            <div style="font-size:0.7rem;color:#92400e;margin-bottom:3px">
+                                Total perdedora 1
+                            </div>
+                            <div id="item-total-p1-${idx}"
+                                style="font-size:0.9rem;font-weight:700;color:#92400e">
+                                S/ 0.00
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                Empresa perdedora 2
-                            </label>
-                            <input type="text" id="item-perd2-${idx}"
-                                placeholder="Nombre empresa"
-                                style="padding:8px 10px;width:100%;border:1px solid #e5e7eb;
-                                    border-radius:6px;font-size:0.85rem">
+                        <div style="background:#fff5f5;border-radius:6px;padding:8px 10px">
+                            <div style="font-size:0.7rem;color:#991b1b;margin-bottom:3px">
+                                Total perdedora 2
+                            </div>
+                            <div id="item-total-p2-${idx}"
+                                style="font-size:0.9rem;font-weight:700;color:#991b1b">
+                                S/ 0.00
+                            </div>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            document.getElementById('totales-preview').style.display = 'none';
+        }
+
+        function recalcularTotales() {
+            if (!requerimientoActual) return;
+            const items   = requerimientoActual.items;
+            let sumG = 0, sumP1 = 0, sumP2 = 0;
+
+            items.forEach((it, idx) => {
+                const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
+                const cantidad = it.cantidad || 0;
+                const vu       = precio > 0 ? precio / 1.18 : 0;
+                const igv      = vu * 0.18;
+                const totalG   = precio * cantidad;
+                const f1       = totalG > 0 ? totalG * (1.05 + Math.random() * 0.03) : 0;
+                const f2       = totalG > 0 ? totalG * (1.05 + Math.random() * 0.03) : 0;
+
+                const elTotalG  = document.getElementById(`item-total-g-${idx}`);
+                const elCalc    = document.getElementById(`item-calc-${idx}`);
+                const elTotalP1 = document.getElementById(`item-total-p1-${idx}`);
+                const elTotalP2 = document.getElementById(`item-total-p2-${idx}`);
+
+                if (elTotalG)  elTotalG.textContent  = `S/ ${totalG.toFixed(2)}`;
+                if (elCalc)    elCalc.textContent     = `S/ ${vu.toFixed(2)} / S/ ${igv.toFixed(2)}`;
+                if (elTotalP1) elTotalP1.textContent  = `S/ ${f1.toFixed(2)}`;
+                if (elTotalP2) elTotalP2.textContent  = `S/ ${f2.toFixed(2)}`;
+
+                sumG  += totalG;
+                sumP1 += f1;
+                sumP2 += f2;
+            });
+
+            document.getElementById('totales-preview').style.display = 'block';
+            document.getElementById('valor-total-ganadora').textContent = `S/ ${sumG.toFixed(2)}`;
+            document.getElementById('valor-total-perd1').textContent    = `S/ ${sumP1.toFixed(2)}`;
+            document.getElementById('valor-total-perd2').textContent    = `S/ ${sumP2.toFixed(2)}`;
         }
 
         // ── Guardar requerimiento ─────────────────────────────────────────
         async function guardarRequerimiento() {
             if (!requerimientoActual) return;
 
-            const items = requerimientoActual.items;
-            console.log('Items recibidos:', JSON.stringify(items));
-
             try {
-                // Paso 1: Actualizar datos del requerimiento
-                const resReq = await fetch(`${API}/requerimientos/${requerimientoActual.requerimiento_id}/datos`, {
-                    method: 'PATCH',
+                // Paso 1: Crear el requerimiento con el tipo seleccionado en ese momento
+                const resReq = await fetch(`${API}/requerimientos`, {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        numero_pedido: document.getElementById('req-pedido').value,
-                        referencia:    document.getElementById('req-referencia').value,
                         descripcion:   document.getElementById('req-descripcion').value,
                         plazo:         document.getElementById('req-plazo').value,
                         area:          document.getElementById('req-area').value,
+                        numero_pedido: document.getElementById('req-pedido').value,
+                        referencia:    document.getElementById('req-referencia').value,
+                        tipo:          tipoSeleccionado,   // ← toma el valor actual del botón
                     })
                 });
-                console.log('Requerimiento actualizado:', resReq.status);
 
-                // Paso 2: Actualizar cada ítem con empresa y precio
-                for (let i = 0; i < items.length; i++) {
-                    const empresa = document.getElementById(`item-empresa-${i}`).value;
-                    const precio  = parseFloat(document.getElementById(`item-precio-${i}`).value) || 0;
-                    const perd1   = document.getElementById(`item-perd1-${i}`).value;
-                    const perd2   = document.getElementById(`item-perd2-${i}`).value;
+                if (!resReq.ok) throw new Error('Error al crear requerimiento');
+                const reqData = await resReq.json();
+                const requerimientoId = reqData.id;
+                const idReq           = reqData.id_req;
 
-                    console.log(`Ítem ${i} - id: ${items[i].id}, empresa: ${empresa}, precio: ${precio}`);
+                // Paso 2: Crear los ítems vinculados al requerimiento recién creado
+                const itemsOCR = requerimientoActual.items;
+                const itemsCreados = [];
+
+                for (let i = 0; i < itemsOCR.length; i++) {
+                    const it     = itemsOCR[i];
+                    const caract = Array.isArray(it.caracteristicas)
+                        ? it.caracteristicas.join(' | ')
+                        : (it.caracteristicas || '');
+
+                    const resItem = await fetch(`${API}/items`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify([{
+                            requerimiento_id: requerimientoId,
+                            numero_item:      it.item || it.numero_item,
+                            cantidad:         it.cantidad,
+                            unidad_medida:    it.unidad_de_medida || it.unidad_medida,
+                            descripcion:      it.descripcion,
+                            caracteristicas:  caract,
+                        }])
+                    });
+
+                    if (resItem.ok) {
+                        // Obtener el id del ítem recién creado
+                        const itemsGuardados = await fetch(
+                            `${API}/items/${requerimientoId}`
+                        );
+                        const lista = await itemsGuardados.json();
+                        const itemCreado = lista.find(
+                            x => x.numero_item === (it.item || it.numero_item)
+                        );
+                        if (itemCreado) itemsCreados.push({ ...it, id: itemCreado.id });
+                    }
+                }
+
+                // Paso 3: Actualizar empresa y precio de cada ítem
+                const empresa = document.getElementById('global-empresa-ganadora').value;
+                const perd1   = document.getElementById('global-empresa-perd1').value;
+                const perd2   = document.getElementById('global-empresa-perd2').value;
+
+                for (let i = 0; i < itemsCreados.length; i++) {
+                    const precio = parseFloat(
+                        document.getElementById(`item-precio-${i}`)?.value
+                    ) || 0;
 
                     if (empresa || precio > 0) {
-                        const resItem = await fetch(`${API}/ocr/actualizar-item/${items[i].id}`, {
+                        await fetch(`${API}/ocr/actualizar-item/${itemsCreados[i].id}`, {
                             method: 'PATCH',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 empresa_ganadora:    empresa,
-                                precio:              precio,
+                                precio:             precio,
                                 empresa_perdedora_1: perd1,
                                 empresa_perdedora_2: perd2,
                             })
                         });
-                        const texto = await resItem.text();
-                        console.log(`Respuesta ítem ${items[i].id}:`, resItem.status, texto);
                     }
                 }
 
                 cerrarModalNuevoReq();
                 await cargarDocumentos();
-                alert(`✓ Requerimiento ${requerimientoActual.id_req} guardado y derivado a "${tipoSeleccionado}"`);
+                alert(`✓ Requerimiento ${idReq} guardado y derivado a "${tipoSeleccionado}"`);
 
             } catch (e) {
-                console.error('Error completo:', e);
+                console.error(e);
                 alert('Error al guardar. Verifica la conexión con el backend.');
             }
         }
@@ -2774,44 +3057,78 @@
 
                 document.getElementById('modal-items-contenido').innerHTML = `
                     <div style="overflow-x:auto">
-                        <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
                             <thead>
                                 <tr style="background:#f3f4f6">
-                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Ítem</th>
-                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Descripción</th>
+                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Ítem</th>
+                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Descripción</th>
                                     <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Cant.</th>
-                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Unidad</th>
-                                    <th style="padding:8px;text-align:left;border-bottom:1px solid #e5e7eb">Empresa ganadora</th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Precio</th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Total</th>
+                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Unidad</th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
+                                            background:#d1fae5;color:#065f46">
+                                        Precio ${items[0]?.empresa_ganadora || 'Ganadora'}
+                                    </th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
+                                            background:#d1fae5;color:#065f46">
+                                        Total ${items[0]?.empresa_ganadora || 'Ganadora'}
+                                    </th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
+                                            background:#fef3c7;color:#92400e">
+                                        Total ${items[0]?.empresa_perdedora_1 || 'Perdedora 1'}
+                                    </th>
+                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
+                                            background:#fee2e2;color:#991b1b">
+                                        Total ${items[0]?.empresa_perdedora_2 || 'Perdedora 2'}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 ${items.map(it => `
                                     <tr style="border-bottom:1px solid #f3f4f6">
                                         <td style="padding:8px">${it.numero_item}</td>
-                                        <td style="padding:8px">${it.descripcion || '—'}</td>
+                                        <td style="padding:8px;max-width:200px;white-space:nowrap;
+                                                overflow:hidden;text-overflow:ellipsis"
+                                            title="${it.descripcion || ''}">${it.descripcion || '—'}</td>
                                         <td style="padding:8px;text-align:right">${it.cantidad}</td>
                                         <td style="padding:8px">${it.unidad_medida || '—'}</td>
-                                        <td style="padding:8px">${it.empresa_ganadora || '—'}</td>
-                                        <td style="padding:8px;text-align:right">S/ ${(it.precio || 0).toFixed(2)}</td>
-                                        <td style="padding:8px;text-align:right;font-weight:600;color:var(--primary)">
+                                        <td style="padding:8px;text-align:right;background:#f0fdf4">
+                                            S/ ${(it.precio || 0).toFixed(2)}
+                                        </td>
+                                        <td style="padding:8px;text-align:right;font-weight:600;
+                                                color:#065f46;background:#f0fdf4">
                                             S/ ${(it.total_ganadora || 0).toFixed(2)}
+                                        </td>
+                                        <td style="padding:8px;text-align:right;background:#fffbeb;color:#92400e">
+                                            S/ ${(it.costo_perdedora_1 || 0).toFixed(2)}
+                                        </td>
+                                        <td style="padding:8px;text-align:right;background:#fff5f5;color:#991b1b">
+                                            S/ ${(it.costo_perdedora_2 || 0).toFixed(2)}
                                         </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                             <tfoot>
-                                <tr style="background:#f0fdf4">
-                                    <td colspan="6" style="padding:8px;text-align:right;font-weight:600">Total requerimiento:</td>
-                                    <td style="padding:8px;text-align:right;font-weight:700;color:var(--secondary)">
-                                        S/ ${items.reduce((s, it) => s + (it.total_ganadora || 0), 0).toFixed(2)}
+                                <tr style="font-weight:700;font-size:0.85rem">
+                                    <td colspan="4" style="padding:10px 8px;text-align:right;
+                                                        background:#f3f4f6">Total requerimiento:</td>
+                                    <td style="padding:10px 8px;text-align:right;background:#d1fae5;color:#065f46">
+                                        —
+                                    </td>
+                                    <td style="padding:10px 8px;text-align:right;background:#d1fae5;color:#065f46">
+                                        S/ ${items.reduce((s, it) => s + (it.total_ganadora   || 0), 0).toFixed(2)}
+                                    </td>
+                                    <td style="padding:10px 8px;text-align:right;background:#fef3c7;color:#92400e">
+                                        S/ ${items.reduce((s, it) => s + (it.costo_perdedora_1 || 0), 0).toFixed(2)}
+                                    </td>
+                                    <td style="padding:10px 8px;text-align:right;background:#fee2e2;color:#991b1b">
+                                        S/ ${items.reduce((s, it) => s + (it.costo_perdedora_2 || 0), 0).toFixed(2)}
                                     </td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
                 `;
+
             } catch (e) {
                 document.getElementById('modal-items-contenido').innerHTML =
                     '<p style="text-align:center;color:#ef4444;padding:20px">Error al cargar ítems</p>';
@@ -2821,6 +3138,380 @@
         function cerrarModalItems() {
             document.getElementById('modal-ver-items').classList.remove('active');
         }
+
+        // ── Variables bandejas ────────────────────────────────────────────
+        let datosBandeja = { 'nollego-p': [], 'nollego-e': [] };
+        let requerimientoOrdenActual = null;
+        let archivoPDFOrden = null;
+
+        // ── Cargar bandeja ────────────────────────────────────────────────
+        async function cargarBandeja(bandeja) {
+            const tipo = bandeja === 'nollego-p' ? 'Propio' : 'Externo';
+            const tbody = document.getElementById(`tbody-${bandeja}`);
+            tbody.innerHTML = `<tr><td colspan="12"
+                style="text-align:center;padding:30px;color:#9ca3af">
+                <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
+
+            try {
+                // Revisar bajas automáticamente al cargar
+                await fetch(`${API}/requerimientos/revisar-bajas`, { method: 'POST' });
+
+                const res  = await fetch(`${API}/requerimientos?tiene_orden=0&tipo=${tipo}`);
+                const data = await res.json();
+                datosBandeja[bandeja] = data;
+                renderizarBandeja(bandeja, data);
+                actualizarMetricasBandeja(bandeja, data);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="12"
+                    style="text-align:center;color:#ef4444;padding:20px">
+                    Error al cargar datos</td></tr>`;
+            }
+        }
+
+        function renderizarBandeja(bandeja, data) {
+            const tbody = document.getElementById(`tbody-${bandeja}`);
+            if (!data.length) {
+                tbody.innerHTML = `<tr><td colspan="12"
+                    style="text-align:center;color:#9ca3af;padding:30px">
+                    No hay requerimientos en esta bandeja</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(r => `
+                <tr style="${r.de_baja ? 'opacity:0.6;background:#fff5f5' : ''}">
+                    <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
+                    <td style="font-size:0.82rem">${r.fecha_req || '—'}</td>
+                    <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
+                    <td style="font-size:0.82rem">${r.plazo || '—'}</td>
+                    <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
+                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;
+                            overflow:hidden;text-overflow:ellipsis"
+                        title="${r.descripcion || ''}">${r.descripcion || '—'}</td>
+                    <td style="font-size:0.82rem">${r.referencia || '—'}</td>
+                    <td style="font-size:0.82rem">${r.area || '—'}</td>
+                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
+                        S/ ${(r.precio_total || 0).toLocaleString('es-PE', {minimumFractionDigits:2})}
+                    </td>
+                    <td style="font-size:0.82rem">${r.fecha_registro || '—'}</td>
+                    <td style="text-align:center">
+                        ${r.de_baja
+                            ? '<span class="status-badge status-pending">De baja</span>'
+                            : '<span class="status-badge status-completed">Activo</span>'
+                        }
+                    </td>
+                    <td>
+                        <button class="btn-view" onclick="abrirModalOrden(${r.id}, '${r.id_req}')"
+                            ${r.de_baja ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
+                            <i class="fas fa-upload"></i> Cargar PDF
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function actualizarMetricasBandeja(bandeja, data) {
+            const sufijo = bandeja === 'nollego-p' ? 'p' : 'e';
+            const bajas  = data.filter(r => r.de_baja).length;
+            document.getElementById(`nollego-${sufijo}-total`).textContent   = data.length;
+            document.getElementById(`nollego-${sufijo}-baja`).textContent    = bajas;
+            document.getElementById(`nollego-${sufijo}-activos`).textContent = data.length - bajas;
+        }
+
+        function filtrarBandeja(bandeja) {
+            const sufijo   = bandeja === 'nollego-p' ? 'p' : 'e';
+            const q        = document.getElementById(`buscar-nollego-${sufijo}`).value.toLowerCase();
+            const soloBaja = document.getElementById(`filtro-baja-${sufijo}`).checked;
+            let filtrados  = datosBandeja[bandeja];
+
+            if (q) {
+                filtrados = filtrados.filter(r =>
+                    (r.descripcion     || '').toLowerCase().includes(q) ||
+                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
+                    (r.area            || '').toLowerCase().includes(q) ||
+                    (r.id_req          || '').toLowerCase().includes(q)
+                );
+            }
+            if (soloBaja) filtrados = filtrados.filter(r => r.de_baja);
+            renderizarBandeja(bandeja, filtrados);
+        }
+
+        // ── Modal asignar orden ───────────────────────────────────────────
+        function abrirModalOrden(reqId, idReq) {
+            requerimientoOrdenActual = reqId;
+            archivoPDFOrden = null;
+            document.getElementById('modal-asignar-orden').classList.add('active');
+            document.getElementById('orden-req-info').textContent =
+                `Requerimiento: ${idReq}`;
+            document.getElementById('pdf-orden-nombre').textContent =
+                'Haz clic para subir el PDF de la orden';
+            document.getElementById('orden-numero').value = '';
+            document.getElementById('orden-siaf').value   = '';
+            document.getElementById('orden-fecha').value  = '';
+        }
+
+        function cerrarModalOrden() {
+            document.getElementById('modal-asignar-orden').classList.remove('active');
+            requerimientoOrdenActual = null;
+            archivoPDFOrden = null;
+        }
+
+        function seleccionarPDFOrden(input) {
+            if (input.files.length) {
+                archivoPDFOrden = input.files[0];
+                document.getElementById('pdf-orden-nombre').textContent =
+                    `✓ ${archivoPDFOrden.name}`;
+            }
+        }
+
+        async function confirmarOrden() {
+            const numeroOrden = document.getElementById('orden-numero').value.trim();
+            const tipoOrden   = document.getElementById('orden-tipo').value;
+            const siaf        = document.getElementById('orden-siaf').value.trim();
+            const fechaOrden  = document.getElementById('orden-fecha').value;
+
+            // Validaciones obligatorias
+            if (!archivoPDFOrden) {
+                alert('Debes subir el PDF de la orden');
+                return;
+            }
+            if (!numeroOrden) {
+                alert('El número de orden es obligatorio');
+                return;
+            }
+            if (!siaf) {
+                alert('El código SIAF es obligatorio');
+                return;
+            }
+            if (!fechaOrden) {
+                alert('La fecha de orden es obligatoria');
+                return;
+            }
+
+            try {
+                // Subir PDF
+                const formData = new FormData();
+                formData.append('archivo', archivoPDFOrden);
+                formData.append('requerimiento_id', requerimientoOrdenActual);
+                const resPdf = await fetch(`${API}/ocr/subir-pdf-orden`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!resPdf.ok) throw new Error('Error al subir el PDF');
+
+                // Crear la orden
+                const res = await fetch(`${API}/ordenes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        requerimiento_id: requerimientoOrdenActual,
+                        tipo_orden:       tipoOrden,
+                        numero_orden:     numeroOrden,
+                        codigo_siaf:      siaf,
+                        fecha_asignacion: fechaOrden,
+                    })
+                });
+
+                if (!res.ok) throw new Error('Error al crear la orden');
+
+                cerrarModalOrden();
+                await cargarBandeja('nollego-p');
+                await cargarBandeja('nollego-e');
+                alert('✓ Orden asignada correctamente. El requerimiento fue trasladado a "Llegó Orden".');
+
+            } catch (e) {
+                alert('Error al asignar la orden: ' + e.message);
+            }
+        }   
+        
+        // ── Variables llegó orden ─────────────────────────────────────────
+        let datosLlego = { 'llego-p': [], 'llego-e': [] };
+        let ordenActualId      = null;
+        let estadoSeleccionado = 'Espera pago';
+        let archivoFactura     = null;
+
+        // ── Cargar llegó orden ────────────────────────────────────────────
+        async function cargarLlego(bandeja) {
+            const tipo  = bandeja === 'llego-p' ? 'Propio' : 'Externo';
+            const tbody = document.getElementById(`tbody-${bandeja}`);
+            tbody.innerHTML = `<tr><td colspan="13"
+                style="text-align:center;padding:30px;color:#9ca3af">
+                <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
+
+            try {
+                const res  = await fetch(`${API}/requerimientos/con-orden?tipo=${tipo}`);
+                const data = await res.json();
+                datosLlego[bandeja] = data;
+                renderizarLlego(bandeja, data);
+                actualizarMetricasLlego(bandeja, data);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="13"
+                    style="text-align:center;color:#ef4444;padding:20px">
+                    Error al cargar datos</td></tr>`;
+            }
+        }
+
+        function renderizarLlego(bandeja, data) {
+            const tbody = document.getElementById(`tbody-${bandeja}`);
+            if (!data.length) {
+                tbody.innerHTML = `<tr><td colspan="13"
+                    style="text-align:center;color:#9ca3af;padding:30px">
+                    No hay requerimientos con orden asignada</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(r => `
+                <tr>
+                    <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
+                    <td style="font-size:0.82rem">${r.fecha_asignacion || '—'}</td>
+                    <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
+                    <td style="font-size:0.82rem">${r.plazo || '—'}</td>
+                    <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
+                    <td style="font-size:0.82rem;text-align:center">
+                        <span class="status-badge"
+                            style="background:${r.tipo_orden === 'OS' ? '#dbeafe' : '#fce7f3'};
+                                color:${r.tipo_orden === 'OS' ? '#1e40af' : '#9d174d'}">
+                            ${r.tipo_orden || '—'}
+                        </span>
+                    </td>
+                    <td style="font-size:0.82rem;font-weight:500">${r.numero_orden || '—'}</td>
+                    <td style="font-size:0.82rem;font-family:monospace">${r.codigo_siaf || '—'}</td>
+                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;
+                            overflow:hidden;text-overflow:ellipsis"
+                        title="${r.descripcion || ''}">${r.descripcion || '—'}</td>
+                    <td style="font-size:0.82rem">${r.area || '—'}</td>
+                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
+                        S/ ${(r.precio_total || 0).toLocaleString('es-PE',
+                            {minimumFractionDigits:2})}
+                    </td>
+                    <td>
+                        <span class="status-badge
+                            ${r.estado === 'Llegó pago' ? 'status-completed' : 'status-pending'}">
+                            ${r.estado || 'Espera pago'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-view"
+                            onclick="abrirModalEstado(${r.orden_id}, '${r.id_req}', '${r.estado || 'Espera pago'}')">
+                            <i class="fas fa-edit"></i>
+                            ${r.estado === 'Llegó pago' ? 'Ver' : 'Actualizar'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function actualizarMetricasLlego(bandeja, data) {
+            const sufijo = bandeja === 'llego-p' ? 'p' : 'e';
+            const espera = data.filter(r => r.estado === 'Espera pago').length;
+            const pagado = data.filter(r => r.estado === 'Llegó pago').length;
+            document.getElementById(`llego-${sufijo}-total`).textContent  = data.length;
+            document.getElementById(`llego-${sufijo}-espera`).textContent = espera;
+            document.getElementById(`llego-${sufijo}-pagado`).textContent = pagado;
+        }
+
+        function filtrarLlego(bandeja) {
+            const sufijo = bandeja === 'llego-p' ? 'p' : 'e';
+            const q      = document.getElementById(`buscar-llego-${sufijo}`).value.toLowerCase();
+            const estado = document.getElementById(`filtro-estado-${sufijo}`).value;
+            let filtrados = datosLlego[bandeja];
+
+            if (q) {
+                filtrados = filtrados.filter(r =>
+                    (r.descripcion     || '').toLowerCase().includes(q) ||
+                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
+                    (r.codigo_siaf     || '').toLowerCase().includes(q) ||
+                    (r.numero_orden    || '').toLowerCase().includes(q) ||
+                    (r.id_req          || '').toLowerCase().includes(q)
+                );
+            }
+            if (estado) filtrados = filtrados.filter(r => r.estado === estado);
+            renderizarLlego(bandeja, filtrados);
+        }
+
+        // ── Modal estado de pago ──────────────────────────────────────────
+        function abrirModalEstado(ordenId, idReq, estadoActual) {
+            ordenActualId      = ordenId;
+            archivoFactura     = null;
+            estadoSeleccionado = estadoActual || 'Espera pago';
+
+            document.getElementById('modal-estado-pago').classList.add('active');
+            document.getElementById('estado-req-info').textContent =
+                `Requerimiento: ${idReq}`;
+            document.getElementById('pdf-factura-nombre').textContent =
+                'Haz clic para subir la factura (opcional)';
+            document.getElementById('input-pdf-factura').value = '';
+
+            seleccionarEstadoPago(estadoSeleccionado);
+        }
+
+        function cerrarModalEstado() {
+            document.getElementById('modal-estado-pago').classList.remove('active');
+            ordenActualId  = null;
+            archivoFactura = null;
+        }
+
+        function seleccionarEstadoPago(estado) {
+            estadoSeleccionado = estado;
+            const btnEspera = document.getElementById('btn-espera-pago');
+            const btnLlego  = document.getElementById('btn-llego-pago');
+            const secFact   = document.getElementById('seccion-factura');
+
+            if (estado === 'Espera pago') {
+                btnEspera.style.background  = '#fef3c7';
+                btnEspera.style.borderColor = '#f59e0b';
+                btnEspera.style.color       = '#92400e';
+                btnLlego.style.background   = 'white';
+                btnLlego.style.borderColor  = '#e5e7eb';
+                btnLlego.style.color        = '#6b7280';
+                secFact.style.display       = 'none';
+            } else {
+                btnLlego.style.background   = '#d1fae5';
+                btnLlego.style.borderColor  = '#10b981';
+                btnLlego.style.color        = '#065f46';
+                btnEspera.style.background  = 'white';
+                btnEspera.style.borderColor = '#e5e7eb';
+                btnEspera.style.color       = '#6b7280';
+                secFact.style.display       = 'block';
+            }
+        }
+
+        function seleccionarFactura(input) {
+            if (input.files.length) {
+                archivoFactura = input.files[0];
+                document.getElementById('pdf-factura-nombre').textContent =
+                    `✓ ${archivoFactura.name}`;
+            }
+        }
+
+        async function confirmarEstadoPago() {
+            if (!ordenActualId) return;
+
+            try {
+                // Actualizar estado
+                const res = await fetch(`${API}/ordenes/${ordenActualId}/estado`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estado: estadoSeleccionado })
+                });
+                if (!res.ok) throw new Error('Error al actualizar estado');
+
+                // Subir factura si se seleccionó
+                if (archivoFactura) {
+                    const formData = new FormData();
+                    formData.append('archivo', archivoFactura);
+                    await fetch(`${API}/ordenes/${ordenActualId}/cargar-factura`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+
+                cerrarModalEstado();
+                await cargarLlego('llego-p');
+                await cargarLlego('llego-e');
+                alert(`✓ Estado actualizado a "${estadoSeleccionado}"`);
+
+            } catch (e) {
+                alert('Error al actualizar: ' + e.message);
+            }
+        }       
 
     </script>
 </body>
