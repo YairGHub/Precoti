@@ -13,9 +13,9 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
-print(f"Buscando el .env en: {BASE_DIR / '.env'}")
-print(f"¿Se encontró el archivo?: {(BASE_DIR / '.env').exists()}")
-print(f"Valor recuperado: {os.getenv('GEMINI_API_KEY')}")
+ORDERS_DIR = Path(__file__).resolve().parent.parent.parent 
+ORDERS_PATH = ORDERS_DIR / "pdfs" / "ordenes"
+
 
 router = APIRouter()
 
@@ -277,3 +277,28 @@ def actualizar_item(item_id: int, data: ItemUpdate):
             "precio_total_req": resumen["total"],
             "empresa_ganadora": resumen["empresa"],
         }
+
+@router.post("/subir-pdf-orden")
+async def subir_pdf_orden(
+    archivo: UploadFile = File(...),
+    requerimiento_id: int = 0
+):
+    if not archivo.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Solo se aceptan PDFs")
+
+    nombre   = f"orden_{requerimiento_id}_{archivo.filename}"
+    ruta     = os.path.join(
+        ORDERS_PATH, nombre
+    )
+    contenido = await archivo.read()
+    with open(ruta, "wb") as f:
+        f.write(contenido)
+
+    # Actualizar ruta en el requerimiento
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE requerimientos SET pdf_req_ruta = ? WHERE id = ?",
+            (ruta, requerimiento_id)
+        )
+
+    return {"mensaje": "PDF guardado", "ruta": ruta}

@@ -5,8 +5,8 @@ from datetime import date
 import os
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent   
-FACTURAS_PATH = BASE_DIR / os.getenv("FACTURAS_PATH", "pdfs/facturas")
+FACT_DIR = Path(__file__).resolve().parent.parent.parent 
+FACTURAS_PATH = FACT_DIR / "pdfs" / "facturas"
 
 router = APIRouter()
 
