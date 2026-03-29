@@ -23,7 +23,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 MODELO  = "gemini-2.5-flash"
 URL     = f"https://generativelanguage.googleapis.com/v1/models/{MODELO}:generateContent?key={API_KEY}"
 
-PROMPT = """Extrae los datos de este TDR en formato JSON. 
+PROMPT_REQ = """Extrae los datos de este TDR en formato JSON. 
 Campos: organo_unidad, denominacion, items (lista con item, cantidad, 
 unidad_de_medida, descripcion, caracteristicas (como una lista de strings)), 
 plazo (extrae solo el número, unidad y tipo de plazo de la sección 3. 
@@ -36,7 +36,7 @@ def llamar_gemini(pdf_base64: str) -> dict:
     payload = {
         "contents": [{
             "parts": [
-                {"text": PROMPT},
+                {"text": PROMPT_REQ},
                 {
                     "inline_data": {
                         "mime_type": "application/pdf",
@@ -49,6 +49,10 @@ def llamar_gemini(pdf_base64: str) -> dict:
     }
     headers  = {"Content-Type": "application/json"}
     response = requests.post(URL, headers=headers, json=payload)
+
+    # Log temporal para diagnosticar
+    print(f"Status Gemini: {response.status_code}")
+    print(f"Respuesta Gemini: {response.text[:500]}")
 
     if response.status_code != 200:
         raise HTTPException(
@@ -95,6 +99,74 @@ def calcular_campos(precio: float, cantidad: float) -> dict:
         "costo_perdedora_2": round(total * factor_2, 2),
     }
 
+PROMPT_ORDEN = """Eres un asistente especializado en leer Órdenes de Servicio y Órdenes de Compra 
+del Sistema Integrado de Gestión Administrativa (SIGA) del Perú.
+
+Analiza la cabecera de este documento y extrae exactamente estos campos:
+
+- tipo_orden: puede ser "OS" si dice "ORDEN DE SERVICIO" o "OC" si dice "ORDEN DE COMPRA"
+- numero_orden: el número completo que aparece junto a "ORDEN DE SERVICIO Nº" u "ORDEN DE COMPRA Nº", 
+  incluyendo todos los ceros (ejemplo: 0012740)
+- codigo_siaf: el número completo que aparece junto a "Nº Exp. SIAF" o "N° Exp. SIAF", 
+  incluyendo todos los ceros (ejemplo: 0000014735)
+- fecha_orden: la fecha en formato DD/MM/YYYY tomada de los campos Dia, Mes, Año de la cabecera
+
+Devuelve ÚNICAMENTE un objeto JSON válido sin texto adicional ni markdown:
+{
+  "tipo_orden": "OS o OC",
+  "numero_orden": "string con ceros incluidos",
+  "codigo_siaf": "string con ceros incluidos",
+  "fecha_orden": "DD/MM/YYYY"
+}
+
+Si algún campo no es legible, usa null."""
+
+
+def llamar_gemini_orden(pdf_base64: str) -> dict:
+    payload = {
+        "contents": [{
+            "parts": [
+                {"text": PROMPT_ORDEN},
+                {
+                    "inline_data": {
+                        "mime_type": "application/pdf",
+                        "data": pdf_base64
+                    }
+                }
+            ]
+        }],
+        "generationConfig": {}
+    }
+
+    headers  = {"Content-Type": "application/json"}
+    response = requests.post(URL, headers=headers, json=payload)
+
+    print(f"Status Gemini Orden: {response.status_code}")
+    print(f"Respuesta Gemini Orden: {response.text[:300]}")
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Error Gemini {response.status_code}: {response.text[:200]}"
+        )
+
+    texto = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+    json_match   = re.search(r"```json\n([\s\S]*?)\n```", texto)
+    texto_limpio = json_match.group(1) if json_match else texto
+
+    try:
+        return json.loads(texto_limpio)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=422, detail="Gemini no pudo leer la orden")
+
+
+@router.post("/leer-orden")
+async def leer_orden(archivo: UploadFile = File(...)):
+    if not archivo.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Solo se aceptan archivos PDF")
+    contenido  = await archivo.read()
+    pdf_base64 = base64.b64encode(contenido).decode("utf-8")
+    return llamar_gemini_orden(pdf_base64)
 
 # ── Endpoint 1: solo lectura, devuelve el JSON sin guardar ──────────────────
 @router.post("/leer-requerimiento")
@@ -103,8 +175,8 @@ async def leer_requerimiento(archivo: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Solo se aceptan archivos PDF")
     contenido  = await archivo.read()
     pdf_base64 = base64.b64encode(contenido).decode("utf-8")
+    
     return llamar_gemini(pdf_base64)
-
 
 # ── Endpoint 2: lee el PDF, crea requerimiento e ítems en una sola llamada ──
 @router.post("/procesar-requerimiento")
@@ -204,13 +276,14 @@ class ItemUpdate(BaseModel):
     precio:              Optional[float] = None
     empresa_perdedora_1: Optional[str]   = None
     empresa_perdedora_2: Optional[str]   = None
+    costo_perdedora_1:   Optional[float] = None  
+    costo_perdedora_2:   Optional[float] = None
 
 @router.patch("/actualizar-item/{item_id}")
 def actualizar_item(item_id: int, data: ItemUpdate):
     with get_connection() as conn:
         cursor = conn.cursor()
 
-        # Obtener cantidad y requerimiento_id del ítem
         cursor.execute(
             "SELECT cantidad, requerimiento_id FROM items_requerimiento WHERE id = ?",
             (item_id,)
@@ -221,9 +294,19 @@ def actualizar_item(item_id: int, data: ItemUpdate):
 
         cantidad         = row["cantidad"]
         requerimiento_id = row["requerimiento_id"]
-        calc             = calcular_campos(data.precio or 0, cantidad)
 
-        # Actualizar el ítem
+        # Calcular campos de ganadora
+        precio         = data.precio or 0
+        valor_unitario = round(precio / 1.18, 2) if precio > 0 else 0
+        igv            = round(valor_unitario * 0.18, 2)
+        total_ganadora = round(precio * cantidad, 2)
+
+        # Usar costos manuales si se enviaron, si no calcular
+        costo_p1 = data.costo_perdedora_1 if data.costo_perdedora_1 is not None \
+                   else round(total_ganadora * 1.06, 2)
+        costo_p2 = data.costo_perdedora_2 if data.costo_perdedora_2 is not None \
+                   else round(total_ganadora * 1.07, 2)
+
         cursor.execute("""
             UPDATE items_requerimiento SET
                 empresa_ganadora    = ?,
@@ -238,26 +321,24 @@ def actualizar_item(item_id: int, data: ItemUpdate):
             WHERE id = ?
         """, (
             data.empresa_ganadora,
-            calc["precio"],
-            calc["valor_unitario"],
-            calc["igv"],
-            calc["total_ganadora"],
+            precio,
+            valor_unitario,
+            igv,
+            total_ganadora,
             data.empresa_perdedora_1,
-            calc["costo_perdedora_1"],
+            costo_p1,
             data.empresa_perdedora_2,
-            calc["costo_perdedora_2"],
+            costo_p2,
             item_id,
         ))
 
         # Recalcular precio_total y empresa_ganadora del requerimiento
-        # sumando todos los total_ganadora de sus ítems
         cursor.execute("""
             SELECT COALESCE(SUM(total_ganadora), 0) AS total,
                    MAX(empresa_ganadora)             AS empresa
             FROM items_requerimiento
             WHERE requerimiento_id = ?
         """, (requerimiento_id,))
-
         resumen = cursor.fetchone()
 
         cursor.execute("""
@@ -265,17 +346,14 @@ def actualizar_item(item_id: int, data: ItemUpdate):
             SET precio_total     = ?,
                 empresa_ganadora = ?
             WHERE id = ?
-        """, (
-            resumen["total"],
-            resumen["empresa"],
-            requerimiento_id,
-        ))
+        """, (resumen["total"], resumen["empresa"], requerimiento_id))
 
         return {
             "mensaje":          "Ítem actualizado",
-            "calculos":         calc,
+            "total_ganadora":   total_ganadora,
+            "costo_p1":         costo_p1,
+            "costo_p2":         costo_p2,
             "precio_total_req": resumen["total"],
-            "empresa_ganadora": resumen["empresa"],
         }
 
 @router.post("/subir-pdf-orden")

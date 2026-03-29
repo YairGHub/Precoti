@@ -47,7 +47,7 @@ def listar_con_orden(tipo: str = None):
                 r.precio_total, r.tipo, r.fecha_req, r.fecha_registro,
                 o.id         AS orden_id,
                 o.tipo_orden, o.numero_orden, o.codigo_siaf,
-                o.estado,    o.fecha_asignacion, o.fecha_pago,
+                o.estado,    o.fecha_asignacion, o.fecha_orden,  o.fecha_pago,
                 o.pdf_orden_ruta, o.pdf_factura_ruta
             FROM requerimientos r
             JOIN ordenes o ON o.requerimiento_id = r.id
@@ -149,3 +149,20 @@ def actualizar_datos(id: int, data: RequerimientoDatosUpdate):
             data.area, id
         ))
         return {"mensaje": "Datos actualizados"}
+    
+@router.patch("/{id}/dar-baja")
+def dar_baja_manual(id: int):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT id, de_baja FROM requerimientos WHERE id = ?", (id,)
+        )
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Requerimiento no encontrado")
+        if row["de_baja"]:
+            raise HTTPException(status_code=400, detail="Ya está de baja")
+        conn.execute(
+            "UPDATE requerimientos SET de_baja = 1 WHERE id = ?", (id,)
+        )
+        return {"mensaje": "Requerimiento dado de baja correctamente"}
