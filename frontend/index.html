@@ -1470,7 +1470,7 @@
                             <div class="form-row" style="margin-bottom:12px">
                                 <div class="input-group" style="margin-bottom:0">
                                     <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
-                                        Descripción
+                                        Descripción <span style="color:red">*</span>
                                     </label>
                                     <input type="text" id="req-descripcion"
                                         style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
@@ -1478,7 +1478,7 @@
                                 </div>
                                 <div class="input-group" style="margin-bottom:0">
                                     <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
-                                        Área / Unidad
+                                        Área / Unidad <span style="color:red">*</span>
                                     </label>
                                     <input type="text" id="req-area"
                                         style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
@@ -1488,7 +1488,7 @@
                             <div class="form-row">
                                 <div class="input-group" style="margin-bottom:0">
                                     <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
-                                        Plazo
+                                        Plazo <span style="color:red">*</span>
                                     </label>
                                     <input type="text" id="req-plazo"
                                         style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
@@ -1513,7 +1513,7 @@
                             <div class="form-row" style="margin-bottom:12px">
                                 <div class="input-group" style="margin-bottom:0">
                                     <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
-                                        N° Pedido
+                                        N° Pedido <span style="color:red">*</span>
                                     </label>
                                     <input type="text" id="req-pedido" placeholder="Ej: 584"
                                         style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
@@ -1521,7 +1521,7 @@
                                 </div>
                                 <div class="input-group" style="margin-bottom:0">
                                     <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
-                                        Referencia
+                                        Referencia <span style="color:red">*</span>
                                     </label>
                                     <input type="text" id="req-referencia" placeholder="Ej: PASACALLES BRISAS"
                                         style="padding:10px 15px;width:100%;border:2px solid #e5e7eb;
@@ -1538,7 +1538,7 @@
                             <div class="form-row" style="margin-bottom:10px">
                                 <div>
                                     <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                        Empresa ganadora
+                                        Empresa ganadora <span style="color:red">*</span>
                                     </label>
                                     <select id="global-empresa-ganadora" onchange="actualizarNombresEmpresas()"
                                         style="padding:8px 10px;width:100%;border:2px solid #10b981;
@@ -1547,7 +1547,7 @@
                                 </div>
                                 <div>
                                     <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                        Empresa perdedora 1
+                                        Empresa perdedora 1 <span style="color:red">*</span>
                                     </label>
                                     <select id="global-empresa-perd1" onchange="actualizarNombresEmpresas()"
                                         style="padding:8px 10px;width:100%;border:2px solid #f59e0b;
@@ -1557,7 +1557,7 @@
                             </div>
                             <div style="max-width:50%;padding-right:6px">
                                 <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                    Empresa perdedora 2
+                                    Empresa perdedora 2 <span style="color:red">*</span>
                                 </label>
                                 <select id="global-empresa-perd2" onchange="actualizarNombresEmpresas()"
                                     style="padding:8px 10px;width:100%;border:2px solid #ef4444;
@@ -1590,7 +1590,7 @@
                                     <div style="padding:10px 12px;background:#fffbeb;border-right:1px solid #e5e7eb">
                                         <div id="label-total-perd1"
                                             style="font-size:0.75rem;color:#92400e;font-weight:600;margin-bottom:4px">
-                                            Total Perdedora 1
+                                            Total Perdedora 1 <span style="color:red">*</span>
                                         </div>
                                         <div id="valor-total-perd1"
                                             style="font-size:1.1rem;font-weight:700;color:#92400e">S/ 0.00</div>
@@ -1598,7 +1598,7 @@
                                     <div style="padding:10px 12px;background:#fff5f5">
                                         <div id="label-total-perd2"
                                             style="font-size:0.75rem;color:#991b1b;font-weight:600;margin-bottom:4px">
-                                            Total Perdedora 2
+                                            Total Perdedora 2 <span style="color:red">*</span>
                                         </div>
                                         <div id="valor-total-perd2"
                                             style="font-size:1.1rem;font-weight:700;color:#991b1b">S/ 0.00</div>
@@ -1708,7 +1708,7 @@
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
-                                <th>Fecha</th>
+                                <th>Fecha Registro</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
@@ -1716,13 +1716,12 @@
                                 <th>Referencia</th>
                                 <th>Área</th>
                                 <th>Total</th>
-                                <th>Fecha Registro</th>
                                 <th>De baja</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-nollego-p">
-                            <tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="11" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
@@ -1785,7 +1784,7 @@
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
-                                <th>Fecha</th>
+                                <th>Fecha Registro</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
@@ -1793,13 +1792,12 @@
                                 <th>Referencia</th>
                                 <th>Área</th>
                                 <th>Total</th>
-                                <th>Fecha Registro</th>
                                 <th>De baja</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-nollego-e">
-                            <tr><td colspan="12" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="11" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
@@ -1809,7 +1807,7 @@
 
             <!-- MODAL: Asignar Orden (OS/OC) -->
             <div id="modal-asignar-orden" class="modal">
-                <div class="modal-content" style="max-width:500px">
+                <div class="modal-content" style="max-width:520px">
                     <div class="modal-header">
                         <div class="modal-title">
                             <i class="fas fa-file-upload"></i> Asignar Orden
@@ -1825,19 +1823,44 @@
                     </div>
 
                     <!-- Subir PDF de orden -->
-                    <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:20px;
-                                text-align:center;margin-bottom:16px;cursor:pointer"
-                        onclick="document.getElementById('input-pdf-orden').click()">
-                        <i class="fas fa-cloud-upload-alt"
-                            style="font-size:2rem;color:#9ca3af;display:block;margin-bottom:8px"></i>
-                        <p id="pdf-orden-nombre" style="color:#6b7280;font-size:0.85rem">
-                            Haz clic para subir el PDF de la orden <span style="color:red">*</span>
-                        </p>
-                    </div>
-                    <input type="file" id="input-pdf-orden" accept=".pdf"
-                        style="display:none" onchange="seleccionarPDFOrden(this)">
+                    <div style="margin-bottom:16px">
+                        <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:6px">
+                            PDF de la orden <span style="color:red">*</span>
+                        </label>
+                        <div id="dropzone-orden"
+                            style="border:2px dashed #e5e7eb;border-radius:10px;padding:20px;
+                                text-align:center;cursor:pointer;transition:all 0.3s"
+                            onclick="document.getElementById('input-pdf-orden').click()">
+                            <i class="fas fa-cloud-upload-alt"
+                                style="font-size:2rem;color:#9ca3af;display:block;margin-bottom:8px"></i>
+                            <p id="pdf-orden-nombre" style="color:#6b7280;font-size:0.85rem">
+                                Haz clic para subir el PDF de la orden
+                            </p>
+                        </div>
+                        <input type="file" id="input-pdf-orden" accept=".pdf"
+                            style="display:none" onchange="procesarPDFOrden(this)">
 
-                    <!-- Campos manuales -->
+                        <!-- Loading OCR -->
+                        <div id="orden-loading" style="display:none;text-align:center;margin-top:12px">
+                            <i class="fas fa-spinner fa-spin"
+                                style="font-size:1.5rem;color:var(--secondary)"></i>
+                            <p style="color:#6b7280;margin-top:6px;font-size:0.85rem">
+                                Leyendo PDF con IA...
+                            </p>
+                        </div>
+
+                        <!-- Alerta OCR exitoso -->
+                        <div id="orden-ocr-ok" style="display:none;background:#f0fdf4;
+                            border:1px solid #86efac;border-radius:8px;padding:10px 14px;
+                            margin-top:10px;display:none;align-items:center;gap:8px">
+                            <i class="fas fa-check-circle" style="color:#16a34a;font-size:16px"></i>
+                            <span style="font-size:0.85rem;color:#166534">
+                                PDF leído. Verifica los datos antes de confirmar.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Campos del formulario (prellenados por OCR) -->
                     <div class="form-row" style="margin-bottom:12px">
                         <div>
                             <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
@@ -1854,7 +1877,7 @@
                             <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
                                 N° de orden <span style="color:red">*</span>
                             </label>
-                            <input type="text" id="orden-numero" placeholder="Ej: OS-0042"
+                            <input type="text" id="orden-numero" placeholder="Ej: 0012740"
                                 style="padding:10px;width:100%;border:2px solid #e5e7eb;
                                     border-radius:8px;font-size:0.9rem">
                         </div>
@@ -1864,7 +1887,7 @@
                             <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
                                 Código SIAF <span style="color:red">*</span>
                             </label>
-                            <input type="text" id="orden-siaf" placeholder="Ej: 2026-00341"
+                            <input type="text" id="orden-siaf" placeholder="Ej: 0000014735"
                                 style="padding:10px;width:100%;border:2px solid #e5e7eb;
                                     border-radius:8px;font-size:0.9rem">
                         </div>
@@ -1872,7 +1895,7 @@
                             <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:4px">
                                 Fecha de orden <span style="color:red">*</span>
                             </label>
-                            <input type="date" id="orden-fecha"
+                            <input type="text" id="orden-fecha" placeholder="DD/MM/YYYY"
                                 style="padding:10px;width:100%;border:2px solid #e5e7eb;
                                     border-radius:8px;font-size:0.9rem">
                         </div>
@@ -1948,6 +1971,7 @@
                             <tr>
                                 <th>ID Req.</th>
                                 <th>Fecha Orden</th>
+                                <th>Fecha Registro Orden</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
@@ -1962,7 +1986,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-llego-p">
-                            <tr><td colspan="13" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="14" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
@@ -2026,6 +2050,7 @@
                             <tr>
                                 <th>ID Req.</th>
                                 <th>Fecha Orden</th>
+                                <th>Fecha Registro Orden</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
@@ -2040,7 +2065,7 @@
                             </tr>
                         </thead>
                         <tbody id="tbody-llego-e">
-                            <tr><td colspan="13" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="14" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
@@ -2088,23 +2113,51 @@
                         </div>
                     </div>
 
-                    <!-- Cargar factura (solo visible si llegó pago) -->
+                    <!-- Sección factura y detalle (solo visible si llegó pago) -->
                     <div id="seccion-factura" style="display:none;margin-bottom:16px">
-                        <label style="font-size:0.8rem;color:#6b7280;display:block;margin-bottom:6px">
-                            Cargar factura PDF
-                        </label>
-                        <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:16px;
-                                    text-align:center;cursor:pointer"
-                            onclick="document.getElementById('input-pdf-factura').click()">
-                            <i class="fas fa-file-invoice"
-                                style="font-size:1.8rem;color:#9ca3af;display:block;margin-bottom:8px"></i>
-                            <p id="pdf-factura-nombre"
-                                style="color:#6b7280;font-size:0.85rem">
-                                Haz clic para subir la factura (opcional)
-                            </p>
+
+                        <!-- Factura -->
+                        <div style="margin-bottom:12px">
+                            <label style="font-size:0.8rem;color:#374151;font-weight:600;
+                                        display:block;margin-bottom:6px">
+                                <i class="fas fa-file-invoice" style="color:#10b981"></i>
+                                Factura PDF
+                            </label>
+                            <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:14px;
+                                        text-align:center;cursor:pointer;transition:all 0.3s"
+                                onclick="document.getElementById('input-pdf-factura').click()"
+                                id="dropzone-factura">
+                                <i class="fas fa-cloud-upload-alt"
+                                    style="font-size:1.5rem;color:#9ca3af;display:block;margin-bottom:6px"></i>
+                                <p id="pdf-factura-nombre" style="color:#6b7280;font-size:0.82rem">
+                                    Subir factura (opcional)
+                                </p>
+                            </div>
+                            <input type="file" id="input-pdf-factura" accept=".pdf"
+                                style="display:none" onchange="seleccionarFactura(this)">
                         </div>
-                        <input type="file" id="input-pdf-factura" accept=".pdf"
-                            style="display:none" onchange="seleccionarFactura(this)">
+
+                        <!-- Detalle de factura -->
+                        <div>
+                            <label style="font-size:0.8rem;color:#374151;font-weight:600;
+                                        display:block;margin-bottom:6px">
+                                <i class="fas fa-file-alt" style="color:#3b82f6"></i>
+                                Detalle de factura PDF
+                            </label>
+                            <div style="border:2px dashed #e5e7eb;border-radius:10px;padding:14px;
+                                        text-align:center;cursor:pointer;transition:all 0.3s"
+                                onclick="document.getElementById('input-pdf-detalle').click()"
+                                id="dropzone-detalle">
+                                <i class="fas fa-cloud-upload-alt"
+                                    style="font-size:1.5rem;color:#9ca3af;display:block;margin-bottom:6px"></i>
+                                <p id="pdf-detalle-nombre" style="color:#6b7280;font-size:0.82rem">
+                                    Subir detalle de factura (opcional)
+                                </p>
+                            </div>
+                            <input type="file" id="input-pdf-detalle" accept=".pdf"
+                                style="display:none" onchange="seleccionarDetalle(this)">
+                        </div>
+
                     </div>
 
                     <div style="display:flex;justify-content:flex-end;gap:10px;
@@ -2605,32 +2658,6 @@
             }
         });
 
-        // Actualizar progreso de documentos automáticamente
-        setInterval(function () {
-            const progressBars = document.querySelectorAll('.progress-fill');
-            progressBars.forEach(bar => {
-                const currentWidth = parseInt(bar.style.width) || 0;
-                if (currentWidth < 100 && Math.random() > 0.7) {
-                    bar.style.width = (currentWidth + Math.random() * 5) + '%';
-                }
-            });
-        }, 5000);
-
-        // Notificaciones en tiempo real simuladas
-        setInterval(function () {
-            if (Math.random() > 0.9 && document.getElementById('dashboard').style.display === 'block') {
-                const badge = document.querySelector('.badge');
-                let count = parseInt(badge.textContent);
-                badge.textContent = count + 1;
-
-                // Efecto visual de notificación
-                badge.style.animation = 'pulse 0.5s ease';
-                setTimeout(() => {
-                    badge.style.animation = '';
-                }, 500);
-            }
-        }, 30000);
-
         // Función para exportar datos
         function exportData(type) {
             const data = {
@@ -2655,15 +2682,44 @@
         let todosLosDocumentos = [];
 
         // ── Modal Nuevo Requerimiento ─────────────────────────────────────
-        async function abrirModalNuevoReq() {
+        function abrirModalNuevoReq() {
             document.getElementById('modal-nuevo-req').classList.add('active');
-            document.getElementById('paso-subir-pdf').style.display = 'block';
+
+            // Resetear PASO 1
+            document.getElementById('paso-subir-pdf').style.display  = 'block';
+            document.getElementById('dropzone-req').style.display    = 'block';
+            document.getElementById('pdf-loading').style.display     = 'none';
+
+            // Resetear PASO 2
             document.getElementById('paso-formulario').style.display = 'none';
-            document.getElementById('pdf-loading').style.display = 'none';
-            document.getElementById('input-pdf-req').value = '';
+            document.getElementById('items-container').innerHTML     = '';
+            document.getElementById('totales-preview').style.display = 'none';
+
+            // Limpiar campos del formulario
+            ['req-descripcion','req-area','req-plazo','req-fecha',
+            'req-pedido','req-referencia'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+
+            // Limpiar selectores de empresa
+            ['global-empresa-ganadora','global-empresa-perd1','global-empresa-perd2']
+                .forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+
+            // Limpiar el input de archivo — clave para permitir subir de nuevo
+            const inputPdf = document.getElementById('input-pdf-req');
+            inputPdf.value = '';
+            // Clonar y reemplazar el input para forzar el reset completo
+            const nuevoInput = inputPdf.cloneNode(true);
+            inputPdf.parentNode.replaceChild(nuevoInput, inputPdf);
+            nuevoInput.addEventListener('change', function() { procesarPDFReq(this); });
+
             requerimientoActual = null;
             seleccionarTipo('Propio');
-            await cargarEmpresasSelector();
+            cargarEmpresasSelector();
         }
 
         let empresasLista = [];
@@ -2698,7 +2754,6 @@
             document.getElementById('label-total-perd1').textContent    = `Total ${p1}`;
             document.getElementById('label-total-perd2').textContent    = `Total ${p2}`;
 
-            recalcularTotales();
         }       
 
         function opcionesEmpresas(idSeleccionado = '') {
@@ -2713,6 +2768,16 @@
 
         function cerrarModalNuevoReq() {
             document.getElementById('modal-nuevo-req').classList.remove('active');
+
+            // Limpiar input de archivo al cerrar también
+            const inputPdf = document.getElementById('input-pdf-req');
+            if (inputPdf) {
+                const nuevoInput = inputPdf.cloneNode(true);
+                inputPdf.parentNode.replaceChild(nuevoInput, inputPdf);
+                nuevoInput.addEventListener('change', function() { procesarPDFReq(this); });
+            }
+
+            requerimientoActual = null;
         }
 
         function seleccionarTipo(tipo) {
@@ -2794,23 +2859,27 @@
                             (${it.cantidad} ${it.unidad_de_medida || it.unidad_medida || ''})
                         </span>
                     </div>
+
+                    <!-- Fila 1: Precio ganadora → total ganadora (automático) -->
                     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
                         <div>
-                            <label style="font-size:0.75rem;color:#6b7280;display:block;margin-bottom:3px">
-                                Precio con IGV (Ganadora)
+                            <label style="font-size:0.75rem;color:#065f46;font-weight:600;
+                                        display:block;margin-bottom:3px">
+                                Precio unitario con IGV <span style="color:red">*</span>
                             </label>
                             <input type="number" id="item-precio-${idx}"
-                                placeholder="0.00" step="0.01"
-                                oninput="recalcularTotales()"
+                                placeholder="0.00" step="0.01" min="0"
+                                oninput="recalcularItem(${idx})"
                                 style="padding:8px 10px;width:100%;border:2px solid #10b981;
                                     border-radius:6px;font-size:0.85rem">
                         </div>
                         <div style="background:#f0fdf4;border-radius:6px;padding:8px 10px">
                             <div style="font-size:0.7rem;color:#065f46;margin-bottom:3px">
                                 Total ganadora
+                                <span style="font-weight:400;color:#9ca3af">(precio × ${it.cantidad})</span>
                             </div>
                             <div id="item-total-g-${idx}"
-                                style="font-size:0.9rem;font-weight:700;color:#065f46">
+                                style="font-size:0.95rem;font-weight:700;color:#065f46">
                                 S/ 0.00
                             </div>
                         </div>
@@ -2818,30 +2887,41 @@
                             <div style="font-size:0.7rem;color:#6b7280;margin-bottom:3px">
                                 Valor unitario / IGV
                             </div>
-                            <div id="item-calc-${idx}"
-                                style="font-size:0.8rem;color:#6b7280">
+                            <div id="item-calc-${idx}" style="font-size:0.8rem;color:#6b7280">
                                 S/ 0.00 / S/ 0.00
                             </div>
                         </div>
                     </div>
+
+                    <!-- Fila 2: Totales perdedoras (sugeridos pero editables) -->
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                        <div style="background:#fffbeb;border-radius:6px;padding:8px 10px">
-                            <div style="font-size:0.7rem;color:#92400e;margin-bottom:3px">
+                        <div>
+                            <label style="font-size:0.75rem;color:#92400e;font-weight:600;
+                                        display:block;margin-bottom:3px">
                                 Total perdedora 1
-                            </div>
-                            <div id="item-total-p1-${idx}"
-                                style="font-size:0.9rem;font-weight:700;color:#92400e">
-                                S/ 0.00
-                            </div>
+                                <span style="font-weight:400;color:#9ca3af;font-size:0.7rem">
+                                    (sugerido, editable)
+                                </span>
+                            </label>
+                            <input type="number" id="item-costo-p1-${idx}"
+                                placeholder="0.00" step="0.01" min="0"
+                                oninput="actualizarResumenPerdedoras()"
+                                style="padding:8px 10px;width:100%;border:2px solid #f59e0b;
+                                    border-radius:6px;font-size:0.85rem;background:#fffbeb">
                         </div>
-                        <div style="background:#fff5f5;border-radius:6px;padding:8px 10px">
-                            <div style="font-size:0.7rem;color:#991b1b;margin-bottom:3px">
+                        <div>
+                            <label style="font-size:0.75rem;color:#991b1b;font-weight:600;
+                                        display:block;margin-bottom:3px">
                                 Total perdedora 2
-                            </div>
-                            <div id="item-total-p2-${idx}"
-                                style="font-size:0.9rem;font-weight:700;color:#991b1b">
-                                S/ 0.00
-                            </div>
+                                <span style="font-weight:400;color:#9ca3af;font-size:0.7rem">
+                                    (sugerido, editable)
+                                </span>
+                            </label>
+                            <input type="number" id="item-costo-p2-${idx}"
+                                placeholder="0.00" step="0.01" min="0"
+                                oninput="actualizarResumenPerdedoras()"
+                                style="padding:8px 10px;width:100%;border:2px solid #ef4444;
+                                    border-radius:6px;font-size:0.85rem;background:#fff5f5">
                         </div>
                     </div>
                 </div>
@@ -2850,33 +2930,74 @@
             document.getElementById('totales-preview').style.display = 'none';
         }
 
-        function recalcularTotales() {
+        function recalcularItem(idx) {
             if (!requerimientoActual) return;
-            const items   = requerimientoActual.items;
+            const it       = requerimientoActual.items[idx];
+            const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
+            const cantidad = it.cantidad || 0;
+            const vu       = precio > 0 ? precio / 1.18 : 0;
+            const igv      = vu * 0.18;
+            const totalG   = precio * cantidad;
+
+            // Actualizar display ganadora
+            const elTotalG = document.getElementById(`item-total-g-${idx}`);
+            const elCalc   = document.getElementById(`item-calc-${idx}`);
+            if (elTotalG) elTotalG.textContent = `S/ ${totalG.toFixed(2)}`;
+            if (elCalc)   elCalc.textContent   = `S/ ${vu.toFixed(2)} / S/ ${igv.toFixed(2)}`;
+
+            // Recalcular totales de perdedoras siempre en base al nuevo precio
+            const campP1 = document.getElementById(`item-costo-p1-${idx}`);
+            const campP2 = document.getElementById(`item-costo-p2-${idx}`);
+
+            if (totalG > 0) {
+                // Usar factores fijos por ítem para que no cambien al recalcular
+                if (!it._factor1) it._factor1 = 1.05 + Math.random() * 0.03;
+                if (!it._factor2) it._factor2 = 1.05 + Math.random() * 0.03;
+                if (campP1) campP1.value = (totalG * it._factor1).toFixed(2);
+                if (campP2) campP2.value = (totalG * it._factor2).toFixed(2);
+            } else {
+                if (campP1) campP1.value = '';
+                if (campP2) campP2.value = '';
+            }
+
+            actualizarResumenGlobal();
+        }
+
+        function actualizarResumenPerdedoras() {
+            actualizarResumenGlobal();
+        }
+
+        function actualizarResumenGlobal() {
+            if (!requerimientoActual) return;
+            const items = requerimientoActual.items;
             let sumG = 0, sumP1 = 0, sumP2 = 0;
 
             items.forEach((it, idx) => {
                 const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
                 const cantidad = it.cantidad || 0;
-                const vu       = precio > 0 ? precio / 1.18 : 0;
-                const igv      = vu * 0.18;
-                const totalG   = precio * cantidad;
-                const f1       = totalG > 0 ? totalG * (1.05 + Math.random() * 0.03) : 0;
-                const f2       = totalG > 0 ? totalG * (1.05 + Math.random() * 0.03) : 0;
+                sumG  += precio * cantidad;
+                sumP1 += parseFloat(document.getElementById(`item-costo-p1-${idx}`)?.value) || 0;
+                sumP2 += parseFloat(document.getElementById(`item-costo-p2-${idx}`)?.value) || 0;
+            });
 
-                const elTotalG  = document.getElementById(`item-total-g-${idx}`);
-                const elCalc    = document.getElementById(`item-calc-${idx}`);
-                const elTotalP1 = document.getElementById(`item-total-p1-${idx}`);
-                const elTotalP2 = document.getElementById(`item-total-p2-${idx}`);
+            document.getElementById('totales-preview').style.display = 'block';
+            document.getElementById('valor-total-ganadora').textContent = `S/ ${sumG.toFixed(2)}`;
+            document.getElementById('valor-total-perd1').textContent    = `S/ ${sumP1.toFixed(2)}`;
+            document.getElementById('valor-total-perd2').textContent    = `S/ ${sumP2.toFixed(2)}`;
+        }
 
-                if (elTotalG)  elTotalG.textContent  = `S/ ${totalG.toFixed(2)}`;
-                if (elCalc)    elCalc.textContent     = `S/ ${vu.toFixed(2)} / S/ ${igv.toFixed(2)}`;
-                if (elTotalP1) elTotalP1.textContent  = `S/ ${f1.toFixed(2)}`;
-                if (elTotalP2) elTotalP2.textContent  = `S/ ${f2.toFixed(2)}`;
+        // Recalcular solo el resumen cuando el usuario edita un costo de perdedora
+        function actualizarResumenPerdedoras() {
+            if (!requerimientoActual) return;
+            const items = requerimientoActual.items;
+            let sumG = 0, sumP1 = 0, sumP2 = 0;
 
-                sumG  += totalG;
-                sumP1 += f1;
-                sumP2 += f2;
+            items.forEach((it, idx) => {
+                const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
+                const cantidad = it.cantidad || 0;
+                sumG  += precio * cantidad;
+                sumP1 += parseFloat(document.getElementById(`item-costo-p1-${idx}`)?.value) || 0;
+                sumP2 += parseFloat(document.getElementById(`item-costo-p2-${idx}`)?.value) || 0;
             });
 
             document.getElementById('totales-preview').style.display = 'block';
@@ -2888,6 +3009,35 @@
         // ── Guardar requerimiento ─────────────────────────────────────────
         async function guardarRequerimiento() {
             if (!requerimientoActual) return;
+
+            // ── Validaciones obligatorias ─────────────────────────────────
+            const descripcion = document.getElementById('req-descripcion').value.trim();
+            const area        = document.getElementById('req-area').value.trim();
+            const plazo       = document.getElementById('req-plazo').value.trim();
+            const pedido      = document.getElementById('req-pedido').value.trim();
+            const referencia  = document.getElementById('req-referencia').value.trim();
+            const empresaG    = document.getElementById('global-empresa-ganadora').value;
+            const empresaP1   = document.getElementById('global-empresa-perd1').value;
+            const empresaP2   = document.getElementById('global-empresa-perd2').value;
+
+            if (!descripcion) { alert('La descripción es obligatoria'); return; }
+            if (!area)        { alert('El área / unidad es obligatoria'); return; }
+            if (!plazo)       { alert('El plazo es obligatorio'); return; }
+            if (!pedido)      { alert('El N° de pedido es obligatorio'); return; }
+            if (!referencia)  { alert('La referencia es obligatoria'); return; }
+            if (!empresaG)    { alert('Debes seleccionar la empresa ganadora'); return; }
+            if (!empresaP1)   { alert('Debes seleccionar la empresa perdedora 1'); return; }
+            if (!empresaP2)   { alert('Debes seleccionar la empresa perdedora 2'); return; }
+
+            // Validar que todos los ítems tengan precio
+            const items = requerimientoActual.items;
+            for (let i = 0; i < items.length; i++) {
+                const precio = parseFloat(document.getElementById(`item-precio-${i}`)?.value) || 0;
+                if (precio <= 0) {
+                    alert(`El ítem ${i + 1} debe tener un precio mayor a 0`);
+                    return;
+                }
+            }            
 
             try {
                 // Paso 1: Crear el requerimiento con el tipo seleccionado en ese momento
@@ -2932,17 +3082,28 @@
                         }])
                     });
 
-                    if (resItem.ok) {
-                        // Obtener el id del ítem recién creado
-                        const itemsGuardados = await fetch(
-                            `${API}/items/${requerimientoId}`
-                        );
-                        const lista = await itemsGuardados.json();
-                        const itemCreado = lista.find(
-                            x => x.numero_item === (it.item || it.numero_item)
-                        );
-                        if (itemCreado) itemsCreados.push({ ...it, id: itemCreado.id });
+                    if (!resItem.ok) continue;
+
+                    // Obtener el id del ítem recién insertado consultando
+                    // solo los ítems de ESTE requerimiento y tomando el último
+                    const resLista   = await fetch(`${API}/items/${requerimientoId}`);
+                    const lista      = await resLista.json();
+
+                    // Filtrar por numero_item dentro de este requerimiento específico
+                    const numeroItem = it.item || it.numero_item;
+                    const itemCreado = lista
+                        .filter(x => x.requerimiento_id === requerimientoId
+                                && x.numero_item === numeroItem)
+                        .pop(); // tomar el último en caso de duplicados
+
+                    if (itemCreado) {
+                        itemsCreados.push({ ...it, id: itemCreado.id });
                     }
+                }
+
+                // Validar que se crearon todos los ítems
+                if (itemsCreados.length !== itemsOCR.length) {
+                    console.warn(`Se esperaban ${itemsOCR.length} ítems pero se crearon ${itemsCreados.length}`);
                 }
 
                 // Paso 3: Actualizar empresa y precio de cada ítem
@@ -2950,23 +3111,26 @@
                 const perd1   = document.getElementById('global-empresa-perd1').value;
                 const perd2   = document.getElementById('global-empresa-perd2').value;
 
+                // Actualizar empresa y precio de cada ítem
                 for (let i = 0; i < itemsCreados.length; i++) {
-                    const precio = parseFloat(
-                        document.getElementById(`item-precio-${i}`)?.value
-                    ) || 0;
+                    const precio  = parseFloat(document.getElementById(`item-precio-${i}`)?.value)    || 0;
+                    const costoP1 = parseFloat(document.getElementById(`item-costo-p1-${i}`)?.value) || null;
+                    const costoP2 = parseFloat(document.getElementById(`item-costo-p2-${i}`)?.value) || null;
 
-                    if (empresa || precio > 0) {
-                        await fetch(`${API}/ocr/actualizar-item/${itemsCreados[i].id}`, {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                empresa_ganadora:    empresa,
-                                precio:             precio,
-                                empresa_perdedora_1: perd1,
-                                empresa_perdedora_2: perd2,
-                            })
-                        });
-                    }
+                    console.log(`Ítem ${i}: precio=${precio}, costoP1=${costoP1}, costoP2=${costoP2}`);
+
+                    await fetch(`${API}/ocr/actualizar-item/${itemsCreados[i].id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            empresa_ganadora:    empresaG,
+                            precio:              precio,
+                            empresa_perdedora_1: empresaP1,
+                            empresa_perdedora_2: empresaP2,
+                            costo_perdedora_1:   costoP1,
+                            costo_perdedora_2:   costoP2,
+                        })
+                    });
                 }
 
                 cerrarModalNuevoReq();
@@ -3171,7 +3335,7 @@
         function renderizarBandeja(bandeja, data) {
             const tbody = document.getElementById(`tbody-${bandeja}`);
             if (!data.length) {
-                tbody.innerHTML = `<tr><td colspan="12"
+                tbody.innerHTML = `<tr><td colspan="11"
                     style="text-align:center;color:#9ca3af;padding:30px">
                     No hay requerimientos en esta bandeja</td></tr>`;
                 return;
@@ -3179,7 +3343,7 @@
             tbody.innerHTML = data.map(r => `
                 <tr style="${r.de_baja ? 'opacity:0.6;background:#fff5f5' : ''}">
                     <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
-                    <td style="font-size:0.82rem">${r.fecha_req || '—'}</td>
+                    <td style="font-size:0.82rem">${r.fecha_registro || '—'}</td>
                     <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
                     <td style="font-size:0.82rem">${r.plazo || '—'}</td>
                     <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
@@ -3191,17 +3355,27 @@
                     <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
                         S/ ${(r.precio_total || 0).toLocaleString('es-PE', {minimumFractionDigits:2})}
                     </td>
-                    <td style="font-size:0.82rem">${r.fecha_registro || '—'}</td>
                     <td style="text-align:center">
                         ${r.de_baja
                             ? '<span class="status-badge status-pending">De baja</span>'
                             : '<span class="status-badge status-completed">Activo</span>'
                         }
                     </td>
-                    <td>
-                        <button class="btn-view" onclick="abrirModalOrden(${r.id}, '${r.id_req}')"
+                    <td style="display:flex;gap:6px;align-items:center">
+                        <button class="btn-view"
+                            onclick="abrirModalOrden(${r.id}, '${r.id_req}')"
                             ${r.de_baja ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
                             <i class="fas fa-upload"></i> Cargar PDF
+                        </button>
+                        <button
+                            onclick="darDeBajaManual(${r.id}, '${r.id_req}', this)"
+                            ${r.de_baja ? 'disabled' : ''}
+                            style="${r.de_baja
+                                ? 'opacity:0.4;cursor:not-allowed;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;background:white;font-size:0.78rem'
+                                : 'padding:6px 10px;border:1px solid #ef4444;border-radius:6px;background:white;color:#ef4444;cursor:pointer;font-size:0.78rem;transition:all 0.2s'}"
+                            onmouseover="${r.de_baja ? '' : "this.style.background='#fee2e2'"}"
+                            onmouseout="${r.de_baja ? '' : "this.style.background='white'"}">
+                            <i class="fas fa-arrow-down"></i> ${r.de_baja ? 'De baja' : 'Dar de baja'}
                         </button>
                     </td>
                 </tr>
@@ -3239,13 +3413,26 @@
             requerimientoOrdenActual = reqId;
             archivoPDFOrden = null;
             document.getElementById('modal-asignar-orden').classList.add('active');
-            document.getElementById('orden-req-info').textContent =
-                `Requerimiento: ${idReq}`;
+            document.getElementById('orden-req-info').textContent = `Requerimiento: ${idReq}`;
+
+            // Resetear dropzone
             document.getElementById('pdf-orden-nombre').textContent =
                 'Haz clic para subir el PDF de la orden';
+            document.getElementById('dropzone-orden').style.borderColor = '#e5e7eb';
+            document.getElementById('orden-loading').style.display = 'none';
+            document.getElementById('orden-ocr-ok').style.display  = 'none';
+
+            // Limpiar campos
+            document.getElementById('orden-tipo').value   = 'OS';
             document.getElementById('orden-numero').value = '';
             document.getElementById('orden-siaf').value   = '';
             document.getElementById('orden-fecha').value  = '';
+
+            // Resetear input file
+            const inputOrden = document.getElementById('input-pdf-orden');
+            const nuevoInput = inputOrden.cloneNode(true);
+            inputOrden.parentNode.replaceChild(nuevoInput, inputOrden);
+            nuevoInput.addEventListener('change', function() { procesarPDFOrden(this); });
         }
 
         function cerrarModalOrden() {
@@ -3305,8 +3492,8 @@
                         requerimiento_id: requerimientoOrdenActual,
                         tipo_orden:       tipoOrden,
                         numero_orden:     numeroOrden,
-                        codigo_siaf:      siaf,
-                        fecha_asignacion: fechaOrden,
+                        codigo_siaf:      document.getElementById('orden-siaf').value.trim() || null,
+                        fecha_orden:      document.getElementById('orden-fecha').value.trim() || null,
                     })
                 });
 
@@ -3332,7 +3519,7 @@
         async function cargarLlego(bandeja) {
             const tipo  = bandeja === 'llego-p' ? 'Propio' : 'Externo';
             const tbody = document.getElementById(`tbody-${bandeja}`);
-            tbody.innerHTML = `<tr><td colspan="13"
+            tbody.innerHTML = `<tr><td colspan="14"
                 style="text-align:center;padding:30px;color:#9ca3af">
                 <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
 
@@ -3343,7 +3530,7 @@
                 renderizarLlego(bandeja, data);
                 actualizarMetricasLlego(bandeja, data);
             } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="13"
+                tbody.innerHTML = `<tr><td colspan="14"
                     style="text-align:center;color:#ef4444;padding:20px">
                     Error al cargar datos</td></tr>`;
             }
@@ -3352,7 +3539,7 @@
         function renderizarLlego(bandeja, data) {
             const tbody = document.getElementById(`tbody-${bandeja}`);
             if (!data.length) {
-                tbody.innerHTML = `<tr><td colspan="13"
+                tbody.innerHTML = `<tr><td colspan="14"
                     style="text-align:center;color:#9ca3af;padding:30px">
                     No hay requerimientos con orden asignada</td></tr>`;
                 return;
@@ -3360,7 +3547,8 @@
             tbody.innerHTML = data.map(r => `
                 <tr>
                     <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
-                    <td style="font-size:0.82rem">${r.fecha_asignacion || '—'}</td>
+                    <td style="font-size:0.82rem">${r.fecha_orden       || '—'}</td>
+                    <td style="font-size:0.82rem">${r.fecha_asignacion  || '—'}</td>
                     <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
                     <td style="font-size:0.82rem">${r.plazo || '—'}</td>
                     <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
@@ -3430,14 +3618,29 @@
         function abrirModalEstado(ordenId, idReq, estadoActual) {
             ordenActualId      = ordenId;
             archivoFactura     = null;
+            archivoDetalle     = null;
             estadoSeleccionado = estadoActual || 'Espera pago';
 
             document.getElementById('modal-estado-pago').classList.add('active');
-            document.getElementById('estado-req-info').textContent =
-                `Requerimiento: ${idReq}`;
-            document.getElementById('pdf-factura-nombre').textContent =
-                'Haz clic para subir la factura (opcional)';
-            document.getElementById('input-pdf-factura').value = '';
+            document.getElementById('estado-req-info').textContent = `Requerimiento: ${idReq}`;
+
+            // Resetear dropzones
+            document.getElementById('pdf-factura-nombre').textContent  = 'Subir factura (opcional)';
+            document.getElementById('pdf-detalle-nombre').textContent  = 'Subir detalle de factura (opcional)';
+            document.getElementById('dropzone-factura').style.borderColor = '#e5e7eb';
+            document.getElementById('dropzone-detalle').style.borderColor = '#e5e7eb';
+
+            // Resetear inputs
+            ['input-pdf-factura', 'input-pdf-detalle'].forEach(id => {
+                const el     = document.getElementById(id);
+                const nuevo  = el.cloneNode(true);
+                el.parentNode.replaceChild(nuevo, el);
+                if (id === 'input-pdf-factura') {
+                    nuevo.addEventListener('change', function() { seleccionarFactura(this); });
+                } else {
+                    nuevo.addEventListener('change', function() { seleccionarDetalle(this); });
+                }
+            });
 
             seleccionarEstadoPago(estadoSeleccionado);
         }
@@ -3473,11 +3676,23 @@
             }
         }
 
+        let archivoDetalle = null;
+
         function seleccionarFactura(input) {
             if (input.files.length) {
                 archivoFactura = input.files[0];
                 document.getElementById('pdf-factura-nombre').textContent =
                     `✓ ${archivoFactura.name}`;
+                document.getElementById('dropzone-factura').style.borderColor = '#10b981';
+            }
+        }
+
+        function seleccionarDetalle(input) {
+            if (input.files.length) {
+                archivoDetalle = input.files[0];
+                document.getElementById('pdf-detalle-nombre').textContent =
+                    `✓ ${archivoDetalle.name}`;
+                document.getElementById('dropzone-detalle').style.borderColor = '#3b82f6';
             }
         }
 
@@ -3493,14 +3708,20 @@
                 });
                 if (!res.ok) throw new Error('Error al actualizar estado');
 
-                // Subir factura si se seleccionó
-                if (archivoFactura) {
+                // Subir archivos si se seleccionaron
+                if (archivoFactura || archivoDetalle) {
                     const formData = new FormData();
-                    formData.append('archivo', archivoFactura);
-                    await fetch(`${API}/ordenes/${ordenActualId}/cargar-factura`, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    if (archivoFactura)  formData.append('archivo',         archivoFactura);
+                    if (archivoDetalle)  formData.append('archivo_detalle', archivoDetalle);
+
+                    const resFact = await fetch(
+                        `${API}/ordenes/${ordenActualId}/cargar-factura`,
+                        { method: 'POST', body: formData }
+                    );
+                    if (!resFact.ok) {
+                        const err = await resFact.json();
+                        alert(`Estado actualizado pero error al subir archivos: ${err.detail}`);
+                    }
                 }
 
                 cerrarModalEstado();
@@ -3511,7 +3732,96 @@
             } catch (e) {
                 alert('Error al actualizar: ' + e.message);
             }
-        }       
+        }  
+        
+        async function darDeBajaManual(id, idReq, btn) {
+            if (!confirm(`¿Dar de baja el requerimiento ${idReq}?\nEsta acción no se puede deshacer.`)) {
+                return;
+            }
+            try {
+                const res = await fetch(`${API}/requerimientos/${id}/dar-baja`, {
+                    method: 'PATCH'
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    alert(err.detail || 'Error al dar de baja');
+                    return;
+                }
+                // Actualizar visualmente sin recargar toda la tabla
+                const fila = btn.closest('tr');
+                fila.style.opacity   = '0.6';
+                fila.style.background = '#fff5f5';
+                btn.disabled          = true;
+                btn.style.opacity     = '0.4';
+                btn.style.cursor      = 'not-allowed';
+                btn.innerHTML         = '<i class="fas fa-arrow-down"></i> De baja';
+
+                // Deshabilitar también el botón de cargar PDF
+                const btnCargar = fila.querySelector('.btn-view');
+                if (btnCargar) {
+                    btnCargar.disabled     = true;
+                    btnCargar.style.opacity = '0.4';
+                    btnCargar.style.cursor  = 'not-allowed';
+                }
+
+                // Actualizar métricas
+                await cargarBandeja('nollego-p');
+                await cargarBandeja('nollego-e');
+
+            } catch (e) {
+                alert('Error al conectar con el servidor');
+            }
+        }
+
+        async function procesarPDFOrden(input) {
+            if (!input.files.length) return;
+            archivoPDFOrden = input.files[0];
+
+            // Mostrar nombre del archivo
+            document.getElementById('pdf-orden-nombre').textContent = `✓ ${archivoPDFOrden.name}`;
+            document.getElementById('dropzone-orden').style.borderColor = '#10b981';
+
+            // Mostrar loading
+            document.getElementById('orden-loading').style.display = 'block';
+            document.getElementById('orden-ocr-ok').style.display  = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('archivo', archivoPDFOrden);
+
+                const res = await fetch(`${API}/ocr/leer-orden`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error('Error al leer el PDF');
+                const datos = await res.json();
+
+                // Prellenar formulario con los datos extraídos
+                if (datos.tipo_orden) {
+                    document.getElementById('orden-tipo').value = datos.tipo_orden;
+                }
+                if (datos.numero_orden) {
+                    document.getElementById('orden-numero').value = datos.numero_orden;
+                }
+                if (datos.codigo_siaf) {
+                    document.getElementById('orden-siaf').value = datos.codigo_siaf;
+                }
+                if (datos.fecha_orden) {
+                    document.getElementById('orden-fecha').value = datos.fecha_orden;
+                }
+
+                // Ocultar loading, mostrar éxito
+                document.getElementById('orden-loading').style.display = 'none';
+                document.getElementById('orden-ocr-ok').style.display  = 'flex';
+
+            } catch (e) {
+                document.getElementById('orden-loading').style.display = 'none';
+                document.getElementById('pdf-orden-nombre').textContent =
+                    'Error al leer el PDF. Completa los campos manualmente.';
+                document.getElementById('dropzone-orden').style.borderColor = '#ef4444';
+            }
+        }
 
     </script>
 </body>
