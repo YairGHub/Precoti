@@ -17,7 +17,8 @@ class OrdenCreate(BaseModel):
     tipo_orden:       str   # 'OS' o 'OC'
     numero_orden:     str
     codigo_siaf:      Optional[str] = None
-    fecha_orden:      Optional[str] = None 
+    fecha_orden:      Optional[str] = None
+    pdf_orden_ruta:   Optional[str] = None
 
 class OrdenEstadoUpdate(BaseModel):
     estado: str  # 'Espera pago' o 'Llegó pago'
