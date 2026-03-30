@@ -6,1025 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> PRECOTI - Sistema de Gestión</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #1e3a8a;
-            --secondary: #10b981;
-            --accent: #3b82f6;
-            --bg-light: #f3f4f6;
-            --text-dark: #1f2937;
-            --white: #ffffff;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-        }
-
-        /* LOGIN PAGE */
-        .login-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-container::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-            animation: wave 20s linear infinite;
-        }
-
-        @keyframes wave {
-            0% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        .login-wrapper {
-            display: flex;
-            gap: 30px;
-            z-index: 1;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .login-box,
-        .numpad-box {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 400px;
-        }
-
-        .logo-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -2px;
-        }
-
-        .logo span {
-            color: var(--secondary);
-        }
-
-        .subtitle {
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .input-group i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: var(--secondary);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
-            background: var(--secondary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-        }
-
-        .btn-primary:hover {
-            background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #6b7280;
-        }
-
-        /* DASHBOARD */
-        .dashboard {
-            display: none;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 260px;
-            height: 100vh;
-            background: var(--white);
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
-            padding: 20px 0;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .sidebar-header {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 20px;
-        }
-
-        .sidebar-logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .sidebar-logo span {
-            color: var(--secondary);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 20px;
-            color: #6b7280;
-            text-decoration: none;
-            transition: all 0.3s;
-            border-left: 4px solid transparent;
-            cursor: pointer;
-        }
-
-        .nav-item:hover,
-        .nav-item.active {
-            background: #eff6ff;
-            color: var(--primary);
-            border-left-color: var(--secondary);
-        }
-
-        .nav-item i {
-            width: 24px;
-            text-align: center;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 20px;
-        }
-
-        .top-header {
-            background: var(--white);
-            padding: 15px 30px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .header-title {
-            font-size: 1.2rem;
-            color: #6b7280;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            position: relative;
-            background: none;
-            border: none;
-            font-size: 1.3rem;
-            color: #6b7280;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .icon-btn:hover {
-            color: var(--primary);
-            transform: scale(1.1);
-        }
-
-        .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .welcome-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .welcome-text h1 {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .welcome-text p {
-            color: #6b7280;
-            margin-bottom: 20px;
-        }
-
-        .welcome-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn-outline {
-            padding: 10px 20px;
-            border: 2px solid #e5e7eb;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--secondary);
-            color: var(--secondary);
-        }
-
-        .mascot {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
-        }
-
-        .mascot::after {
-            content: '👋';
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            animation: wave 2s infinite;
-        }
-
-        @keyframes wave {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(20deg);
-            }
-
-            75% {
-                transform: rotate(-20deg);
-            }
-        }
-
-        .pending-card,
-        .notifications-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .card-subtitle {
-            font-size: 0.85rem;
-            color: #9ca3af;
-            margin-bottom: 15px;
-        }
-
-        .pending-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            background: #f3f4f6;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--secondary);
-        }
-
-        .pending-item.debate {
-            border-left-color: var(--accent);
-        }
-
-        .pending-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .pending-icon {
-            width: 35px;
-            height: 35px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--secondary);
-        }
-
-        .pending-icon.debate {
-            color: var(--accent);
-        }
-
-        .pending-text {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .btn-view {
-            padding: 6px 12px;
-            background: transparent;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-view:hover {
-            background: var(--secondary);
-            color: white;
-            border-color: var(--secondary);
-        }
-
-        .notification-item {
-            display: flex;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--secondary);
-            border-radius: 50%;
-            margin-top: 6px;
-            flex-shrink: 0;
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-text {
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-        }
-
-        .notification-time {
-            font-size: 0.8rem;
-            color: #9ca3af;
-        }
-
-        .courses-section {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .courses-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .course-card {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .course-image {
-            width: 150px;
-            height: 100px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2.5rem;
-            flex-shrink: 0;
-        }
-
-        .course-image.grabado {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-        }
-
-        .course-info {
-            flex: 1;
-        }
-
-        .course-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            background: var(--danger);
-            color: white;
-            font-size: 0.75rem;
-            border-radius: 20px;
-            margin-bottom: 8px;
-        }
-
-        .course-badge.live {
-            background: var(--danger);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: fit-content;
-        }
-
-        .course-badge.recorded {
-            background: #6b7280;
-        }
-
-        .pulse {
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .course-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .course-teacher {
-            font-size: 0.9rem;
-            color: #6b7280;
-            margin-bottom: 10px;
-        }
-
-        .course-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 0.85rem;
-            color: #6b7280;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--secondary);
-            border-radius: 3px;
-            width: 0%;
-        }
-
-        .whatsapp-btn {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50px;
-            height: 50px;
-            background: #25d366;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
-            transition: all 0.3s;
-        }
-
-        .whatsapp-btn:hover {
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .promo-card {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-            border-radius: 20px;
-            padding: 30px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.3);
-        }
-
-        .promo-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #ef4444;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .promo-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .promo-subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            color: #93c5fd;
-        }
-
-        .promo-list {
-            list-style: none;
-            margin-bottom: 20px;
-        }
-
-        .promo-list li {
-            padding: 5px 0;
-            font-size: 0.9rem;
-        }
-
-        .promo-list li::before {
-            content: '✓';
-            margin-right: 8px;
-            color: #34d399;
-        }
-
-        .promo-price {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            text-align: center;
-        }
-
-        .price-tag {
-            background: #fbbf24;
-            color: #1e3a8a;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 1.2rem;
-        }
-
-        .price-note {
-            font-size: 0.8rem;
-            margin-top: 5px;
-            opacity: 0.9;
-        }
-
-        .promo-offer {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            text-align: center;
-        }
-
-        .offer-big {
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .offer-text {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .support-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #25d366;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            transition: all 0.3s;
-            z-index: 99;
-        }
-
-        .support-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
-        }
-
-        /* MODAL CREAR USUARIO */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #6b7280;
-            cursor: pointer;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        @media (max-width: 1024px) {
-
-            .dashboard-grid,
-            .courses-section {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .login-wrapper {
-                flex-direction: column;
-            }
-
-            .welcome-card {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .course-card {
-                flex-direction: column;
-            }
-
-            .course-image {
-                width: 100%;
-                height: 150px;
-            }
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-icon.blue {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .stat-icon.green {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .stat-icon.yellow {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .stat-icon.red {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .stat-info h3 {
-            font-size: 1.8rem;
-            color: var(--text-dark);
-            margin-bottom: 5px;
-        }
-
-        .stat-info p {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        .orders-table {
-            width: 100%;
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .orders-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .orders-table th {
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .orders-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .orders-table tr:hover {
-            background: #f9fafb;
-        }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-completed {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-cancelled {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .chart-placeholder {
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .chart-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            color: #d1d5db;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
+
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
+    <!-- Modal: Búsqueda global -->
+    <div id="modal-busqueda" onclick="if(event.target===this)cerrarBusqueda()">
+        <div id="busqueda-box">
+            <input id="busqueda-input" type="text" placeholder="Buscar ID, descripción, empresa, N° orden, SIAF…"
+                oninput="buscarGlobal(this.value)" onkeydown="if(event.key==='Escape')cerrarBusqueda()">
+            <div id="busqueda-resultados">
+                <p id="busqueda-hint" style="padding:20px;color:#9ca3af;font-size:0.88rem;">Escribe al menos 2 caracteres…</p>
+            </div>
+        </div>
+    </div>
 
     <!-- LOGIN PAGE -->
     <div class="login-container" id="loginPage">
@@ -1159,17 +158,17 @@
                     <i class="fas fa-envelope"></i>
                     <span>Mensajes</span>
                 </a>
-                <a class="nav-item" onclick="showSection('mercado')">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Estudio de Mercado</span>
-                </a>
                 <a class="nav-item" onclick="showSection('pedidos')">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span>Gestión de Pedidos</span>
+                    <i class="fas fa-file-excel"></i>
+                    <span>Reportes</span>
                 </a>
                 <a class="nav-item" onclick="showSection('financiero')">
                     <i class="fas fa-chart-pie"></i>
                     <span>Dashboard Financiero</span>
+                </a>
+                <a class="nav-item" onclick="showSection('empresas')">
+                    <i class="fas fa-building"></i>
+                    <span>Empresas</span>
                 </a>
             </nav>
         </aside>
@@ -1179,12 +178,12 @@
             <div class="top-header">
                 <div class="header-title">General</div>
                 <div class="header-actions">
+                    <button class="icon-btn" onclick="abrirBusqueda()" title="Buscar (Ctrl+/)">
+                        <i class="fas fa-search"></i>
+                    </button>
                     <button class="icon-btn">
                         <i class="fas fa-bell"></i>
                         <span class="badge">4</span>
-                    </button>
-                    <button class="icon-btn">
-                        <i class="fas fa-envelope"></i>
                     </button>
                     <div class="user-avatar" onclick="logout()">TN</div>
                 </div>
@@ -1414,6 +413,7 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-documentos" class="paginacion-controls"></div>
                 </div>
             </div>
 
@@ -1726,6 +726,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-nollego-p" class="paginacion-controls"></div>
                 </div>
             </div>
 
@@ -1802,6 +803,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-nollego-e" class="paginacion-controls"></div>
                 </div>
             </div>
 
@@ -1966,7 +968,7 @@
 
                 <!-- Tabla -->
                 <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1200px">
+                    <table style="min-width:1200px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
@@ -1991,6 +993,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-llego-p" class="paginacion-controls"></div>
                 </div>
             </div>
 
@@ -2045,7 +1048,7 @@
                 </div>
 
                 <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1200px">
+                    <table style="min-width:1200px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
@@ -2070,6 +1073,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-llego-e" class="paginacion-controls"></div>
                 </div>
             </div>
 
@@ -2284,199 +1288,287 @@
                 </h2>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>S/ 45,230</h3>
-                            <p>Ingresos del mes</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon red">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>S/ 40,450</h3>
-                            <p>Egresos del mes</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
                         <div class="stat-icon blue">
-                            <i class="fas fa-wallet"></i>
+                            <i class="fas fa-file-alt"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>S/ 16,780</h3>
-                            <p>Utilidad neta</p>
+                            <h3 id="fin-total">—</h3>
+                            <p>Total requerimientos</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="fin-con">—</h3>
+                            <p>Con orden asignada</p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon yellow">
-                            <i class="fas fa-percentage"></i>
+                            <i class="fas fa-clock"></i>
                         </div>
                         <div class="stat-info">
-                            <h3>37.1%</h3>
-                            <p>Margen de utilidad</p>
+                            <h3 id="fin-sin">—</h3>
+                            <p>Sin orden (pendientes)</p>
                         </div>
                     </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-line"></i>
-                        <h3>Gráfico de Tendencias Financieras</h3>
-                        <p>Visualización de ingresos vs egresos mensuales</p>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#059669);">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="fin-pagados">—</h3>
+                            <p>Pagados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card" style="grid-column:span 2;">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="fin-monto" style="font-size:1.4rem;">—</h3>
+                            <p>Monto total comprometido</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: GESTIÓN DE PEDIDOS -->
+            <!-- SECTION: REPORTES -->
             <div id="section-pedidos" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-clipboard-list"></i> Gestión de Pedidos
+                    <i class="fas fa-file-excel"></i> Reportes — Exportar a Excel
                 </h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-shopping-cart"></i>
+                <p style="color:#6b7280; margin-bottom:24px;">Descarga los datos de cada bandeja en formato Excel (.xlsx).</p>
+
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:20px; margin-bottom:24px;">
+                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="stat-icon blue"><i class="fas fa-times-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 style="font-size:1rem;">No llegó Orden — Propio</h3>
+                                <p>Requerimientos sin orden asignada (Propios)</p>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <h3>42</h3>
-                            <p>Pedidos activos</p>
-                        </div>
+                        <button class="btn-primary" style="width:100%;" onclick="exportarBandeja('nollego','Propio')">
+                            <i class="fas fa-download"></i> Descargar Excel
+                        </button>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon yellow">
-                            <i class="fas fa-shipping-fast"></i>
+                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="stat-icon yellow"><i class="fas fa-times-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 style="font-size:1rem;">No llegó Orden — Externo</h3>
+                                <p>Requerimientos sin orden asignada (Externos)</p>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <h3>18</h3>
-                            <p>En tránsito</p>
-                        </div>
+                        <button class="btn-primary" style="width:100%;" onclick="exportarBandeja('nollego','Externo')">
+                            <i class="fas fa-download"></i> Descargar Excel
+                        </button>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-check-double"></i>
+                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 style="font-size:1rem;">Llegó Orden — Propio</h3>
+                                <p>Requerimientos con orden asignada (Propios)</p>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <h3>156</h3>
-                            <p>Entregados</p>
+                        <button class="btn-primary" style="width:100%;" onclick="exportarBandeja('llego','Propio')">
+                            <i class="fas fa-download"></i> Descargar Excel
+                        </button>
+                    </div>
+                    <div class="stat-card" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <div class="stat-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3 style="font-size:1rem;">Llegó Orden — Externo</h3>
+                                <p>Requerimientos con orden asignada (Externos)</p>
+                            </div>
                         </div>
+                        <button class="btn-primary" style="width:100%;" onclick="exportarBandeja('llego','Externo')">
+                            <i class="fas fa-download"></i> Descargar Excel
+                        </button>
                     </div>
                 </div>
 
-                <div class="orders-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>N° Pedido</th>
-                                <th>Cliente</th>
-                                <th>Fecha</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>PED-2026-0156</td>
-                                <td>Cliente Importante S.A.</td>
-                                <td>15/03/2026</td>
-                                <td>S/ 3,450.00</td>
-                                <td><span class="status-badge status-pending">Procesando</span></td>
-                                <td><button class="btn-view">Detalle</button></td>
-                            </tr>
-                            <tr>
-                                <td>PED-2026-0155</td>
-                                <td>Distribuidora XYZ</td>
-                                <td>14/03/2026</td>
-                                <td>S/ 8,200.00</td>
-                                <td><span class="status-badge status-completed">Entregado</span></td>
-                                <td><button class="btn-view">Detalle</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- SECTION: ESTUDIO DE MERCADO -->
-            <div id="section-mercado" class="content-section">
-                <h2 class="section-title">
-                    <i class="fas fa-chart-line"></i> Estudio de Mercado
-                </h2>
-                <div class="chart-container" style="margin-bottom: 20px;">
-                    <div class="chart-placeholder">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>Análisis de Competencia</h3>
-                        <p>Comparativa de precios y posicionamiento</p>
-                    </div>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>+15%</h3>
-                            <p>Crecimiento clientes</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>#3</h3>
-                            <p>Posición en mercado</p>
-                        </div>
-                    </div>
+                <div style="text-align:center; padding:20px; border:2px dashed #d1d5db; border-radius:12px; background:#f9fafb;">
+                    <i class="fas fa-file-excel" style="font-size:2.5rem; color:#10b981; margin-bottom:12px; display:block;"></i>
+                    <h3 style="margin-bottom:8px; color:#1f2937;">Exportar Todo</h3>
+                    <p style="color:#6b7280; margin-bottom:16px;">Genera un único archivo Excel con las 4 bandejas en hojas separadas.</p>
+                    <button class="btn-primary" onclick="exportarTodo()">
+                        <i class="fas fa-file-export"></i> Exportar las 4 bandejas
+                    </button>
                 </div>
             </div>
 
             <!-- SECTION: CALENDARIO -->
             <div id="section-calendario" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-calendar-alt"></i> Calendario
+                    <i class="fas fa-calendar-alt"></i> Calendario de Vencimientos
                 </h2>
-                <div class="chart-container">
-                    <div class="chart-placeholder">
-                        <i class="fas fa-calendar"></i>
-                        <h3>Calendario de Actividades</h3>
-                        <p>Próximas reuniones y vencimientos</p>
+                <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
+                    <!-- Calendario mensual -->
+                    <div style="flex:1; min-width:320px; background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); padding:20px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                            <button onclick="navegarMes(-1)" style="background:none; border:1px solid #d1d5db; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:1rem;">&#8592;</button>
+                            <h3 id="cal-titulo" style="font-size:1.1rem; color:#1e3a8a; font-weight:600;"></h3>
+                            <button onclick="navegarMes(1)" style="background:none; border:1px solid #d1d5db; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:1rem;">&#8594;</button>
+                        </div>
+                        <div id="cal-grid" style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-align:center;"></div>
+                        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; font-size:0.78rem; color:#6b7280;">
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#ef4444;margin-right:4px;"></span>Vencido/Hoy</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#f97316;margin-right:4px;"></span>≤7 días</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#eab308;margin-right:4px;"></span>≤30 días</span>
+                            <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#10b981;margin-right:4px;"></span>>30 días</span>
+                        </div>
+                    </div>
+                    <!-- Panel detalle -->
+                    <div id="cal-detalle" style="flex:1; min-width:280px; background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.08); padding:20px;">
+                        <h3 style="color:#1e3a8a; margin-bottom:12px; font-size:1rem;"><i class="fas fa-info-circle"></i> Detalle del día</h3>
+                        <p id="cal-detalle-vacio" style="color:#9ca3af; font-size:0.9rem;">Haz clic en un día resaltado para ver los vencimientos.</p>
+                        <div id="cal-detalle-lista"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: MENSAJES -->
+            <!-- SECTION: MENSAJES / NOTIFICACIONES -->
             <div id="section-mensajes" class="content-section">
                 <h2 class="section-title">
-                    <i class="fas fa-envelope"></i> Mensajes
+                    <i class="fas fa-bell"></i> Notificaciones de Vencimientos
                 </h2>
+
+                <!-- Tarjetas resumen -->
+                <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="msg-count-critico">—</h3>
+                            <p>Crítico (≤7 días)</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="msg-count-proximo">—</h3>
+                            <p>Próximo (≤30 días)</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="msg-count-ok">—</h3>
+                            <p>A tiempo (>30 días)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap;">
+                    <button class="btn-primary" onclick="cargarMensajes()">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                    <button class="btn-outline" onclick="descargarICS()">
+                        <i class="fas fa-calendar-plus"></i> Descargar .ics (Google Calendar / Outlook)
+                    </button>
+                </div>
+
+                <!-- Lista de notificaciones -->
+                <div id="msg-lista" style="display:flex; flex-direction:column; gap:12px;">
+                    <p style="color:#9ca3af; text-align:center; padding:40px;">Cargando notificaciones…</p>
+                </div>
+                <div id="paginacion-mensajes" class="paginacion-controls"></div>
+            </div>
+
+            <!-- SECTION: EMPRESAS -->
+            <div id="section-empresas" class="content-section">
+                <h2 class="section-title">
+                    <i class="fas fa-building"></i> Empresas Proveedoras
+                </h2>
+
+                <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+                    <input id="buscar-empresa" type="text" placeholder="Buscar por RUC, nombre, rubro…"
+                        oninput="filtrarEmpresas()"
+                        style="flex:1;min-width:220px;padding:10px 14px;border:1px solid #d1d5db;
+                               border-radius:8px;font-size:0.9rem;outline:none;">
+                    <button class="btn-primary" onclick="abrirModalEmpresa()">
+                        <i class="fas fa-plus"></i> Nueva Empresa
+                    </button>
+                </div>
+
                 <div class="orders-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>De</th>
-                                <th>Asunto</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
+                                <th>RUC</th>
+                                <th>Razón Social</th>
+                                <th>Rubro</th>
+                                <th>Correo</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Administración</strong></td>
-                                <td>Actualización de políticas</td>
-                                <td>Hoy, 10:30 AM</td>
-                                <td><span class="status-badge status-pending">No leído</span></td>
-                            </tr>
-                            <tr>
-                                <td>Soporte Técnico</td>
-                                <td>Resolución de ticket #456</td>
-                                <td>Ayer, 4:15 PM</td>
-                                <td><span class="status-badge status-completed">Leído</span></td>
-                            </tr>
+                        <tbody id="tbody-empresas">
+                            <tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:30px">Cargando…</td></tr>
                         </tbody>
                     </table>
+                    <div id="paginacion-empresas" class="paginacion-controls"></div>
+                </div>
+            </div>
+
+            <!-- MODAL: Nueva Empresa -->
+            <div id="modal-empresa" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5);
+                 z-index:8000; align-items:center; justify-content:center;">
+                <div style="background:#fff; border-radius:16px; padding:32px; width:100%; max-width:480px;
+                     box-shadow:0 20px 60px rgba(0,0,0,0.2); position:relative;">
+                    <h3 style="margin-bottom:20px; color:#1e3a8a; font-size:1.1rem;">
+                        <i class="fas fa-building"></i> Nueva Empresa Proveedora
+                    </h3>
+                    <form id="form-empresa" onsubmit="return false;">
+                        <div style="display:flex; flex-direction:column; gap:14px;">
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:4px;">RUC *</label>
+                                <input id="emp-ruc" type="text" maxlength="11" placeholder="20601234567"
+                                    style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;outline:none;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Razón Social *</label>
+                                <input id="emp-nombre" type="text" placeholder="EMPRESA SAC"
+                                    style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;outline:none;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Rubro</label>
+                                <select id="emp-rubro"
+                                    style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;outline:none;background:#fff;">
+                                    <option value="">— Seleccionar —</option>
+                                    <option>Publicidad</option>
+                                    <option>Servicios generales</option>
+                                    <option>Prendas y alimentos</option>
+                                    <option>Tecnología</option>
+                                    <option>Construcción</option>
+                                    <option>Limpieza</option>
+                                    <option>Otros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.85rem;font-weight:600;color:#374151;display:block;margin-bottom:4px;">Correo</label>
+                                <input id="emp-correo" type="email" placeholder="contacto@empresa.com"
+                                    style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:0.9rem;outline:none;">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:12px; margin-top:24px; justify-content:flex-end;">
+                            <button type="button" class="btn-outline" onclick="cerrarModalEmpresa()">Cancelar</button>
+                            <button type="submit" class="btn-primary" onclick="guardarEmpresa()">
+                                <i class="fas fa-save"></i> Guardar
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -2486,1344 +1578,82 @@
                     <i class="fas fa-user"></i> Mi Perfil
                 </h2>
                 <div class="welcome-card" style="flex-direction: column; text-align: center; padding: 40px;">
-                    <div class="user-avatar"
-                        style="width: 100px; height: 100px; font-size: 2.5rem; margin-bottom: 20px;">TN</div>
-                    <h2>Tu Nombre Completo</h2>
+                    <div id="perfil-avatar" class="user-avatar"
+                        style="width: 100px; height: 100px; font-size: 2.5rem; margin-bottom: 20px;">?</div>
+                    <h2 id="perfil-nombre" style="margin-bottom:4px">—</h2>
                     <p style="color: #6b7280;">Administrador del Sistema</p>
-                    <div style="margin-top: 20px; display: flex; gap: 15px;">
-                        <button class="btn-outline">Editar Perfil</button>
-                        <button class="btn-outline">Cambiar Contraseña</button>
+                    <div style="margin-top: 20px; display: flex; gap: 15px; justify-content:center;">
+                        <button class="btn-outline" onclick="abrirEditarPerfil()">
+                            <i class="fas fa-user-edit"></i> Editar Perfil
+                        </button>
+                        <button class="btn-outline" onclick="abrirCambiarPassword()">
+                            <i class="fas fa-lock"></i> Cambiar Contraseña
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: Editar Perfil -->
+            <div id="modal-editar-perfil" class="modal">
+                <div class="modal-content" style="max-width:420px">
+                    <div class="modal-header">
+                        <div class="modal-title"><i class="fas fa-user-edit"></i> Editar Perfil</div>
+                        <button class="modal-close" onclick="cerrarModal('modal-editar-perfil')">&times;</button>
+                    </div>
+                    <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+                        <div>
+                            <label style="font-size:0.85rem;font-weight:600;color:#374151">Nuevo nombre de usuario</label>
+                            <input id="perfil-nuevo-username" type="text" class="form-input"
+                                placeholder="Nuevo nombre de usuario" style="margin-top:6px;width:100%;box-sizing:border-box">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;font-weight:600;color:#374151">Contraseña actual (confirmación)</label>
+                            <input id="perfil-pass-confirm" type="password" class="form-input"
+                                placeholder="Tu contraseña actual" style="margin-top:6px;width:100%;box-sizing:border-box">
+                        </div>
+                        <div style="display:flex;gap:12px;justify-content:flex-end">
+                            <button class="btn-outline" onclick="cerrarModal('modal-editar-perfil')">Cancelar</button>
+                            <button class="btn-primary" onclick="guardarPerfil()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: Cambiar Contraseña -->
+            <div id="modal-cambiar-password" class="modal">
+                <div class="modal-content" style="max-width:420px">
+                    <div class="modal-header">
+                        <div class="modal-title"><i class="fas fa-lock"></i> Cambiar Contraseña</div>
+                        <button class="modal-close" onclick="cerrarModal('modal-cambiar-password')">&times;</button>
+                    </div>
+                    <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+                        <div>
+                            <label style="font-size:0.85rem;font-weight:600;color:#374151">Contraseña actual</label>
+                            <input id="cp-actual" type="password" class="form-input"
+                                placeholder="Contraseña actual" style="margin-top:6px;width:100%;box-sizing:border-box">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;font-weight:600;color:#374151">Nueva contraseña</label>
+                            <input id="cp-nueva" type="password" class="form-input"
+                                placeholder="Nueva contraseña" style="margin-top:6px;width:100%;box-sizing:border-box">
+                        </div>
+                        <div>
+                            <label style="font-size:0.85rem;font-weight:600;color:#374151">Confirmar nueva contraseña</label>
+                            <input id="cp-confirmar" type="password" class="form-input"
+                                placeholder="Repetir nueva contraseña" style="margin-top:6px;width:100%;box-sizing:border-box">
+                        </div>
+                        <div style="display:flex;gap:12px;justify-content:flex-end">
+                            <button class="btn-outline" onclick="cerrarModal('modal-cambiar-password')">Cancelar</button>
+                            <button class="btn-primary" onclick="cambiarPassword()">Actualizar</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <div class="support-btn">
-            <i class="fab fa-whatsapp"></i>
-            <span>Atención al cliente</span>
-        </div>
     </div>
 
-    <script>
-        let pin = '';
-        let currentUser = '';
-
-        // URL base del backend — ajusta si cambias de puerto
-        const API = 'http://localhost:8000';
-
-        async function login() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-
-            if (!username || !password) {
-                document.getElementById('login-error').style.display = 'block';
-                document.getElementById('login-error').textContent = 'Ingresa usuario y contraseña';
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    currentUser = data.username;
-                    document.getElementById('userName').textContent = currentUser;
-                    document.getElementById('login-error').style.display = 'none';
-                    document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                } else {
-                    document.getElementById('login-error').style.display = 'block';
-                    document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos';
-                }
-            } catch (e) {
-                document.getElementById('login-error').style.display = 'block';
-                document.getElementById('login-error').textContent = 'No se pudo conectar con el servidor';
-            }
-        }
-
-        function logout() {
-            if (confirm('¿Desea cerrar sesión?')) {
-                document.getElementById('loginPage').style.display = 'flex';
-                document.getElementById('dashboard').style.display = 'none';
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                pin = '';
-                updateDots();
-            }
-        }
-
-        function openModal() {
-            document.getElementById('createUserModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('createUserModal').classList.remove('active');
-        }
-
-        function registerUser() {
-            alert('Usuario registrado exitosamente');
-            closeModal();
-        }
-
-        function showSection(sectionName) {
-
-            if (sectionName === 'no-llego')       cargarBandeja('nollego-p');
-            if (sectionName === 'noexterOrden')   cargarBandeja('nollego-e');
-            if (sectionName === 'llego')       cargarLlego('llego-p');
-            if (sectionName === 'exterOrden')  cargarLlego('llego-e');
-
-            // Ocultar todas las secciones
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-
-            // Mostrar sección seleccionada
-            const targetSection = document.getElementById(`section-${sectionName}`);
-            if (targetSection) {
-                targetSection.classList.add('active');
-            }
-
-            // Actualizar navegación activa
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.currentTarget.classList.add('active');
-
-            // Actualizar título del header
-            const titles = {
-                'general': 'General',
-                'perfil': 'Perfil',
-                'documentos': 'Documentos',
-                'no-llego': 'No llegó Orden',
-                'llego': 'Llegó Orden',
-                'noexterOrden': 'No llegó Orden Externa',
-                'exterOrden': 'Llegó Orden Externa',
-                'calendario': 'Calendario',
-                'mensajes': 'Mensajes',
-                'mercado': 'Estudio de Mercado',
-                'pedidos': 'Gestión de Pedidos',
-                'financiero': 'Dashboard Financiero'
-            };
-            document.querySelector('.header-title').textContent = titles[sectionName] || 'General';
-
-            // Cargar datos según la sección
-            if (sectionName === 'documentos') cargarDocumentos();
-        }
-
-        // Cerrar modal al hacer clic fuera
-        window.onclick = function (event) {
-            const modal = document.getElementById('createUserModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-
-        // Animación de entrada para elementos
-        document.addEventListener('DOMContentLoaded', function () {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function (entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            // Observar tarjetas para animación
-            document.querySelectorAll('.stat-card, .course-card, .pending-item').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease';
-                observer.observe(el);
-            });
-        });
-
-        // Funcionalidad de búsqueda rápida
-        document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey && e.key === '/') {
-                e.preventDefault();
-                const searchTerm = prompt('Buscar en el sistema:');
-                if (searchTerm) {
-                    alert('Buscando: ' + searchTerm);
-                }
-            }
-        });
-
-        // Función para exportar datos
-        function exportData(type) {
-            const data = {
-                timestamp: new Date().toLocaleString(),
-                type: type,
-                user: currentUser
-            };
-            console.log('Exportando datos:', data);
-            alert('Reporte exportado exitosamente');
-        }
-
-        // Manejo de errores global
-        window.onerror = function (msg, url, lineNo, columnNo, error) {
-            console.error('Error: ' + msg + '\nURL: ' + url + '\nLinea: ' + lineNo);
-            return false;
-        };
-
-
-        // ── Variables globales del flujo ──────────────────────────────────
-        let tipoSeleccionado = 'Propio';
-        let requerimientoActual = null;
-        let todosLosDocumentos = [];
-
-        // ── Modal Nuevo Requerimiento ─────────────────────────────────────
-        function abrirModalNuevoReq() {
-            document.getElementById('modal-nuevo-req').classList.add('active');
-
-            // Resetear PASO 1
-            document.getElementById('paso-subir-pdf').style.display  = 'block';
-            document.getElementById('dropzone-req').style.display    = 'block';
-            document.getElementById('pdf-loading').style.display     = 'none';
-
-            // Resetear PASO 2
-            document.getElementById('paso-formulario').style.display = 'none';
-            document.getElementById('items-container').innerHTML     = '';
-            document.getElementById('totales-preview').style.display = 'none';
-
-            // Limpiar campos del formulario
-            ['req-descripcion','req-area','req-plazo','req-fecha',
-            'req-pedido','req-referencia'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = '';
-            });
-
-            // Limpiar selectores de empresa
-            ['global-empresa-ganadora','global-empresa-perd1','global-empresa-perd2']
-                .forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = '';
-                });
-
-            // Limpiar el input de archivo — clave para permitir subir de nuevo
-            const inputPdf = document.getElementById('input-pdf-req');
-            inputPdf.value = '';
-            // Clonar y reemplazar el input para forzar el reset completo
-            const nuevoInput = inputPdf.cloneNode(true);
-            inputPdf.parentNode.replaceChild(nuevoInput, inputPdf);
-            nuevoInput.addEventListener('change', function() { procesarPDFReq(this); });
-
-            requerimientoActual = null;
-            seleccionarTipo('Propio');
-            cargarEmpresasSelector();
-        }
-
-        let empresasLista = [];
-
-        async function cargarEmpresasSelector() {
-            try {
-                const res = await fetch(`${API}/empresas`);
-                empresasLista = await res.json();
-            } catch (e) {
-                empresasLista = [];
-            }
-
-            const placeholder = `<option value="">-- Seleccionar empresa --</option>`;
-            const opciones = empresasLista.map(e =>
-                `<option value="${e.desc_empresa}">${e.desc_empresa}${e.rubro ? ' (' + e.rubro + ')' : ''}</option>`
-            ).join('');
-            const html = placeholder + opciones;
-
-            ['global-empresa-ganadora', 'global-empresa-perd1', 'global-empresa-perd2']
-                .forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerHTML = html;
-                });
-        }
-
-        function actualizarNombresEmpresas() {
-            const g  = document.getElementById('global-empresa-ganadora').value || 'Ganadora';
-            const p1 = document.getElementById('global-empresa-perd1').value    || 'Perdedora 1';
-            const p2 = document.getElementById('global-empresa-perd2').value    || 'Perdedora 2';
-
-            document.getElementById('label-total-ganadora').textContent = `Total ${g}`;
-            document.getElementById('label-total-perd1').textContent    = `Total ${p1}`;
-            document.getElementById('label-total-perd2').textContent    = `Total ${p2}`;
-
-        }       
-
-        function opcionesEmpresas(idSeleccionado = '') {
-            const placeholder = `<option value="">-- Seleccionar empresa --</option>`;
-            const opciones = empresasLista.map(e =>
-                `<option value="${e.desc_empresa}" ${e.desc_empresa === idSeleccionado ? 'selected' : ''}>
-                    ${e.desc_empresa} (${e.rubro || 'Sin rubro'})
-                </option>`
-            ).join('');
-            return placeholder + opciones;
-        }
-
-        function cerrarModalNuevoReq() {
-            document.getElementById('modal-nuevo-req').classList.remove('active');
-
-            // Limpiar input de archivo al cerrar también
-            const inputPdf = document.getElementById('input-pdf-req');
-            if (inputPdf) {
-                const nuevoInput = inputPdf.cloneNode(true);
-                inputPdf.parentNode.replaceChild(nuevoInput, inputPdf);
-                nuevoInput.addEventListener('change', function() { procesarPDFReq(this); });
-            }
-
-            requerimientoActual = null;
-        }
-
-        function seleccionarTipo(tipo) {
-            tipoSeleccionado = tipo;
-            const btnPropio   = document.getElementById('btn-tipo-propio');
-            const btnExterno  = document.getElementById('btn-tipo-externo');
-            if (tipo === 'Propio') {
-                btnPropio.style.background  = 'var(--secondary)';
-                btnPropio.style.color       = 'white';
-                btnPropio.style.borderColor = 'var(--secondary)';
-                btnExterno.style.background = 'white';
-                btnExterno.style.color      = '#374151';
-                btnExterno.style.borderColor= '#e5e7eb';
-            } else {
-                btnExterno.style.background  = 'var(--primary)';
-                btnExterno.style.color       = 'white';
-                btnExterno.style.borderColor = 'var(--primary)';
-                btnPropio.style.background   = 'white';
-                btnPropio.style.color        = '#374151';
-                btnPropio.style.borderColor  = '#e5e7eb';
-            }
-        }
-
-        // ── Procesar PDF con OCR ──────────────────────────────────────────
-        async function procesarPDFReq(input) {
-            if (!input.files.length) return;
-            const archivo = input.files[0];
-
-            document.getElementById('dropzone-req').style.display  = 'none';
-            document.getElementById('pdf-loading').style.display   = 'block';
-
-            const formData = new FormData();
-            formData.append('archivo', archivo);
-            formData.append('tipo', tipoSeleccionado);
-
-            try {
-                const res = await fetch(`${API}/ocr/leer-requerimiento`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!res.ok) throw new Error('Error al procesar el PDF');
-                const data = await res.json();
-                // Solo guarda los datos del OCR, sin requerimiento_id aún
-                requerimientoActual = {
-                    descripcion: data.denominacion   || data.descripcion || '',
-                    area:        data.organo_unidad  || data.area        || '',
-                    plazo:       data.plazo          || '',
-                    items:       data.items          || [],
-                };
-
-                // Prellenar formulario
-                document.getElementById('req-descripcion').value = requerimientoActual.descripcion;
-                document.getElementById('req-area').value        = requerimientoActual.area;
-                document.getElementById('req-plazo').value       = requerimientoActual.plazo;
-                document.getElementById('req-fecha').value       = new Date().toLocaleDateString('es-PE');
-
-                // Renderizar ítems
-                renderizarItemsFormulario(requerimientoActual.items);
-
-                document.getElementById('pdf-loading').style.display   = 'none';
-                document.getElementById('paso-formulario').style.display = 'block';
-
-            } catch (e) {
-                document.getElementById('pdf-loading').style.display  = 'none';
-                document.getElementById('dropzone-req').style.display = 'block';
-                alert('Error al leer el PDF. Verifica que el backend esté corriendo.');
-            }
-        }
-
-        function renderizarItemsFormulario(items) {
-            const container = document.getElementById('items-container');
-            container.innerHTML = items.map((it, idx) => `
-                <div style="background:white;border:1px solid #e5e7eb;border-radius:8px;
-                            padding:12px;margin-bottom:10px">
-                    <div style="font-size:0.8rem;font-weight:600;color:var(--primary);margin-bottom:8px">
-                        Ítem ${it.item || it.numero_item} — ${it.descripcion}
-                        <span style="font-weight:400;color:#9ca3af">
-                            (${it.cantidad} ${it.unidad_de_medida || it.unidad_medida || ''})
-                        </span>
-                    </div>
-
-                    <!-- Fila 1: Precio ganadora → total ganadora (automático) -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px">
-                        <div>
-                            <label style="font-size:0.75rem;color:#065f46;font-weight:600;
-                                        display:block;margin-bottom:3px">
-                                Precio unitario con IGV <span style="color:red">*</span>
-                            </label>
-                            <input type="number" id="item-precio-${idx}"
-                                placeholder="0.00" step="0.01" min="0"
-                                oninput="recalcularItem(${idx})"
-                                style="padding:8px 10px;width:100%;border:2px solid #10b981;
-                                    border-radius:6px;font-size:0.85rem">
-                        </div>
-                        <div style="background:#f0fdf4;border-radius:6px;padding:8px 10px">
-                            <div style="font-size:0.7rem;color:#065f46;margin-bottom:3px">
-                                Total ganadora
-                                <span style="font-weight:400;color:#9ca3af">(precio × ${it.cantidad})</span>
-                            </div>
-                            <div id="item-total-g-${idx}"
-                                style="font-size:0.95rem;font-weight:700;color:#065f46">
-                                S/ 0.00
-                            </div>
-                        </div>
-                        <div style="background:#f9fafb;border-radius:6px;padding:8px 10px">
-                            <div style="font-size:0.7rem;color:#6b7280;margin-bottom:3px">
-                                Valor unitario / IGV
-                            </div>
-                            <div id="item-calc-${idx}" style="font-size:0.8rem;color:#6b7280">
-                                S/ 0.00 / S/ 0.00
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fila 2: Totales perdedoras (sugeridos pero editables) -->
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                        <div>
-                            <label style="font-size:0.75rem;color:#92400e;font-weight:600;
-                                        display:block;margin-bottom:3px">
-                                Total perdedora 1
-                                <span style="font-weight:400;color:#9ca3af;font-size:0.7rem">
-                                    (sugerido, editable)
-                                </span>
-                            </label>
-                            <input type="number" id="item-costo-p1-${idx}"
-                                placeholder="0.00" step="0.01" min="0"
-                                oninput="actualizarResumenPerdedoras()"
-                                style="padding:8px 10px;width:100%;border:2px solid #f59e0b;
-                                    border-radius:6px;font-size:0.85rem;background:#fffbeb">
-                        </div>
-                        <div>
-                            <label style="font-size:0.75rem;color:#991b1b;font-weight:600;
-                                        display:block;margin-bottom:3px">
-                                Total perdedora 2
-                                <span style="font-weight:400;color:#9ca3af;font-size:0.7rem">
-                                    (sugerido, editable)
-                                </span>
-                            </label>
-                            <input type="number" id="item-costo-p2-${idx}"
-                                placeholder="0.00" step="0.01" min="0"
-                                oninput="actualizarResumenPerdedoras()"
-                                style="padding:8px 10px;width:100%;border:2px solid #ef4444;
-                                    border-radius:6px;font-size:0.85rem;background:#fff5f5">
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            document.getElementById('totales-preview').style.display = 'none';
-        }
-
-        function recalcularItem(idx) {
-            if (!requerimientoActual) return;
-            const it       = requerimientoActual.items[idx];
-            const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
-            const cantidad = it.cantidad || 0;
-            const vu       = precio > 0 ? precio / 1.18 : 0;
-            const igv      = vu * 0.18;
-            const totalG   = precio * cantidad;
-
-            // Actualizar display ganadora
-            const elTotalG = document.getElementById(`item-total-g-${idx}`);
-            const elCalc   = document.getElementById(`item-calc-${idx}`);
-            if (elTotalG) elTotalG.textContent = `S/ ${totalG.toFixed(2)}`;
-            if (elCalc)   elCalc.textContent   = `S/ ${vu.toFixed(2)} / S/ ${igv.toFixed(2)}`;
-
-            // Recalcular totales de perdedoras siempre en base al nuevo precio
-            const campP1 = document.getElementById(`item-costo-p1-${idx}`);
-            const campP2 = document.getElementById(`item-costo-p2-${idx}`);
-
-            if (totalG > 0) {
-                // Usar factores fijos por ítem para que no cambien al recalcular
-                if (!it._factor1) it._factor1 = 1.05 + Math.random() * 0.03;
-                if (!it._factor2) it._factor2 = 1.05 + Math.random() * 0.03;
-                if (campP1) campP1.value = (totalG * it._factor1).toFixed(2);
-                if (campP2) campP2.value = (totalG * it._factor2).toFixed(2);
-            } else {
-                if (campP1) campP1.value = '';
-                if (campP2) campP2.value = '';
-            }
-
-            actualizarResumenGlobal();
-        }
-
-        function actualizarResumenPerdedoras() {
-            actualizarResumenGlobal();
-        }
-
-        function actualizarResumenGlobal() {
-            if (!requerimientoActual) return;
-            const items = requerimientoActual.items;
-            let sumG = 0, sumP1 = 0, sumP2 = 0;
-
-            items.forEach((it, idx) => {
-                const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
-                const cantidad = it.cantidad || 0;
-                sumG  += precio * cantidad;
-                sumP1 += parseFloat(document.getElementById(`item-costo-p1-${idx}`)?.value) || 0;
-                sumP2 += parseFloat(document.getElementById(`item-costo-p2-${idx}`)?.value) || 0;
-            });
-
-            document.getElementById('totales-preview').style.display = 'block';
-            document.getElementById('valor-total-ganadora').textContent = `S/ ${sumG.toFixed(2)}`;
-            document.getElementById('valor-total-perd1').textContent    = `S/ ${sumP1.toFixed(2)}`;
-            document.getElementById('valor-total-perd2').textContent    = `S/ ${sumP2.toFixed(2)}`;
-        }
-
-        // Recalcular solo el resumen cuando el usuario edita un costo de perdedora
-        function actualizarResumenPerdedoras() {
-            if (!requerimientoActual) return;
-            const items = requerimientoActual.items;
-            let sumG = 0, sumP1 = 0, sumP2 = 0;
-
-            items.forEach((it, idx) => {
-                const precio   = parseFloat(document.getElementById(`item-precio-${idx}`)?.value) || 0;
-                const cantidad = it.cantidad || 0;
-                sumG  += precio * cantidad;
-                sumP1 += parseFloat(document.getElementById(`item-costo-p1-${idx}`)?.value) || 0;
-                sumP2 += parseFloat(document.getElementById(`item-costo-p2-${idx}`)?.value) || 0;
-            });
-
-            document.getElementById('totales-preview').style.display = 'block';
-            document.getElementById('valor-total-ganadora').textContent = `S/ ${sumG.toFixed(2)}`;
-            document.getElementById('valor-total-perd1').textContent    = `S/ ${sumP1.toFixed(2)}`;
-            document.getElementById('valor-total-perd2').textContent    = `S/ ${sumP2.toFixed(2)}`;
-        }
-
-        // ── Guardar requerimiento ─────────────────────────────────────────
-        async function guardarRequerimiento() {
-            if (!requerimientoActual) return;
-
-            // ── Validaciones obligatorias ─────────────────────────────────
-            const descripcion = document.getElementById('req-descripcion').value.trim();
-            const area        = document.getElementById('req-area').value.trim();
-            const plazo       = document.getElementById('req-plazo').value.trim();
-            const pedido      = document.getElementById('req-pedido').value.trim();
-            const referencia  = document.getElementById('req-referencia').value.trim();
-            const empresaG    = document.getElementById('global-empresa-ganadora').value;
-            const empresaP1   = document.getElementById('global-empresa-perd1').value;
-            const empresaP2   = document.getElementById('global-empresa-perd2').value;
-
-            if (!descripcion) { alert('La descripción es obligatoria'); return; }
-            if (!area)        { alert('El área / unidad es obligatoria'); return; }
-            if (!plazo)       { alert('El plazo es obligatorio'); return; }
-            if (!pedido)      { alert('El N° de pedido es obligatorio'); return; }
-            if (!referencia)  { alert('La referencia es obligatoria'); return; }
-            if (!empresaG)    { alert('Debes seleccionar la empresa ganadora'); return; }
-            if (!empresaP1)   { alert('Debes seleccionar la empresa perdedora 1'); return; }
-            if (!empresaP2)   { alert('Debes seleccionar la empresa perdedora 2'); return; }
-
-            // Validar que todos los ítems tengan precio
-            const items = requerimientoActual.items;
-            for (let i = 0; i < items.length; i++) {
-                const precio = parseFloat(document.getElementById(`item-precio-${i}`)?.value) || 0;
-                if (precio <= 0) {
-                    alert(`El ítem ${i + 1} debe tener un precio mayor a 0`);
-                    return;
-                }
-            }            
-
-            try {
-                // Paso 1: Crear el requerimiento con el tipo seleccionado en ese momento
-                const resReq = await fetch(`${API}/requerimientos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        descripcion:   document.getElementById('req-descripcion').value,
-                        plazo:         document.getElementById('req-plazo').value,
-                        area:          document.getElementById('req-area').value,
-                        numero_pedido: document.getElementById('req-pedido').value,
-                        referencia:    document.getElementById('req-referencia').value,
-                        tipo:          tipoSeleccionado,   // ← toma el valor actual del botón
-                    })
-                });
-
-                if (!resReq.ok) throw new Error('Error al crear requerimiento');
-                const reqData = await resReq.json();
-                const requerimientoId = reqData.id;
-                const idReq           = reqData.id_req;
-
-                // Paso 2: Crear los ítems vinculados al requerimiento recién creado
-                const itemsOCR = requerimientoActual.items;
-                const itemsCreados = [];
-
-                for (let i = 0; i < itemsOCR.length; i++) {
-                    const it     = itemsOCR[i];
-                    const caract = Array.isArray(it.caracteristicas)
-                        ? it.caracteristicas.join(' | ')
-                        : (it.caracteristicas || '');
-
-                    const resItem = await fetch(`${API}/items`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify([{
-                            requerimiento_id: requerimientoId,
-                            numero_item:      it.item || it.numero_item,
-                            cantidad:         it.cantidad,
-                            unidad_medida:    it.unidad_de_medida || it.unidad_medida,
-                            descripcion:      it.descripcion,
-                            caracteristicas:  caract,
-                        }])
-                    });
-
-                    if (!resItem.ok) continue;
-
-                    // Obtener el id del ítem recién insertado consultando
-                    // solo los ítems de ESTE requerimiento y tomando el último
-                    const resLista   = await fetch(`${API}/items/${requerimientoId}`);
-                    const lista      = await resLista.json();
-
-                    // Filtrar por numero_item dentro de este requerimiento específico
-                    const numeroItem = it.item || it.numero_item;
-                    const itemCreado = lista
-                        .filter(x => x.requerimiento_id === requerimientoId
-                                && x.numero_item === numeroItem)
-                        .pop(); // tomar el último en caso de duplicados
-
-                    if (itemCreado) {
-                        itemsCreados.push({ ...it, id: itemCreado.id });
-                    }
-                }
-
-                // Validar que se crearon todos los ítems
-                if (itemsCreados.length !== itemsOCR.length) {
-                    console.warn(`Se esperaban ${itemsOCR.length} ítems pero se crearon ${itemsCreados.length}`);
-                }
-
-                // Paso 3: Actualizar empresa y precio de cada ítem
-                const empresa = document.getElementById('global-empresa-ganadora').value;
-                const perd1   = document.getElementById('global-empresa-perd1').value;
-                const perd2   = document.getElementById('global-empresa-perd2').value;
-
-                // Actualizar empresa y precio de cada ítem
-                for (let i = 0; i < itemsCreados.length; i++) {
-                    const precio  = parseFloat(document.getElementById(`item-precio-${i}`)?.value)    || 0;
-                    const costoP1 = parseFloat(document.getElementById(`item-costo-p1-${i}`)?.value) || null;
-                    const costoP2 = parseFloat(document.getElementById(`item-costo-p2-${i}`)?.value) || null;
-
-                    console.log(`Ítem ${i}: precio=${precio}, costoP1=${costoP1}, costoP2=${costoP2}`);
-
-                    await fetch(`${API}/ocr/actualizar-item/${itemsCreados[i].id}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            empresa_ganadora:    empresaG,
-                            precio:              precio,
-                            empresa_perdedora_1: empresaP1,
-                            empresa_perdedora_2: empresaP2,
-                            costo_perdedora_1:   costoP1,
-                            costo_perdedora_2:   costoP2,
-                        })
-                    });
-                }
-
-                cerrarModalNuevoReq();
-                await cargarDocumentos();
-                alert(`✓ Requerimiento ${idReq} guardado y derivado a "${tipoSeleccionado}"`);
-
-            } catch (e) {
-                console.error(e);
-                alert('Error al guardar. Verifica la conexión con el backend.');
-            }
-        }
-
-        // ── Cargar tabla de documentos ────────────────────────────────────
-        async function cargarDocumentos() {
-            try {
-                const res  = await fetch(`${API}/requerimientos`);
-                const data = await res.json();
-                todosLosDocumentos = data;
-                renderizarTablaDocumentos(data);
-                actualizarMetricasDocumentos(data);
-            } catch (e) {
-                document.getElementById('tbody-documentos').innerHTML =
-                    '<tr><td colspan="7" style="text-align:center;color:#ef4444">Error al cargar datos</td></tr>';
-            }
-        }
-
-        function renderizarTablaDocumentos(data) {
-            const tbody = document.getElementById('tbody-documentos');
-            if (!data.length) {
-                tbody.innerHTML =
-                    '<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:30px">No hay requerimientos registrados</td></tr>';
-                return;
-            }
-            tbody.innerHTML = data.map(r => `
-                <tr>
-                    <td><strong style="color:var(--primary)">${r.id_req}</strong></td>
-                    <td title="${r.descripcion}">${r.descripcion ? r.descripcion.substring(0, 50) + (r.descripcion.length > 50 ? '...' : '') : '—'}</td>
-                    <td>${r.area || '—'}</td>
-                    <td>${r.plazo || '—'}</td>
-                    <td>${r.fecha_registro || '—'}</td>
-                    <td>
-                        <span class="status-badge ${r.tipo === 'Propio' ? 'status-completed' : 'status-pending'}">
-                            ${r.tipo}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn-view" onclick="verItems(${r.id}, '${r.id_req}')">
-                            <i class="fas fa-list"></i> Ver
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function actualizarMetricasDocumentos(data) {
-            document.getElementById('docs-total').textContent    = data.length;
-            document.getElementById('docs-propios').textContent  = data.filter(r => r.tipo === 'Propio').length;
-            document.getElementById('docs-externos').textContent = data.filter(r => r.tipo === 'Externo').length;
-            document.getElementById('docs-sin-orden').textContent= data.filter(r => r.tiene_orden === 0).length;
-        }
-
-        function filtrarDocumentos() {
-            const q = document.getElementById('buscador-docs').value.toLowerCase();
-            const filtrados = todosLosDocumentos.filter(r =>
-                (r.descripcion || '').toLowerCase().includes(q) ||
-                (r.area        || '').toLowerCase().includes(q) ||
-                (r.id_req      || '').toLowerCase().includes(q)
-            );
-            renderizarTablaDocumentos(filtrados);
-        }
-
-        // ── Ver ítems de un requerimiento ─────────────────────────────────
-        async function verItems(requerimientoId, idReq) {
-            document.getElementById('modal-items-titulo').textContent = `Ítems — ${idReq}`;
-            document.getElementById('modal-ver-items').classList.add('active');
-            document.getElementById('modal-items-contenido').innerHTML =
-                '<p style="text-align:center;padding:20px"><i class="fas fa-spinner fa-spin"></i> Cargando...</p>';
-
-            try {
-                const res   = await fetch(`${API}/items/${requerimientoId}`);
-                const items = await res.json();
-
-                if (!items.length) {
-                    document.getElementById('modal-items-contenido').innerHTML =
-                        '<p style="text-align:center;color:#9ca3af;padding:20px">Sin ítems registrados</p>';
-                    return;
-                }
-
-                document.getElementById('modal-items-contenido').innerHTML = `
-                    <div style="overflow-x:auto">
-                        <table style="width:100%;border-collapse:collapse;font-size:0.82rem">
-                            <thead>
-                                <tr style="background:#f3f4f6">
-                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Ítem</th>
-                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Descripción</th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb">Cant.</th>
-                                    <th style="padding:8px;border-bottom:1px solid #e5e7eb">Unidad</th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
-                                            background:#d1fae5;color:#065f46">
-                                        Precio ${items[0]?.empresa_ganadora || 'Ganadora'}
-                                    </th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
-                                            background:#d1fae5;color:#065f46">
-                                        Total ${items[0]?.empresa_ganadora || 'Ganadora'}
-                                    </th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
-                                            background:#fef3c7;color:#92400e">
-                                        Total ${items[0]?.empresa_perdedora_1 || 'Perdedora 1'}
-                                    </th>
-                                    <th style="padding:8px;text-align:right;border-bottom:1px solid #e5e7eb;
-                                            background:#fee2e2;color:#991b1b">
-                                        Total ${items[0]?.empresa_perdedora_2 || 'Perdedora 2'}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${items.map(it => `
-                                    <tr style="border-bottom:1px solid #f3f4f6">
-                                        <td style="padding:8px">${it.numero_item}</td>
-                                        <td style="padding:8px;max-width:200px;white-space:nowrap;
-                                                overflow:hidden;text-overflow:ellipsis"
-                                            title="${it.descripcion || ''}">${it.descripcion || '—'}</td>
-                                        <td style="padding:8px;text-align:right">${it.cantidad}</td>
-                                        <td style="padding:8px">${it.unidad_medida || '—'}</td>
-                                        <td style="padding:8px;text-align:right;background:#f0fdf4">
-                                            S/ ${(it.precio || 0).toFixed(2)}
-                                        </td>
-                                        <td style="padding:8px;text-align:right;font-weight:600;
-                                                color:#065f46;background:#f0fdf4">
-                                            S/ ${(it.total_ganadora || 0).toFixed(2)}
-                                        </td>
-                                        <td style="padding:8px;text-align:right;background:#fffbeb;color:#92400e">
-                                            S/ ${(it.costo_perdedora_1 || 0).toFixed(2)}
-                                        </td>
-                                        <td style="padding:8px;text-align:right;background:#fff5f5;color:#991b1b">
-                                            S/ ${(it.costo_perdedora_2 || 0).toFixed(2)}
-                                        </td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                            <tfoot>
-                                <tr style="font-weight:700;font-size:0.85rem">
-                                    <td colspan="4" style="padding:10px 8px;text-align:right;
-                                                        background:#f3f4f6">Total requerimiento:</td>
-                                    <td style="padding:10px 8px;text-align:right;background:#d1fae5;color:#065f46">
-                                        —
-                                    </td>
-                                    <td style="padding:10px 8px;text-align:right;background:#d1fae5;color:#065f46">
-                                        S/ ${items.reduce((s, it) => s + (it.total_ganadora   || 0), 0).toFixed(2)}
-                                    </td>
-                                    <td style="padding:10px 8px;text-align:right;background:#fef3c7;color:#92400e">
-                                        S/ ${items.reduce((s, it) => s + (it.costo_perdedora_1 || 0), 0).toFixed(2)}
-                                    </td>
-                                    <td style="padding:10px 8px;text-align:right;background:#fee2e2;color:#991b1b">
-                                        S/ ${items.reduce((s, it) => s + (it.costo_perdedora_2 || 0), 0).toFixed(2)}
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                `;
-
-            } catch (e) {
-                document.getElementById('modal-items-contenido').innerHTML =
-                    '<p style="text-align:center;color:#ef4444;padding:20px">Error al cargar ítems</p>';
-            }
-        }
-
-        function cerrarModalItems() {
-            document.getElementById('modal-ver-items').classList.remove('active');
-        }
-
-        // ── Variables bandejas ────────────────────────────────────────────
-        let datosBandeja = { 'nollego-p': [], 'nollego-e': [] };
-        let requerimientoOrdenActual = null;
-        let archivoPDFOrden = null;
-
-        // ── Cargar bandeja ────────────────────────────────────────────────
-        async function cargarBandeja(bandeja) {
-            const tipo = bandeja === 'nollego-p' ? 'Propio' : 'Externo';
-            const tbody = document.getElementById(`tbody-${bandeja}`);
-            tbody.innerHTML = `<tr><td colspan="12"
-                style="text-align:center;padding:30px;color:#9ca3af">
-                <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
-
-            try {
-                // Revisar bajas automáticamente al cargar
-                await fetch(`${API}/requerimientos/revisar-bajas`, { method: 'POST' });
-
-                const res  = await fetch(`${API}/requerimientos?tiene_orden=0&tipo=${tipo}`);
-                const data = await res.json();
-                datosBandeja[bandeja] = data;
-                renderizarBandeja(bandeja, data);
-                actualizarMetricasBandeja(bandeja, data);
-            } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="12"
-                    style="text-align:center;color:#ef4444;padding:20px">
-                    Error al cargar datos</td></tr>`;
-            }
-        }
-
-        function renderizarBandeja(bandeja, data) {
-            const tbody = document.getElementById(`tbody-${bandeja}`);
-            if (!data.length) {
-                tbody.innerHTML = `<tr><td colspan="11"
-                    style="text-align:center;color:#9ca3af;padding:30px">
-                    No hay requerimientos en esta bandeja</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = data.map(r => `
-                <tr style="${r.de_baja ? 'opacity:0.6;background:#fff5f5' : ''}">
-                    <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
-                    <td style="font-size:0.82rem">${r.fecha_registro || '—'}</td>
-                    <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
-                    <td style="font-size:0.82rem">${r.plazo || '—'}</td>
-                    <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
-                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;
-                            overflow:hidden;text-overflow:ellipsis"
-                        title="${r.descripcion || ''}">${r.descripcion || '—'}</td>
-                    <td style="font-size:0.82rem">${r.referencia || '—'}</td>
-                    <td style="font-size:0.82rem">${r.area || '—'}</td>
-                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
-                        S/ ${(r.precio_total || 0).toLocaleString('es-PE', {minimumFractionDigits:2})}
-                    </td>
-                    <td style="text-align:center">
-                        ${r.de_baja
-                            ? '<span class="status-badge status-pending">De baja</span>'
-                            : '<span class="status-badge status-completed">Activo</span>'
-                        }
-                    </td>
-                    <td style="display:flex;gap:6px;align-items:center">
-                        <button class="btn-view"
-                            onclick="abrirModalOrden(${r.id}, '${r.id_req}')"
-                            ${r.de_baja ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''}>
-                            <i class="fas fa-upload"></i> Cargar PDF
-                        </button>
-                        <button
-                            onclick="darDeBajaManual(${r.id}, '${r.id_req}', this)"
-                            ${r.de_baja ? 'disabled' : ''}
-                            style="${r.de_baja
-                                ? 'opacity:0.4;cursor:not-allowed;padding:6px 10px;border:1px solid #d1d5db;border-radius:6px;background:white;font-size:0.78rem'
-                                : 'padding:6px 10px;border:1px solid #ef4444;border-radius:6px;background:white;color:#ef4444;cursor:pointer;font-size:0.78rem;transition:all 0.2s'}"
-                            onmouseover="${r.de_baja ? '' : "this.style.background='#fee2e2'"}"
-                            onmouseout="${r.de_baja ? '' : "this.style.background='white'"}">
-                            <i class="fas fa-arrow-down"></i> ${r.de_baja ? 'De baja' : 'Dar de baja'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function actualizarMetricasBandeja(bandeja, data) {
-            const sufijo = bandeja === 'nollego-p' ? 'p' : 'e';
-            const bajas  = data.filter(r => r.de_baja).length;
-            document.getElementById(`nollego-${sufijo}-total`).textContent   = data.length;
-            document.getElementById(`nollego-${sufijo}-baja`).textContent    = bajas;
-            document.getElementById(`nollego-${sufijo}-activos`).textContent = data.length - bajas;
-        }
-
-        function filtrarBandeja(bandeja) {
-            const sufijo   = bandeja === 'nollego-p' ? 'p' : 'e';
-            const q        = document.getElementById(`buscar-nollego-${sufijo}`).value.toLowerCase();
-            const soloBaja = document.getElementById(`filtro-baja-${sufijo}`).checked;
-            let filtrados  = datosBandeja[bandeja];
-
-            if (q) {
-                filtrados = filtrados.filter(r =>
-                    (r.descripcion     || '').toLowerCase().includes(q) ||
-                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
-                    (r.area            || '').toLowerCase().includes(q) ||
-                    (r.id_req          || '').toLowerCase().includes(q)
-                );
-            }
-            if (soloBaja) filtrados = filtrados.filter(r => r.de_baja);
-            renderizarBandeja(bandeja, filtrados);
-        }
-
-        // ── Modal asignar orden ───────────────────────────────────────────
-        function abrirModalOrden(reqId, idReq) {
-            requerimientoOrdenActual = reqId;
-            archivoPDFOrden = null;
-            document.getElementById('modal-asignar-orden').classList.add('active');
-            document.getElementById('orden-req-info').textContent = `Requerimiento: ${idReq}`;
-
-            // Resetear dropzone
-            document.getElementById('pdf-orden-nombre').textContent =
-                'Haz clic para subir el PDF de la orden';
-            document.getElementById('dropzone-orden').style.borderColor = '#e5e7eb';
-            document.getElementById('orden-loading').style.display = 'none';
-            document.getElementById('orden-ocr-ok').style.display  = 'none';
-
-            // Limpiar campos
-            document.getElementById('orden-tipo').value   = 'OS';
-            document.getElementById('orden-numero').value = '';
-            document.getElementById('orden-siaf').value   = '';
-            document.getElementById('orden-fecha').value  = '';
-
-            // Resetear input file
-            const inputOrden = document.getElementById('input-pdf-orden');
-            const nuevoInput = inputOrden.cloneNode(true);
-            inputOrden.parentNode.replaceChild(nuevoInput, inputOrden);
-            nuevoInput.addEventListener('change', function() { procesarPDFOrden(this); });
-        }
-
-        function cerrarModalOrden() {
-            document.getElementById('modal-asignar-orden').classList.remove('active');
-            requerimientoOrdenActual = null;
-            archivoPDFOrden = null;
-        }
-
-        function seleccionarPDFOrden(input) {
-            if (input.files.length) {
-                archivoPDFOrden = input.files[0];
-                document.getElementById('pdf-orden-nombre').textContent =
-                    `✓ ${archivoPDFOrden.name}`;
-            }
-        }
-
-        async function confirmarOrden() {
-            const numeroOrden = document.getElementById('orden-numero').value.trim();
-            const tipoOrden   = document.getElementById('orden-tipo').value;
-            const siaf        = document.getElementById('orden-siaf').value.trim();
-            const fechaOrden  = document.getElementById('orden-fecha').value;
-
-            // Validaciones obligatorias
-            if (!archivoPDFOrden) {
-                alert('Debes subir el PDF de la orden');
-                return;
-            }
-            if (!numeroOrden) {
-                alert('El número de orden es obligatorio');
-                return;
-            }
-            if (!siaf) {
-                alert('El código SIAF es obligatorio');
-                return;
-            }
-            if (!fechaOrden) {
-                alert('La fecha de orden es obligatoria');
-                return;
-            }
-
-            try {
-                // Subir PDF
-                const formData = new FormData();
-                formData.append('archivo', archivoPDFOrden);
-                formData.append('requerimiento_id', requerimientoOrdenActual);
-                const resPdf = await fetch(`${API}/ocr/subir-pdf-orden`, {
-                    method: 'POST',
-                    body: formData
-                });
-                if (!resPdf.ok) throw new Error('Error al subir el PDF');
-
-                // Crear la orden
-                const res = await fetch(`${API}/ordenes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        requerimiento_id: requerimientoOrdenActual,
-                        tipo_orden:       tipoOrden,
-                        numero_orden:     numeroOrden,
-                        codigo_siaf:      document.getElementById('orden-siaf').value.trim() || null,
-                        fecha_orden:      document.getElementById('orden-fecha').value.trim() || null,
-                    })
-                });
-
-                if (!res.ok) throw new Error('Error al crear la orden');
-
-                cerrarModalOrden();
-                await cargarBandeja('nollego-p');
-                await cargarBandeja('nollego-e');
-                alert('✓ Orden asignada correctamente. El requerimiento fue trasladado a "Llegó Orden".');
-
-            } catch (e) {
-                alert('Error al asignar la orden: ' + e.message);
-            }
-        }   
-        
-        // ── Variables llegó orden ─────────────────────────────────────────
-        let datosLlego = { 'llego-p': [], 'llego-e': [] };
-        let ordenActualId      = null;
-        let estadoSeleccionado = 'Espera pago';
-        let archivoFactura     = null;
-
-        // ── Cargar llegó orden ────────────────────────────────────────────
-        async function cargarLlego(bandeja) {
-            const tipo  = bandeja === 'llego-p' ? 'Propio' : 'Externo';
-            const tbody = document.getElementById(`tbody-${bandeja}`);
-            tbody.innerHTML = `<tr><td colspan="14"
-                style="text-align:center;padding:30px;color:#9ca3af">
-                <i class="fas fa-spinner fa-spin"></i> Cargando...</td></tr>`;
-
-            try {
-                const res  = await fetch(`${API}/requerimientos/con-orden?tipo=${tipo}`);
-                const data = await res.json();
-                datosLlego[bandeja] = data;
-                renderizarLlego(bandeja, data);
-                actualizarMetricasLlego(bandeja, data);
-            } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="14"
-                    style="text-align:center;color:#ef4444;padding:20px">
-                    Error al cargar datos</td></tr>`;
-            }
-        }
-
-        function renderizarLlego(bandeja, data) {
-            const tbody = document.getElementById(`tbody-${bandeja}`);
-            if (!data.length) {
-                tbody.innerHTML = `<tr><td colspan="14"
-                    style="text-align:center;color:#9ca3af;padding:30px">
-                    No hay requerimientos con orden asignada</td></tr>`;
-                return;
-            }
-            tbody.innerHTML = data.map(r => `
-                <tr>
-                    <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
-                    <td style="font-size:0.82rem">${r.fecha_orden       || '—'}</td>
-                    <td style="font-size:0.82rem">${r.fecha_asignacion  || '—'}</td>
-                    <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
-                    <td style="font-size:0.82rem">${r.plazo || '—'}</td>
-                    <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
-                    <td style="font-size:0.82rem;text-align:center">
-                        <span class="status-badge"
-                            style="background:${r.tipo_orden === 'OS' ? '#dbeafe' : '#fce7f3'};
-                                color:${r.tipo_orden === 'OS' ? '#1e40af' : '#9d174d'}">
-                            ${r.tipo_orden || '—'}
-                        </span>
-                    </td>
-                    <td style="font-size:0.82rem;font-weight:500">${r.numero_orden || '—'}</td>
-                    <td style="font-size:0.82rem;font-family:monospace">${r.codigo_siaf || '—'}</td>
-                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;
-                            overflow:hidden;text-overflow:ellipsis"
-                        title="${r.descripcion || ''}">${r.descripcion || '—'}</td>
-                    <td style="font-size:0.82rem">${r.area || '—'}</td>
-                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
-                        S/ ${(r.precio_total || 0).toLocaleString('es-PE',
-                            {minimumFractionDigits:2})}
-                    </td>
-                    <td>
-                        <span class="status-badge
-                            ${r.estado === 'Llegó pago' ? 'status-completed' : 'status-pending'}">
-                            ${r.estado || 'Espera pago'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn-view"
-                            onclick="abrirModalEstado(${r.orden_id}, '${r.id_req}', '${r.estado || 'Espera pago'}')">
-                            <i class="fas fa-edit"></i>
-                            ${r.estado === 'Llegó pago' ? 'Ver' : 'Actualizar'}
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function actualizarMetricasLlego(bandeja, data) {
-            const sufijo = bandeja === 'llego-p' ? 'p' : 'e';
-            const espera = data.filter(r => r.estado === 'Espera pago').length;
-            const pagado = data.filter(r => r.estado === 'Llegó pago').length;
-            document.getElementById(`llego-${sufijo}-total`).textContent  = data.length;
-            document.getElementById(`llego-${sufijo}-espera`).textContent = espera;
-            document.getElementById(`llego-${sufijo}-pagado`).textContent = pagado;
-        }
-
-        function filtrarLlego(bandeja) {
-            const sufijo = bandeja === 'llego-p' ? 'p' : 'e';
-            const q      = document.getElementById(`buscar-llego-${sufijo}`).value.toLowerCase();
-            const estado = document.getElementById(`filtro-estado-${sufijo}`).value;
-            let filtrados = datosLlego[bandeja];
-
-            if (q) {
-                filtrados = filtrados.filter(r =>
-                    (r.descripcion     || '').toLowerCase().includes(q) ||
-                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
-                    (r.codigo_siaf     || '').toLowerCase().includes(q) ||
-                    (r.numero_orden    || '').toLowerCase().includes(q) ||
-                    (r.id_req          || '').toLowerCase().includes(q)
-                );
-            }
-            if (estado) filtrados = filtrados.filter(r => r.estado === estado);
-            renderizarLlego(bandeja, filtrados);
-        }
-
-        // ── Modal estado de pago ──────────────────────────────────────────
-        function abrirModalEstado(ordenId, idReq, estadoActual) {
-            ordenActualId      = ordenId;
-            archivoFactura     = null;
-            archivoDetalle     = null;
-            estadoSeleccionado = estadoActual || 'Espera pago';
-
-            document.getElementById('modal-estado-pago').classList.add('active');
-            document.getElementById('estado-req-info').textContent = `Requerimiento: ${idReq}`;
-
-            // Resetear dropzones
-            document.getElementById('pdf-factura-nombre').textContent  = 'Subir factura (opcional)';
-            document.getElementById('pdf-detalle-nombre').textContent  = 'Subir detalle de factura (opcional)';
-            document.getElementById('dropzone-factura').style.borderColor = '#e5e7eb';
-            document.getElementById('dropzone-detalle').style.borderColor = '#e5e7eb';
-
-            // Resetear inputs
-            ['input-pdf-factura', 'input-pdf-detalle'].forEach(id => {
-                const el     = document.getElementById(id);
-                const nuevo  = el.cloneNode(true);
-                el.parentNode.replaceChild(nuevo, el);
-                if (id === 'input-pdf-factura') {
-                    nuevo.addEventListener('change', function() { seleccionarFactura(this); });
-                } else {
-                    nuevo.addEventListener('change', function() { seleccionarDetalle(this); });
-                }
-            });
-
-            seleccionarEstadoPago(estadoSeleccionado);
-        }
-
-        function cerrarModalEstado() {
-            document.getElementById('modal-estado-pago').classList.remove('active');
-            ordenActualId  = null;
-            archivoFactura = null;
-        }
-
-        function seleccionarEstadoPago(estado) {
-            estadoSeleccionado = estado;
-            const btnEspera = document.getElementById('btn-espera-pago');
-            const btnLlego  = document.getElementById('btn-llego-pago');
-            const secFact   = document.getElementById('seccion-factura');
-
-            if (estado === 'Espera pago') {
-                btnEspera.style.background  = '#fef3c7';
-                btnEspera.style.borderColor = '#f59e0b';
-                btnEspera.style.color       = '#92400e';
-                btnLlego.style.background   = 'white';
-                btnLlego.style.borderColor  = '#e5e7eb';
-                btnLlego.style.color        = '#6b7280';
-                secFact.style.display       = 'none';
-            } else {
-                btnLlego.style.background   = '#d1fae5';
-                btnLlego.style.borderColor  = '#10b981';
-                btnLlego.style.color        = '#065f46';
-                btnEspera.style.background  = 'white';
-                btnEspera.style.borderColor = '#e5e7eb';
-                btnEspera.style.color       = '#6b7280';
-                secFact.style.display       = 'block';
-            }
-        }
-
-        let archivoDetalle = null;
-
-        function seleccionarFactura(input) {
-            if (input.files.length) {
-                archivoFactura = input.files[0];
-                document.getElementById('pdf-factura-nombre').textContent =
-                    `✓ ${archivoFactura.name}`;
-                document.getElementById('dropzone-factura').style.borderColor = '#10b981';
-            }
-        }
-
-        function seleccionarDetalle(input) {
-            if (input.files.length) {
-                archivoDetalle = input.files[0];
-                document.getElementById('pdf-detalle-nombre').textContent =
-                    `✓ ${archivoDetalle.name}`;
-                document.getElementById('dropzone-detalle').style.borderColor = '#3b82f6';
-            }
-        }
-
-        async function confirmarEstadoPago() {
-            if (!ordenActualId) return;
-
-            try {
-                // Actualizar estado
-                const res = await fetch(`${API}/ordenes/${ordenActualId}/estado`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ estado: estadoSeleccionado })
-                });
-                if (!res.ok) throw new Error('Error al actualizar estado');
-
-                // Subir archivos si se seleccionaron
-                if (archivoFactura || archivoDetalle) {
-                    const formData = new FormData();
-                    if (archivoFactura)  formData.append('archivo',         archivoFactura);
-                    if (archivoDetalle)  formData.append('archivo_detalle', archivoDetalle);
-
-                    const resFact = await fetch(
-                        `${API}/ordenes/${ordenActualId}/cargar-factura`,
-                        { method: 'POST', body: formData }
-                    );
-                    if (!resFact.ok) {
-                        const err = await resFact.json();
-                        alert(`Estado actualizado pero error al subir archivos: ${err.detail}`);
-                    }
-                }
-
-                cerrarModalEstado();
-                await cargarLlego('llego-p');
-                await cargarLlego('llego-e');
-                alert(`✓ Estado actualizado a "${estadoSeleccionado}"`);
-
-            } catch (e) {
-                alert('Error al actualizar: ' + e.message);
-            }
-        }  
-        
-        async function darDeBajaManual(id, idReq, btn) {
-            if (!confirm(`¿Dar de baja el requerimiento ${idReq}?\nEsta acción no se puede deshacer.`)) {
-                return;
-            }
-            try {
-                const res = await fetch(`${API}/requerimientos/${id}/dar-baja`, {
-                    method: 'PATCH'
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    alert(err.detail || 'Error al dar de baja');
-                    return;
-                }
-                // Actualizar visualmente sin recargar toda la tabla
-                const fila = btn.closest('tr');
-                fila.style.opacity   = '0.6';
-                fila.style.background = '#fff5f5';
-                btn.disabled          = true;
-                btn.style.opacity     = '0.4';
-                btn.style.cursor      = 'not-allowed';
-                btn.innerHTML         = '<i class="fas fa-arrow-down"></i> De baja';
-
-                // Deshabilitar también el botón de cargar PDF
-                const btnCargar = fila.querySelector('.btn-view');
-                if (btnCargar) {
-                    btnCargar.disabled     = true;
-                    btnCargar.style.opacity = '0.4';
-                    btnCargar.style.cursor  = 'not-allowed';
-                }
-
-                // Actualizar métricas
-                await cargarBandeja('nollego-p');
-                await cargarBandeja('nollego-e');
-
-            } catch (e) {
-                alert('Error al conectar con el servidor');
-            }
-        }
-
-        async function procesarPDFOrden(input) {
-            if (!input.files.length) return;
-            archivoPDFOrden = input.files[0];
-
-            // Mostrar nombre del archivo
-            document.getElementById('pdf-orden-nombre').textContent = `✓ ${archivoPDFOrden.name}`;
-            document.getElementById('dropzone-orden').style.borderColor = '#10b981';
-
-            // Mostrar loading
-            document.getElementById('orden-loading').style.display = 'block';
-            document.getElementById('orden-ocr-ok').style.display  = 'none';
-
-            try {
-                const formData = new FormData();
-                formData.append('archivo', archivoPDFOrden);
-
-                const res = await fetch(`${API}/ocr/leer-orden`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!res.ok) throw new Error('Error al leer el PDF');
-                const datos = await res.json();
-
-                // Prellenar formulario con los datos extraídos
-                if (datos.tipo_orden) {
-                    document.getElementById('orden-tipo').value = datos.tipo_orden;
-                }
-                if (datos.numero_orden) {
-                    document.getElementById('orden-numero').value = datos.numero_orden;
-                }
-                if (datos.codigo_siaf) {
-                    document.getElementById('orden-siaf').value = datos.codigo_siaf;
-                }
-                if (datos.fecha_orden) {
-                    document.getElementById('orden-fecha').value = datos.fecha_orden;
-                }
-
-                // Ocultar loading, mostrar éxito
-                document.getElementById('orden-loading').style.display = 'none';
-                document.getElementById('orden-ocr-ok').style.display  = 'flex';
-
-            } catch (e) {
-                document.getElementById('orden-loading').style.display = 'none';
-                document.getElementById('pdf-orden-nombre').textContent =
-                    'Error al leer el PDF. Completa los campos manualmente.';
-                document.getElementById('dropzone-orden').style.borderColor = '#ef4444';
-            }
-        }
-
-    </script>
+    <script src="app.js"></script>
 </body>
 
 </html>
