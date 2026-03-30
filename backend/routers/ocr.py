@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from database import get_connection
 import requests
 import base64
@@ -358,25 +358,53 @@ def actualizar_item(item_id: int, data: ItemUpdate):
 
 @router.post("/subir-pdf-orden")
 async def subir_pdf_orden(
-    archivo: UploadFile = File(...),
-    requerimiento_id: int = 0
+    archivo:          UploadFile = File(...),
+    requerimiento_id: int        = Form(0),
+    tipo_orden:       str        = Form("OS"),
+    numero_orden:     str        = Form("0"),
 ):
     if not archivo.filename.endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Solo se aceptan PDFs")
 
-    nombre   = f"orden_{requerimiento_id}_{archivo.filename}"
-    ruta     = os.path.join(
-        ORDERS_PATH, nombre
-    )
+    # Obtener id_req para el nombre estructurado
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT id_req FROM requerimientos WHERE id = ?", (requerimiento_id,)
+        ).fetchone()
+    id_req = row["id_req"] if row else str(requerimiento_id)
+
+    # Formato: OS-0012740_REQ-2026-0043.pdf
+    nombre = f"{tipo_orden}-{numero_orden}_{id_req}.pdf"
+    ruta   = os.path.join(ORDERS_PATH, nombre)
+
     contenido = await archivo.read()
     with open(ruta, "wb") as f:
         f.write(contenido)
 
-    # Actualizar ruta en el requerimiento
+    return {"mensaje": "PDF guardado", "ruta": str(ruta), "nombre": nombre}
+
+
+@router.post("/guardar-pdf-req")
+async def guardar_pdf_req(
+    archivo:          UploadFile = File(...),
+    requerimiento_id: int        = Form(...),
+    id_req:           str        = Form(...),
+):
+    if not archivo.filename.endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Solo se aceptan PDFs")
+
+    REQS_PATH = Path(__file__).resolve().parent.parent.parent / "pdfs" / "requerimientos"
+    nombre = f"requerimiento_{id_req}.pdf"
+    ruta   = os.path.join(REQS_PATH, nombre)
+
+    contenido = await archivo.read()
+    with open(ruta, "wb") as f:
+        f.write(contenido)
+
     with get_connection() as conn:
         conn.execute(
             "UPDATE requerimientos SET pdf_req_ruta = ? WHERE id = ?",
-            (ruta, requerimiento_id)
+            (str(ruta), requerimiento_id)
         )
 
-    return {"mensaje": "PDF guardado", "ruta": ruta}
+    return {"mensaje": "PDF de requerimiento guardado", "ruta": str(ruta)}

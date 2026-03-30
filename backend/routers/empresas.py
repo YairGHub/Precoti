@@ -1,3 +1,4 @@
+import sqlite3
 from fastapi import APIRouter, HTTPException
 from database import get_connection
 from models import EmpresaCreate
@@ -23,7 +24,7 @@ def crear_empresa(data: EmpresaCreate):
                 VALUES (?,?,?,?)
             """, (data.ruc, data.desc_empresa, data.rubro, data.correo))
             return {"mensaje": "Empresa registrada"}
-        except Exception:
+        except sqlite3.IntegrityError:
             raise HTTPException(status_code=400, detail="El RUC ya existe")
 
 @router.delete("/{ruc}")

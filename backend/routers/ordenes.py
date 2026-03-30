@@ -20,15 +20,16 @@ def asignar_orden(data: OrdenCreate):
         cursor.execute("""
             INSERT INTO ordenes
                 (requerimiento_id, tipo_orden, numero_orden,
-                 codigo_siaf, fecha_orden, fecha_asignacion)
-            VALUES (?,?,?,?,?,?)
+                 codigo_siaf, fecha_orden, fecha_asignacion, pdf_orden_ruta)
+            VALUES (?,?,?,?,?,?,?)
         """, (
-            data.requerimiento_id, 
+            data.requerimiento_id,
             data.tipo_orden,
-            data.numero_orden, 
-            data.codigo_siaf, 
+            data.numero_orden,
+            data.codigo_siaf,
             data.fecha_orden,
             str(date.today()),
+            data.pdf_orden_ruta,
         ))
         cursor.execute(
             "UPDATE requerimientos SET tiene_orden = 1 WHERE id = ?",

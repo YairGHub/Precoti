@@ -32,6 +32,52 @@ def listar_requerimientos(tipo: str = None, tiene_orden: int = None):
         cursor.execute(query, params)
         return [dict(r) for r in cursor.fetchall()]
     
+@router.get("/metricas")
+def obtener_metricas():
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE de_baja = 0")
+        total = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden = 1 AND de_baja = 0")
+        con_orden = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden = 0 AND de_baja = 0")
+        sin_orden = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE estado = 'Llegó pago'")
+        pagados = cursor.fetchone()[0]
+        cursor.execute("SELECT COALESCE(SUM(precio_total), 0) FROM requerimientos WHERE de_baja = 0")
+        monto_total = cursor.fetchone()[0]
+        return {
+            "total_reqs": total,
+            "con_orden": con_orden,
+            "sin_orden": sin_orden,
+            "pagados": pagados,
+            "monto_total": round(monto_total, 2),
+        }
+
+@router.get("/buscar")
+def buscar_requerimientos(q: str = ""):
+    if not q or len(q.strip()) < 2:
+        return []
+    term = f"%{q.strip()}%"
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT r.id, r.id_req, r.descripcion, r.area, r.empresa_ganadora,
+                   r.tipo, r.tiene_orden, r.de_baja, r.precio_total,
+                   o.tipo_orden, o.numero_orden, o.codigo_siaf, o.estado
+            FROM requerimientos r
+            LEFT JOIN ordenes o ON o.requerimiento_id = r.id
+            WHERE r.id_req          LIKE ? COLLATE NOCASE
+               OR r.descripcion     LIKE ? COLLATE NOCASE
+               OR r.empresa_ganadora LIKE ? COLLATE NOCASE
+               OR r.numero_pedido   LIKE ? COLLATE NOCASE
+               OR o.numero_orden    LIKE ? COLLATE NOCASE
+               OR o.codigo_siaf     LIKE ? COLLATE NOCASE
+            ORDER BY r.id DESC
+            LIMIT 30
+        """, (term, term, term, term, term, term))
+        return [dict(r) for r in cursor.fetchall()]
+
 @router.get("/con-orden")
 def listar_con_orden(tipo: str = None):
     """
@@ -48,7 +94,7 @@ def listar_con_orden(tipo: str = None):
                 o.id         AS orden_id,
                 o.tipo_orden, o.numero_orden, o.codigo_siaf,
                 o.estado,    o.fecha_asignacion, o.fecha_orden,  o.fecha_pago,
-                o.pdf_orden_ruta, o.pdf_factura_ruta
+                o.pdf_orden_ruta, o.pdf_factura_ruta, o.pdf_detalle_factura_ruta
             FROM requerimientos r
             JOIN ordenes o ON o.requerimiento_id = r.id
             WHERE r.tiene_orden = 1
