@@ -36,22 +36,160 @@ def listar_requerimientos(tipo: str = None, tiene_orden: int = None):
 def obtener_metricas():
     with get_connection() as conn:
         cursor = conn.cursor()
+
+        # ── KPIs básicos ──────────────────────────────────────────────
         cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE de_baja = 0")
         total = cursor.fetchone()[0]
-        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden = 1 AND de_baja = 0")
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=1 AND de_baja=0")
         con_orden = cursor.fetchone()[0]
-        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden = 0 AND de_baja = 0")
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=0 AND de_baja=0")
         sin_orden = cursor.fetchone()[0]
-        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE estado = 'Llegó pago'")
-        pagados = cursor.fetchone()[0]
-        cursor.execute("SELECT COALESCE(SUM(precio_total), 0) FROM requerimientos WHERE de_baja = 0")
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE de_baja=1")
+        de_baja = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tipo='Propio' AND de_baja=0")
+        propio_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tipo='Externo' AND de_baja=0")
+        externo_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COALESCE(SUM(precio_total),0) FROM requerimientos WHERE de_baja=0")
         monto_total = cursor.fetchone()[0]
+
+        # ── Estado de pagos ───────────────────────────────────────────
+        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE estado='Llegó pago'")
+        pagados = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE estado='Espera pago'")
+        espera_pago = cursor.fetchone()[0]
+        cursor.execute("""
+            SELECT COUNT(*) FROM ordenes o
+            JOIN requerimientos r ON r.id = o.requerimiento_id
+            WHERE o.pdf_factura_ruta IS NULL OR o.pdf_factura_ruta = ''
+        """)
+        sin_factura = cursor.fetchone()[0]
+        cursor.execute("SELECT COALESCE(SUM(r.precio_total),0) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Llegó pago'")
+        monto_pagado = cursor.fetchone()[0]
+        cursor.execute("SELECT COALESCE(SUM(r.precio_total),0) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Espera pago'")
+        monto_espera = cursor.fetchone()[0]
+
+        # ── Tipo de orden OC / OS ─────────────────────────────────────
+        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE tipo_orden='OC'")
+        oc_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM ordenes WHERE tipo_orden='OS'")
+        os_count = cursor.fetchone()[0]
+
+        # ── Activos sin orden (sin baja) ──────────────────────────────
+        cursor.execute("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=0 AND de_baja=0")
+        activos_sin_orden = cursor.fetchone()[0]
+
+        # ── Monto por empresa (top 8) ─────────────────────────────────
+        cursor.execute("""
+            SELECT COALESCE(empresa_ganadora,'Sin empresa') AS empresa,
+                   ROUND(SUM(precio_total),2) AS total
+            FROM requerimientos
+            WHERE de_baja=0 AND empresa_ganadora IS NOT NULL AND empresa_ganadora != ''
+            GROUP BY empresa_ganadora
+            ORDER BY total DESC
+            LIMIT 8
+        """)
+        monto_por_empresa = [{"empresa": r["empresa"], "total": r["total"]} for r in cursor.fetchall()]
+
+        # ── Evolución mensual año en curso ────────────────────────────
+        cursor.execute("SELECT valor FROM config WHERE clave='año_actual'")
+        row = cursor.fetchone()
+        anio = row["valor"] if row else str(date.today().year)
+        evolucion = []
+        meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+        for m in range(1, 13):
+            mes_str = f"{anio}-{m:02d}"
+            cursor.execute("""
+                SELECT COUNT(*) FROM requerimientos
+                WHERE tipo='Propio' AND strftime('%Y-%m', fecha_registro) = ?
+            """, (mes_str,))
+            p = cursor.fetchone()[0]
+            cursor.execute("""
+                SELECT COUNT(*) FROM requerimientos
+                WHERE tipo='Externo' AND strftime('%Y-%m', fecha_registro) = ?
+            """, (mes_str,))
+            e = cursor.fetchone()[0]
+            evolucion.append({"mes": meses[m-1], "propio": p, "externo": e})
+
+        # ── Reqs por área (top 9 + "Otras") ──────────────────────────
+        cursor.execute("""
+            SELECT COALESCE(area,'Sin área') AS area, COUNT(*) AS total
+            FROM requerimientos WHERE de_baja=0
+            GROUP BY area ORDER BY total DESC
+        """)
+        todas_areas = cursor.fetchall()
+        por_area = [{"area": r["area"], "total": r["total"]} for r in todas_areas[:9]]
+        if len(todas_areas) > 9:
+            otras = sum(r["total"] for r in todas_areas[9:])
+            por_area.append({"area": "Otras", "total": otras})
+
+        # ── Estado agrupado propio/externo ────────────────────────────
+        labels_estado = ['Con Orden','Sin Orden','De Baja','Espera Pago','Llegó Pago']
+        def cnt(q, p): cursor.execute(q, p); return cursor.fetchone()[0]
+        estado_propio = [
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=1 AND de_baja=0 AND tipo=?",('Propio',)),
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=0 AND de_baja=0 AND tipo=?",('Propio',)),
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE de_baja=1 AND tipo=?",('Propio',)),
+            cnt("SELECT COUNT(*) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Espera pago' AND r.tipo=?",('Propio',)),
+            cnt("SELECT COUNT(*) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Llegó pago' AND r.tipo=?",('Propio',)),
+        ]
+        estado_externo = [
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=1 AND de_baja=0 AND tipo=?",('Externo',)),
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE tiene_orden=0 AND de_baja=0 AND tipo=?",('Externo',)),
+            cnt("SELECT COUNT(*) FROM requerimientos WHERE de_baja=1 AND tipo=?",('Externo',)),
+            cnt("SELECT COUNT(*) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Espera pago' AND r.tipo=?",('Externo',)),
+            cnt("SELECT COUNT(*) FROM ordenes o JOIN requerimientos r ON r.id=o.requerimiento_id WHERE o.estado='Llegó pago' AND r.tipo=?",('Externo',)),
+        ]
+
+        # ── Últimos 8 requerimientos ──────────────────────────────────
+        cursor.execute("""
+            SELECT r.id_req, r.fecha_registro, r.empresa_ganadora, r.tipo,
+                   r.descripcion, r.precio_total, r.tiene_orden, r.de_baja,
+                   o.tipo_orden, o.numero_orden, o.estado AS estado_pago
+            FROM requerimientos r
+            LEFT JOIN ordenes o ON o.requerimiento_id = r.id
+            ORDER BY r.id DESC LIMIT 8
+        """)
+        ultimos = []
+        for row in cursor.fetchall():
+            estado = ('De baja' if row['de_baja']
+                      else row['estado_pago'] if row['estado_pago']
+                      else ('Sin orden' if not row['tiene_orden'] else 'Activo'))
+            ultimos.append({
+                "id_req": row["id_req"],
+                "fecha_registro": row["fecha_registro"] or "—",
+                "empresa": row["empresa_ganadora"] or "—",
+                "tipo_req": row["tipo"] or "—",
+                "descripcion": (row["descripcion"] or "")[:45] + ("…" if len(row["descripcion"] or "") > 45 else ""),
+                "precio_total": round(row["precio_total"] or 0, 2),
+                "tipo_orden": row["tipo_orden"] or "—",
+                "numero_orden": row["numero_orden"] or "—",
+                "estado": estado,
+            })
+
         return {
             "total_reqs": total,
             "con_orden": con_orden,
             "sin_orden": sin_orden,
-            "pagados": pagados,
+            "de_baja": de_baja,
+            "propio_count": propio_count,
+            "externo_count": externo_count,
             "monto_total": round(monto_total, 2),
+            "pagados": pagados,
+            "espera_pago": espera_pago,
+            "sin_factura": sin_factura,
+            "monto_pagado": round(monto_pagado, 2),
+            "monto_espera": round(monto_espera, 2),
+            "oc_count": oc_count,
+            "os_count": os_count,
+            "activos_sin_orden": activos_sin_orden,
+            "monto_por_empresa": monto_por_empresa,
+            "evolucion": evolucion,
+            "por_area": por_area,
+            "labels_estado": labels_estado,
+            "estado_propio": estado_propio,
+            "estado_externo": estado_externo,
+            "ultimos": ultimos,
         }
 
 @router.get("/buscar")
