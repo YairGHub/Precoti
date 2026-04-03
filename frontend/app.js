@@ -28,6 +28,7 @@
                     document.getElementById('login-error').style.display = 'none';
                     document.getElementById('loginPage').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
+                    cargarGeneral();
                 } else {
                     document.getElementById('login-error').style.display = 'block';
                     document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos';
@@ -67,12 +68,45 @@
             closeModal();
         }
 
-        function showSection(sectionName) {
+        function _resetearFiltros(sectionName) {
+            const mapa = {
+                'documentos':   { texto: 'buscador-docs',    desde: 'desde-docs',       hasta: 'hasta-docs',       key: 'documentos', cardId: 'card-docs-total',      grupo: null },
+                'no-llego':     { texto: 'buscar-nollego-p', desde: 'desde-nollego-p',  hasta: 'hasta-nollego-p',  key: 'nollego-p',  cardId: 'card-nollego-p-total', grupo: '_cardsNP' },
+                'noexterOrden': { texto: 'buscar-nollego-e', desde: 'desde-nollego-e',  hasta: 'hasta-nollego-e',  key: 'nollego-e',  cardId: 'card-nollego-e-total', grupo: '_cardsNE' },
+                'llego':        { texto: 'buscar-llego-p',   desde: 'desde-llego-p',    hasta: 'hasta-llego-p',    key: 'llego-p',    cardId: 'card-llego-p-total',   grupo: '_cardsLP' },
+                'exterOrden':   { texto: 'buscar-llego-e',   desde: 'desde-llego-e',    hasta: 'hasta-llego-e',    key: 'llego-e',    cardId: 'card-llego-e-total',   grupo: '_cardsLE' },
+            };
+            // Reset mensajes (sin inputs de texto/fecha)
+            if (sectionName === 'mensajes') {
+                cardFiltros.mensajes = 'all';
+                _activarCard(null, _cardsMsg);
+                return;
+            }
+            const cfg = mapa[sectionName];
+            if (!cfg) return;
+            const _id = id => document.getElementById(id);
+            if (_id(cfg.texto)) _id(cfg.texto).value = '';
+            if (_id(cfg.desde)) _id(cfg.desde).value = '';
+            if (_id(cfg.hasta)) _id(cfg.hasta).value = '';
+            if (cardFiltros[cfg.key] !== undefined) {
+                cardFiltros[cfg.key] = 'all';
+                const grupos = { _cardsNP, _cardsNE, _cardsLP, _cardsLE,
+                                 documentos: _cardsDoc };
+                const g = cfg.grupo ? grupos[cfg.grupo] : _cardsDoc;
+                _activarCard(cfg.cardId, g);
+            }
+        }
 
-            if (sectionName === 'no-llego')       cargarBandeja('nollego-p');
-            if (sectionName === 'noexterOrden')   cargarBandeja('nollego-e');
-            if (sectionName === 'llego')       cargarLlego('llego-p');
-            if (sectionName === 'exterOrden')  cargarLlego('llego-e');
+        function showSection(sectionName, evt) {
+            // Permite llamar desde onclick sin pasar event
+            if (evt) event = evt;
+
+            _resetearFiltros(sectionName);
+
+            if (sectionName === 'no-llego')      cargarBandeja('nollego-p');
+            if (sectionName === 'noexterOrden')  cargarBandeja('nollego-e');
+            if (sectionName === 'llego')         cargarLlego('llego-p');
+            if (sectionName === 'exterOrden')    cargarLlego('llego-e');
 
             // Ocultar todas las secciones
             document.querySelectorAll('.content-section').forEach(section => {
@@ -85,11 +119,15 @@
                 targetSection.classList.add('active');
             }
 
-            // Actualizar navegación activa
+            // Actualizar navegación activa (solo si se originó desde un nav-item)
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.currentTarget.classList.add('active');
+            const navMatch = document.querySelector(`.nav-item[onclick*="'${sectionName}'"]`);
+            if (navMatch) navMatch.classList.add('active');
+            else if (event && event.currentTarget && event.currentTarget.classList.contains('nav-item')) {
+                event.currentTarget.classList.add('active');
+            }
 
             // Actualizar título del header
             const titles = {
@@ -109,6 +147,7 @@
             document.querySelector('.header-title').textContent = titles[sectionName] || 'General';
 
             // Cargar datos según la sección
+            if (sectionName === 'general')     cargarGeneral();
             if (sectionName === 'documentos')  cargarDocumentos();
             if (sectionName === 'calendario')  cargarCalendario();
             if (sectionName === 'mensajes')    cargarMensajes();
@@ -663,12 +702,182 @@
             }
         }
 
+        // ── Sección General ───────────────────────────────────────────────
+        async function cargarGeneral() {
+            // Saludo dinámico
+            const hora = new Date().getHours();
+            const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+            const el = document.getElementById('gen-saludo-texto');
+            if (el) el.textContent = `${saludo}, ${currentUser || 'Usuario'} 👋`;
+
+            // Fecha actual
+            const hoy = new Date();
+            const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+            const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+            const fechaEl = document.getElementById('gen-fecha-hoy');
+            if (fechaEl) fechaEl.textContent =
+                `${dias[hoy.getDay()]}, ${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+
+            // Datos del backend en paralelo
+            try {
+                const [metricas, reqs, conOrdenP, conOrdenE] = await Promise.all([
+                    fetch(`${API}/requerimientos/metricas`).then(r => r.json()),
+                    fetch(`${API}/requerimientos`).then(r => r.json()),
+                    fetch(`${API}/requerimientos/con-orden?tipo=Propio`).then(r => r.json()),
+                    fetch(`${API}/requerimientos/con-orden?tipo=Externo`).then(r => r.json()),
+                ]);
+
+                // ── KPIs
+                const monFmt = v => {
+                    const n = (Number(v)||0).toFixed(2).split('.');
+                    return 'S/ ' + n[0].replace(/\B(?=(\d{3})+(?!\d))/g,',') + '.' + n[1];
+                };
+                const gs = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+                gs('gen-k-total',   metricas.total_reqs);
+                gs('gen-k-total-sub', `Propio: ${metricas.propio_count || '—'} · Externo: ${metricas.externo_count || '—'}`);
+                gs('gen-k-con',     metricas.con_orden);
+                gs('gen-k-con-sub', `Pagados: ${metricas.pagados || 0} · Espera: ${metricas.espera_pago || 0}`);
+                gs('gen-k-sin',     metricas.sin_orden);
+                gs('gen-k-sin-sub', `Activos: ${metricas.activos_sin_orden || 0} · Baja: ${metricas.de_baja || 0}`);
+                gs('gen-k-espera',  metricas.espera_pago || 0);
+                gs('gen-k-espera-sub', monFmt(metricas.monto_espera));
+                gs('gen-k-monto',   monFmt(metricas.monto_total));
+                gs('gen-k-monto-sub', `Cobrado: ${monFmt(metricas.monto_pagado)}`);
+
+                // ── Conteo bandejas
+                const sinOrdenP = reqs.filter(r => r.tiene_orden === 0 && r.tipo === 'Propio' && !r.de_baja).length;
+                const sinOrdenE = reqs.filter(r => r.tiene_orden === 0 && r.tipo === 'Externo' && !r.de_baja).length;
+                const deBaja    = reqs.filter(r => r.de_baja).length;
+                gs('gen-b-nollego-p', sinOrdenP);
+                gs('gen-b-nollego-e', sinOrdenE);
+                gs('gen-b-llego-p',   conOrdenP.length);
+                gs('gen-b-llego-e',   conOrdenE.length);
+                gs('gen-b-baja',      deBaja);
+
+                // ── Alertas de vencimiento (top 5 más urgentes)
+                const todosConOrden = [...conOrdenP, ...conOrdenE];
+                const eventos = calcularVencimientos(todosConOrden)
+                    .sort((a, b) => a.dias_restantes - b.dias_restantes)
+                    .slice(0, 5);
+                const alertasEl = document.getElementById('gen-alertas');
+                if (alertasEl) {
+                    if (!eventos.length) {
+                        alertasEl.innerHTML = '<p style="color:#9ca3af;text-align:center;padding:16px;font-size:0.82rem">Sin vencimientos próximos</p>';
+                    } else {
+                        alertasEl.innerHTML = eventos.map(e => {
+                            const c = colorDias(e.dias_restantes);
+                            const label = e.dias_restantes <= 0
+                                ? `Venció hace ${Math.abs(e.dias_restantes)}d`
+                                : `Faltan ${e.dias_restantes}d`;
+                            const bg = e.dias_restantes <= 0 ? '#fff1f2'
+                                     : e.dias_restantes <= 7 ? '#fff7ed'
+                                     : '#f0fdf4';
+                            return `
+                            <div class="gen-alerta" style="background:${bg};border-color:${c}">
+                                <div class="gen-alerta-info">
+                                    <div class="gen-alerta-id">${e.id_req}
+                                        <span style="color:#6b7280;font-weight:400;margin-left:6px;font-size:0.75rem">${e.tipo_orden} ${e.numero_orden}</span>
+                                    </div>
+                                    <div class="gen-alerta-desc" title="${e.descripcion}">${e.descripcion}</div>
+                                </div>
+                                <span class="gen-alerta-tag" style="background:${c}22;color:${c}">${label}</span>
+                            </div>`;
+                        }).join('');
+                    }
+                }
+
+                // ── Últimos 6 requerimientos
+                const ultimos = reqs.slice(0, 6);
+                const tbody = document.getElementById('gen-ultimos-tbody');
+                if (tbody) {
+                    tbody.innerHTML = ultimos.length ? ultimos.map(r => `
+                        <tr>
+                            <td style="color:#1e3a8a;font-weight:700;font-size:0.8rem">${r.id_req}</td>
+                            <td style="color:#374151;font-size:0.78rem;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+                                title="${r.descripcion||''}">${r.descripcion||'—'}</td>
+                            <td style="font-size:0.78rem;color:#6b7280">${r.empresa_ganadora||'—'}</td>
+                            <td style="text-align:right;font-size:0.78rem;font-weight:600;color:#1f2937">${monFmt(r.precio_total)}</td>
+                            <td style="text-align:center">
+                                <span style="font-size:0.7rem;padding:2px 8px;border-radius:999px;font-weight:700;
+                                    background:${r.tipo==='Propio'?'#dbeafe':'#f5f3ff'};
+                                    color:${r.tipo==='Propio'?'#1d4ed8':'#6d28d9'}">${r.tipo}</span>
+                            </td>
+                        </tr>`).join('')
+                        : '<tr><td colspan="5" style="text-align:center;padding:16px;color:#9ca3af">Sin registros</td></tr>';
+                }
+
+            } catch(e) {
+                console.error('Error cargando General:', e);
+            }
+        }
+
+        // ── Filtros por card ──────────────────────────────────────────────
+        const cardFiltros = {
+            documentos: 'all',
+            'nollego-p': 'all',
+            'nollego-e': 'all',
+            'llego-p':   'all',
+            'llego-e':   'all',
+            mensajes:    'all',
+        };
+
+        const _cardsDoc   = ['card-docs-total','card-docs-propio','card-docs-externo','card-docs-sin-orden'];
+        const _cardsNP    = ['card-nollego-p-total','card-nollego-p-baja','card-nollego-p-activo'];
+        const _cardsNE    = ['card-nollego-e-total','card-nollego-e-baja','card-nollego-e-activo'];
+        const _cardsLP    = ['card-llego-p-total','card-llego-p-espera','card-llego-p-pagado'];
+        const _cardsLE    = ['card-llego-e-total','card-llego-e-espera','card-llego-e-pagado'];
+        const _cardsMsg   = ['card-msg-critico','card-msg-proximo','card-msg-ok'];
+
+        function _activarCard(activeId, grupo) {
+            grupo.forEach(id => document.getElementById(id)?.classList.remove('card-active'));
+            if (activeId) document.getElementById(activeId)?.classList.add('card-active');
+        }
+
+        function filtroCardDocs(filtro) {
+            const mismo = cardFiltros.documentos === filtro && filtro !== 'all';
+            cardFiltros.documentos = mismo ? 'all' : filtro;
+            const mapa = { all: 'card-docs-total', Propio: 'card-docs-propio',
+                           Externo: 'card-docs-externo', 'sin-orden': 'card-docs-sin-orden' };
+            _activarCard(cardFiltros.documentos === 'all' ? 'card-docs-total' : mapa[cardFiltros.documentos], _cardsDoc);
+            filtrarDocumentos();
+        }
+
+        function filtroCardBandeja(bandeja, filtro) {
+            const mismo = cardFiltros[bandeja] === filtro && filtro !== 'all';
+            cardFiltros[bandeja] = mismo ? 'all' : filtro;
+            const grupo = bandeja === 'nollego-p' ? _cardsNP : _cardsNE;
+            const mapa = { 'nollego-p': { all:'card-nollego-p-total', baja:'card-nollego-p-baja', activo:'card-nollego-p-activo' },
+                           'nollego-e': { all:'card-nollego-e-total', baja:'card-nollego-e-baja', activo:'card-nollego-e-activo' } };
+            _activarCard(mapa[bandeja][cardFiltros[bandeja]], grupo);
+            filtrarBandeja(bandeja);
+        }
+
+        function filtroCardMensajes(filtro) {
+            const mismo = cardFiltros.mensajes === filtro;
+            cardFiltros.mensajes = mismo ? 'all' : filtro;
+            const mapa = { all: null, critico: 'card-msg-critico', proximo: 'card-msg-proximo', ok: 'card-msg-ok' };
+            _activarCard(mapa[cardFiltros.mensajes], _cardsMsg);
+            renderizarMensajes();
+        }
+
+        function filtroCardLlego(bandeja, filtro) {
+            const mismo = cardFiltros[bandeja] === filtro && filtro !== 'all';
+            cardFiltros[bandeja] = mismo ? 'all' : filtro;
+            const grupo = bandeja === 'llego-p' ? _cardsLP : _cardsLE;
+            const mapa = { 'llego-p': { all:'card-llego-p-total', 'Espera pago':'card-llego-p-espera', 'Llegó pago':'card-llego-p-pagado' },
+                           'llego-e': { all:'card-llego-e-total', 'Espera pago':'card-llego-e-espera', 'Llegó pago':'card-llego-e-pagado' } };
+            _activarCard(mapa[bandeja][cardFiltros[bandeja]], grupo);
+            filtrarLlego(bandeja);
+        }
+
         // ── Cargar tabla de documentos ────────────────────────────────────
         async function cargarDocumentos() {
             try {
                 const res  = await fetch(`${API}/requerimientos`);
                 const data = await res.json();
                 todosLosDocumentos = data;
+                cardFiltros.documentos = 'all';
+                _activarCard('card-docs-total', _cardsDoc);
                 renderizarTablaDocumentos(data);
                 actualizarMetricasDocumentos(data);
             } catch (e) {
@@ -718,13 +927,33 @@
         }
 
         function filtrarDocumentos() {
-            const q = document.getElementById('buscador-docs').value.toLowerCase();
-            const filtrados = todosLosDocumentos.filter(r =>
+            const q     = document.getElementById('buscador-docs').value.toLowerCase();
+            const desde = document.getElementById('desde-docs').value;
+            const hasta = document.getElementById('hasta-docs').value;
+
+            // Base (texto + fecha): actualiza contadores de cards
+            let base = todosLosDocumentos;
+            if (q) base = base.filter(r =>
                 (r.descripcion || '').toLowerCase().includes(q) ||
                 (r.area        || '').toLowerCase().includes(q) ||
                 (r.id_req      || '').toLowerCase().includes(q)
             );
+            base = _filtroFecha(base, 'fecha_registro', desde, hasta);
+            actualizarMetricasDocumentos(base);
+
+            // Card encima: filtra la tabla
+            let filtrados = base;
+            const cf = cardFiltros.documentos;
+            if (cf === 'Propio')    filtrados = filtrados.filter(r => r.tipo === 'Propio');
+            if (cf === 'Externo')   filtrados = filtrados.filter(r => r.tipo === 'Externo');
+            if (cf === 'sin-orden') filtrados = filtrados.filter(r => r.tiene_orden === 0);
             renderizarTablaDocumentos(filtrados);
+        }
+
+        function _filtroFecha(lista, campo, desde, hasta) {
+            if (desde) lista = lista.filter(r => (r[campo] || '') >= desde);
+            if (hasta) lista = lista.filter(r => (r[campo] || '') <= hasta);
+            return lista;
         }
 
         // ── Ver ítems de un requerimiento ─────────────────────────────────
@@ -848,6 +1077,9 @@
                 const res  = await fetch(`${API}/requerimientos?tiene_orden=0&tipo=${tipo}`);
                 const data = await res.json();
                 datosBandeja[bandeja] = data;
+                cardFiltros[bandeja] = 'all';
+                _activarCard(bandeja === 'nollego-p' ? 'card-nollego-p-total' : 'card-nollego-e-total',
+                             bandeja === 'nollego-p' ? _cardsNP : _cardsNE);
                 renderizarBandeja(bandeja, data);
                 actualizarMetricasBandeja(bandeja, data);
             } catch (e) {
@@ -921,20 +1153,27 @@
         }
 
         function filtrarBandeja(bandeja) {
-            const sufijo   = bandeja === 'nollego-p' ? 'p' : 'e';
-            const q        = document.getElementById(`buscar-nollego-${sufijo}`).value.toLowerCase();
-            const soloBaja = document.getElementById(`filtro-baja-${sufijo}`).checked;
-            let filtrados  = datosBandeja[bandeja];
+            const sufijo = bandeja === 'nollego-p' ? 'p' : 'e';
+            const q      = document.getElementById(`buscar-nollego-${sufijo}`).value.toLowerCase();
+            const desde  = document.getElementById(`desde-${bandeja}`).value;
+            const hasta  = document.getElementById(`hasta-${bandeja}`).value;
 
-            if (q) {
-                filtrados = filtrados.filter(r =>
-                    (r.descripcion     || '').toLowerCase().includes(q) ||
-                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
-                    (r.area            || '').toLowerCase().includes(q) ||
-                    (r.id_req          || '').toLowerCase().includes(q)
-                );
-            }
-            if (soloBaja) filtrados = filtrados.filter(r => r.de_baja);
+            // Base (texto + fecha): actualiza contadores de cards
+            let base = datosBandeja[bandeja];
+            if (q) base = base.filter(r =>
+                (r.descripcion     || '').toLowerCase().includes(q) ||
+                (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
+                (r.area            || '').toLowerCase().includes(q) ||
+                (r.id_req          || '').toLowerCase().includes(q)
+            );
+            base = _filtroFecha(base, 'fecha_registro', desde, hasta);
+            actualizarMetricasBandeja(bandeja, base);
+
+            // Card encima: filtra la tabla
+            let filtrados = base;
+            const cf = cardFiltros[bandeja];
+            if (cf === 'baja')   filtrados = filtrados.filter(r => r.de_baja);
+            if (cf === 'activo') filtrados = filtrados.filter(r => !r.de_baja);
             renderizarBandeja(bandeja, filtrados);
         }
 
@@ -1103,6 +1342,9 @@
                 const res  = await fetch(`${API}/requerimientos/con-orden?tipo=${tipo}`);
                 const data = await res.json();
                 datosLlego[bandeja] = data;
+                cardFiltros[bandeja] = 'all';
+                _activarCard(bandeja === 'llego-p' ? 'card-llego-p-total' : 'card-llego-e-total',
+                             bandeja === 'llego-p' ? _cardsLP : _cardsLE);
                 renderizarLlego(bandeja, data);
                 actualizarMetricasLlego(bandeja, data);
             } catch (e) {
@@ -1118,64 +1360,58 @@
             const pagData = s.datos.slice((s.p - 1) * s.n, s.p * s.n);
             const tbody = document.getElementById(`tbody-${bandeja}`);
             if (!s.datos.length) {
-                tbody.innerHTML = `<tr><td colspan="14"
+                tbody.innerHTML = `<tr><td colspan="15"
                     style="text-align:center;color:#9ca3af;padding:30px">
                     No hay requerimientos con orden asignada</td></tr>`;
                 actualizarControlesPaginacion(bandeja, 0);
                 return;
             }
+            const monFmt = v => { const n=(Number(v)||0).toFixed(2).split('.'); return 'S/ '+n[0].replace(/\B(?=(\d{3})+(?!\d))/g,',')+'.'+n[1]; };
             tbody.innerHTML = pagData.map(r => `
                 <tr>
                     <td><strong style="color:var(--primary);font-size:0.8rem">${r.id_req}</strong></td>
-                    <td style="font-size:0.82rem">${r.fecha_orden       || '—'}</td>
-                    <td style="font-size:0.82rem">${r.fecha_asignacion  || '—'}</td>
+                    <td style="font-size:0.82rem">${r.fecha_orden      || '—'}</td>
+                    <td style="font-size:0.82rem">${r.fecha_asignacion || '—'}</td>
                     <td style="font-size:0.82rem">${r.empresa_ganadora || '—'}</td>
-                    <td style="font-size:0.82rem">${r.plazo || '—'}</td>
-                    <td style="font-size:0.82rem">${r.numero_pedido || '—'}</td>
+                    <td style="font-size:0.82rem">${r.plazo            || '—'}</td>
+                    <td style="font-size:0.82rem">${r.numero_pedido    || '—'}</td>
                     <td style="font-size:0.82rem;text-align:center">
                         <span class="status-badge"
-                            style="background:${r.tipo_orden === 'OS' ? '#dbeafe' : '#fce7f3'};
-                                color:${r.tipo_orden === 'OS' ? '#1e40af' : '#9d174d'}">
+                            style="background:${r.tipo_orden==='OS'?'#dbeafe':'#fce7f3'};
+                                   color:${r.tipo_orden==='OS'?'#1e40af':'#9d174d'}">
                             ${r.tipo_orden || '—'}
                         </span>
                     </td>
-                    <td style="font-size:0.82rem;font-weight:500">${r.numero_orden || '—'}</td>
+                    <td style="font-size:0.82rem;font-weight:500">${r.numero_orden  || '—'}</td>
                     <td style="font-size:0.82rem;font-family:monospace">${r.codigo_siaf || '—'}</td>
-                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;
-                            overflow:hidden;text-overflow:ellipsis"
-                        title="${r.descripcion || ''}">${r.descripcion || '—'}</td>
+                    <td style="font-size:0.82rem;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+                        title="${r.descripcion||''}">${r.descripcion || '—'}</td>
                     <td style="font-size:0.82rem">${r.area || '—'}</td>
-                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">
-                        S/ ${(r.precio_total || 0).toLocaleString('es-PE',
-                            {minimumFractionDigits:2})}
-                    </td>
+                    <td style="font-size:0.82rem;font-weight:600;color:var(--primary)">${monFmt(r.precio_total)}</td>
                     <td>
-                        <span class="status-badge
-                            ${r.estado === 'Llegó pago' ? 'status-completed' : 'status-pending'}">
+                        <span class="status-badge ${r.estado==='Llegó pago'?'status-completed':'status-pending'}">
                             ${r.estado || 'Espera pago'}
                         </span>
                     </td>
-                    <td style="white-space:nowrap;">
+                    <td style="white-space:nowrap;min-width:90px">
                         ${r.pdf_factura_ruta
-                            ? `<button class="btn-view" style="margin-bottom:4px;display:block;"
+                            ? `<button class="btn-view" style="margin-bottom:3px;display:block;width:100%"
                                 onclick="verPDF('${r.pdf_factura_ruta.replace(/\\/g,"/")}')">
-                                <i class="fas fa-file-pdf" style="color:#ef4444;"></i> Factura
-                               </button>`
-                            : '<span style="color:#d1d5db;font-size:0.78rem;">Sin factura</span>'
+                                <i class="fas fa-file-pdf" style="color:#ef4444"></i> Factura</button>`
+                            : '<span style="color:#d1d5db;font-size:0.78rem">Sin factura</span>'
                         }
                         ${r.pdf_detalle_factura_ruta
-                            ? `<button class="btn-view" style="display:block;"
+                            ? `<button class="btn-view" style="display:block;width:100%"
                                 onclick="verPDF('${r.pdf_detalle_factura_ruta.replace(/\\/g,"/")}')">
-                                <i class="fas fa-file-pdf" style="color:#f97316;"></i> Detalle
-                               </button>`
+                                <i class="fas fa-file-pdf" style="color:#f97316"></i> Detalle</button>`
                             : ''
                         }
                     </td>
-                    <td>
-                        <button class="btn-view"
-                            onclick="abrirModalEstado(${r.orden_id}, '${r.id_req}', '${r.estado || 'Espera pago'}')">
+                    <td style="min-width:100px">
+                        <button class="btn-view" style="width:100%;justify-content:center"
+                            onclick="abrirModalEstado(${r.orden_id},'${r.id_req}','${r.estado||'Espera pago'}')">
                             <i class="fas fa-edit"></i>
-                            ${r.estado === 'Llegó pago' ? 'Ver' : 'Actualizar'}
+                            ${r.estado==='Llegó pago' ? 'Ver' : 'Actualizar'}
                         </button>
                     </td>
                 </tr>
@@ -1195,19 +1431,25 @@
         function filtrarLlego(bandeja) {
             const sufijo = bandeja === 'llego-p' ? 'p' : 'e';
             const q      = document.getElementById(`buscar-llego-${sufijo}`).value.toLowerCase();
-            const estado = document.getElementById(`filtro-estado-${sufijo}`).value;
-            let filtrados = datosLlego[bandeja];
+            const desde  = document.getElementById(`desde-${bandeja}`).value;
+            const hasta  = document.getElementById(`hasta-${bandeja}`).value;
 
-            if (q) {
-                filtrados = filtrados.filter(r =>
-                    (r.descripcion     || '').toLowerCase().includes(q) ||
-                    (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
-                    (r.codigo_siaf     || '').toLowerCase().includes(q) ||
-                    (r.numero_orden    || '').toLowerCase().includes(q) ||
-                    (r.id_req          || '').toLowerCase().includes(q)
-                );
-            }
-            if (estado) filtrados = filtrados.filter(r => r.estado === estado);
+            // Base (texto + fecha): actualiza contadores de cards
+            let base = datosLlego[bandeja];
+            if (q) base = base.filter(r =>
+                (r.descripcion     || '').toLowerCase().includes(q) ||
+                (r.empresa_ganadora|| '').toLowerCase().includes(q) ||
+                (r.codigo_siaf     || '').toLowerCase().includes(q) ||
+                (r.numero_orden    || '').toLowerCase().includes(q) ||
+                (r.id_req          || '').toLowerCase().includes(q)
+            );
+            base = _filtroFecha(base, 'fecha_registro', desde, hasta);
+            actualizarMetricasLlego(bandeja, base);
+
+            // Card encima: filtra la tabla
+            let filtrados = base;
+            const cf = cardFiltros[bandeja];
+            if (cf !== 'all') filtrados = filtrados.filter(r => r.estado === cf);
             renderizarLlego(bandeja, filtrados);
         }
 
@@ -1424,6 +1666,25 @@
         // ══════════════════════════════════════════════════════════════
         // REPORTES — Exportar a Excel
         // ══════════════════════════════════════════════════════════════
+
+        function exportarFiltrado(key) {
+            const datos = paginacionState[key]?.datos;
+            if (!datos || !datos.length) {
+                showToast('No hay datos para exportar con los filtros actuales', 'warning');
+                return;
+            }
+            const tipo    = key.endsWith('-p') ? 'Propio' : 'Externo';
+            const esLlego = key.startsWith('llego');
+            const bandejaMap = esLlego ? 'llego' : 'nollego';
+            const hoja    = esLlego ? `Llegó - ${tipo}` : `No llegó - ${tipo}`;
+            const nombre  = esLlego
+                ? `Llego_${tipo}_Filtrado_${hoyStr()}.xlsx`
+                : `NoLlego_${tipo}_Filtrado_${hoyStr()}.xlsx`;
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(mapearColumnas(datos, bandejaMap)), hoja);
+            XLSX.writeFile(wb, nombre);
+            showToast(`✓ ${datos.length} registros exportados`, 'success');
+        }
 
         async function exportarBandeja(bandeja, tipo) {
             try {
@@ -1691,6 +1952,8 @@
                 ]);
                 mensajesEventos = calcularVencimientos([...rp, ...re]);
                 mensajesEventos.sort((a, b) => a.dias_restantes - b.dias_restantes);
+                cardFiltros.mensajes = 'all';
+                _activarCard(null, _cardsMsg);
                 renderizarMensajes(mensajesEventos);
             } catch (e) {
                 document.getElementById('msg-lista').innerHTML =
@@ -1704,22 +1967,29 @@
             if (eventos !== undefined) { s.datos = eventos; s.p = 1; }
             const todos = s.datos;
 
+            // Contadores siempre sobre el total completo
             const critico = todos.filter(e => e.dias_restantes <= 7);
             const proximo = todos.filter(e => e.dias_restantes > 7 && e.dias_restantes <= 30);
             const ok      = todos.filter(e => e.dias_restantes > 30);
-
             document.getElementById('msg-count-critico').textContent = critico.length;
             document.getElementById('msg-count-proximo').textContent = proximo.length;
             document.getElementById('msg-count-ok').textContent      = ok.length;
 
+            // Aplicar filtro de card
+            const cf = cardFiltros.mensajes;
+            const filtrados = cf === 'critico' ? critico
+                            : cf === 'proximo' ? proximo
+                            : cf === 'ok'      ? ok
+                            : todos;
+
             const lista = document.getElementById('msg-lista');
-            if (!todos.length) {
-                lista.innerHTML = '<p style="color:#9ca3af; text-align:center; padding:40px;">No hay órdenes con vencimientos registrados.</p>';
+            if (!filtrados.length) {
+                lista.innerHTML = '<p style="color:#9ca3af; text-align:center; padding:40px;">No hay órdenes en esta categoría.</p>';
                 actualizarControlesPaginacion('mensajes', 0);
                 return;
             }
 
-            const pagData = todos.slice((s.p - 1) * s.n, s.p * s.n);
+            const pagData = filtrados.slice((s.p - 1) * s.n, s.p * s.n);
             lista.innerHTML = pagData.map(e => {
                 const color = colorDias(e.dias_restantes);
                 const label = e.dias_restantes <= 0
@@ -1747,7 +2017,7 @@
                     </a>
                 </div>`;
             }).join('');
-            actualizarControlesPaginacion('mensajes', todos.length);
+            actualizarControlesPaginacion('mensajes', filtrados.length);
         }
 
         function linkGoogleCalendar(evento) {
@@ -1887,18 +2157,310 @@
         // DASHBOARD FINANCIERO — métricas reales
         // ══════════════════════════════════════════════════════════════
 
+        // Instancias de charts para poder destruirlas antes de recrear
+        const _finCharts = {};
+
+        function _destroyChart(id) {
+            if (_finCharts[id]) { _finCharts[id].destroy(); delete _finCharts[id]; }
+        }
+
+        function _s(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val;
+        }
+
+        function _mon(v) {
+            const n = (Number(v) || 0).toFixed(2);
+            const [int, dec] = n.split('.');
+            return 'S/ ' + int.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + dec;
+        }
+
         async function cargarMetricas() {
             try {
                 const res = await fetch(`${API}/requerimientos/metricas`);
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    showToast('Error del servidor: ' + (err.detail || res.status), 'error');
+                    return;
+                }
                 const m = await res.json();
-                document.getElementById('fin-total').textContent  = m.total_reqs;
-                document.getElementById('fin-con').textContent    = m.con_orden;
-                document.getElementById('fin-sin').textContent    = m.sin_orden;
-                document.getElementById('fin-pagados').textContent = m.pagados;
-                document.getElementById('fin-monto').textContent  =
-                    `S/ ${(m.monto_total || 0).toLocaleString('es-PE', {minimumFractionDigits:2})}`;
+
+                // ── KPIs ──────────────────────────────────────────────
+                _s('fin-total',    m.total_reqs);
+                _s('fin-con',      m.con_orden);
+                _s('fin-sin',      m.sin_orden);
+                _s('fin-monto',    _mon(m.monto_total));
+                _s('fin-monto-espera',  _mon(m.monto_espera));
+                _s('fin-monto-pagado',  _mon(m.monto_pagado));
+                _s('fin-kpi-propio',    `Propio: ${m.propio_count}`);
+                _s('fin-kpi-externo',   `Externo: ${m.externo_count}`);
+                _s('fin-con-sub',       `<i class="fas fa-check"></i> Pagados: ${m.pagados} · Espera: ${m.espera_pago}`);
+                const elConSub = document.getElementById('fin-con-sub');
+                if (elConSub) elConSub.innerHTML = `<i class="fas fa-check"></i> Pagados: ${m.pagados} &nbsp;·&nbsp; Espera: ${m.espera_pago}`;
+                _s('fin-mk-sin',    m.sin_orden);
+                _s('fin-mk-baja',   m.de_baja);
+                _s('fin-mk-activos',m.activos_sin_orden);
+                _s('fin-oc',        m.oc_count);
+                _s('fin-os',        m.os_count);
+
+                // año evolución
+                const elAnio = document.getElementById('fin-anio-evol');
+                if (elAnio && m.evolucion && m.evolucion.length)
+                    elAnio.textContent = new Date().getFullYear();
+
+                // ── Gráficos (bloque independiente de los KPIs) ────────
+                try {
+                if (typeof Chart === 'undefined') {
+                    showToast('Chart.js no cargó. Verifica la conexión a internet.', 'warning');
+                    return;
+                }
+                Chart.defaults.font.family = 'inherit';
+                Chart.defaults.color = '#64748b';
+
+                // ── 1. Barras agrupadas: estado por tipo ───────────────
+                _destroyChart('estado-tipo');
+                _finCharts['estado-tipo'] = new Chart(
+                    document.getElementById('chart-estado-tipo'), {
+                    type: 'bar',
+                    data: {
+                        labels: m.labels_estado,
+                        datasets: [
+                            {
+                                label: 'Propio',
+                                data: m.estado_propio,
+                                backgroundColor: 'rgba(59,130,246,0.75)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            },
+                            {
+                                label: 'Externo',
+                                data: m.estado_externo,
+                                backgroundColor: 'rgba(99,102,241,0.65)',
+                                borderColor: '#6366f1',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10 }, stepSize: 1 } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                        }
+                    }
+                });
+
+                // ── 2. Donut estado de pagos ───────────────────────────
+                _destroyChart('pagos-donut');
+                _finCharts['pagos-donut'] = new Chart(
+                    document.getElementById('chart-pagos-donut'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Espera pago', 'Llegó pago', 'Sin factura'],
+                        datasets: [{
+                            data: [m.espera_pago, m.pagados, m.sin_factura],
+                            backgroundColor: ['#fbbf24', '#22c55e', '#cbd5e1'],
+                            borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } }
+                        }
+                    }
+                });
+                const legendEl = document.getElementById('fin-pagos-legend');
+                if (legendEl) {
+                    const items = [
+                        ['#fbbf24', 'Espera pago', m.espera_pago],
+                        ['#22c55e', 'Llegó pago',  m.pagados],
+                        ['#cbd5e1', 'Sin factura', m.sin_factura],
+                    ];
+                    legendEl.innerHTML = items.map(([c, label, val]) => `
+                        <div class="fin-donut-legend-row">
+                            <span><span class="fin-donut-dot" style="background:${c}"></span>${label}</span>
+                            <strong>${val}</strong>
+                        </div>`).join('');
+                }
+
+                // ── 3. Barras horizontales: monto por empresa ──────────
+                _destroyChart('empresa-monto');
+                const empLabels  = (m.monto_por_empresa || []).map(e => e.empresa);
+                const empTotales = (m.monto_por_empresa || []).map(e => e.total);
+                const empColors  = ['rgba(59,130,246,0.8)','rgba(16,185,129,0.8)','rgba(99,102,241,0.8)',
+                                    'rgba(245,158,11,0.8)','rgba(239,68,68,0.7)','rgba(14,165,233,0.8)',
+                                    'rgba(156,163,175,0.7)','rgba(168,85,247,0.7)'];
+                _finCharts['empresa-monto'] = new Chart(
+                    document.getElementById('chart-empresa-monto'), {
+                    type: 'bar',
+                    data: {
+                        labels: empLabels,
+                        datasets: [{
+                            label: 'Monto S/',
+                            data: empTotales,
+                            backgroundColor: empColors.slice(0, empLabels.length),
+                            borderRadius: 5, borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { label: c => ` S/ ${Number(c.raw).toLocaleString('es-PE', {minimumFractionDigits:2})}` } }
+                        },
+                        scales: {
+                            x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => 'S/'+v, font: { size: 9 } } },
+                            y: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                        }
+                    }
+                });
+
+                // ── 4. Línea: evolución mensual ────────────────────────
+                _destroyChart('evolucion');
+                const evolMeses  = (m.evolucion || []).map(e => e.mes);
+                const evolPropio = (m.evolucion || []).map(e => e.propio);
+                const evolExt    = (m.evolucion || []).map(e => e.externo);
+                _finCharts['evolucion'] = new Chart(
+                    document.getElementById('chart-evolucion'), {
+                    type: 'line',
+                    data: {
+                        labels: evolMeses,
+                        datasets: [
+                            {
+                                label: 'Propio',
+                                data: evolPropio,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59,130,246,0.1)',
+                                fill: true, tension: 0.4, borderWidth: 2,
+                                pointRadius: 4, pointBackgroundColor: '#fff', pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Externo',
+                                data: evolExt,
+                                borderColor: '#6366f1',
+                                backgroundColor: 'rgba(99,102,241,0.08)',
+                                fill: true, tension: 0.4, borderWidth: 2,
+                                pointRadius: 4, pointBackgroundColor: '#fff', pointBorderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top', align: 'start', labels: { boxWidth: 10, font: { size: 10 } } } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 9 }, stepSize: 1 } },
+                            x: { grid: { display: false }, ticks: { font: { size: 9 } } }
+                        }
+                    }
+                });
+
+                // ── 5. Donut OC/OS ─────────────────────────────────────
+                _destroyChart('tipo-orden');
+                _finCharts['tipo-orden'] = new Chart(
+                    document.getElementById('chart-tipo-orden'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['OC (Compra)', 'OS (Servicio)'],
+                        datasets: [{
+                            data: [m.oc_count, m.os_count],
+                            backgroundColor: ['rgba(236,72,153,0.8)', 'rgba(139,92,246,0.8)'],
+                            borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+                    }
+                });
+
+                // ── 6. Barras: reqs por área (top 9 + Otras) ─────────
+                _destroyChart('area');
+                const areaLabels = (m.por_area || []).map(a => a.area);
+                const areaTots   = (m.por_area || []).map(a => a.total);
+                const areaColors = [
+                    'rgba(15,35,64,0.85)','rgba(59,130,246,0.75)','rgba(99,102,241,0.75)',
+                    'rgba(16,185,129,0.75)','rgba(245,158,11,0.75)','rgba(239,68,68,0.70)',
+                    'rgba(14,165,233,0.75)','rgba(168,85,247,0.75)','rgba(251,146,60,0.75)',
+                    'rgba(156,163,175,0.70)',  // "Otras"
+                ];
+                _finCharts['area'] = new Chart(
+                    document.getElementById('chart-area'), {
+                    type: 'bar',
+                    data: {
+                        labels: areaLabels,
+                        datasets: [{
+                            label: 'Requerimientos',
+                            data: areaTots,
+                            backgroundColor: areaColors.slice(0, areaLabels.length),
+                            borderRadius: 5, borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 9 }, stepSize: 1 } },
+                            x: {
+                                grid: { display: false },
+                                ticks: {
+                                    font: { size: 9 },
+                                    maxRotation: 90,
+                                    minRotation: 90,
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // ── Tabla últimos reqs ─────────────────────────────────
+                const badgeClass = e => {
+                    if (e === 'Llegó pago')  return 'fin-badge-estado fin-badge-llego';
+                    if (e === 'Espera pago') return 'fin-badge-estado fin-badge-espera';
+                    if (e === 'De baja')     return 'fin-badge-estado fin-badge-baja';
+                    if (e === 'Sin orden')   return 'fin-badge-estado fin-badge-sinorden';
+                    return 'fin-badge-estado fin-badge-activo';
+                };
+                const tbody = document.getElementById('fin-tabla-body');
+                if (tbody && m.ultimos) {
+                    _s('fin-tabla-count', `Mostrando ${m.ultimos.length} registros`);
+                    tbody.innerHTML = m.ultimos.map(r => `
+                        <tr>
+                            <td style="color:#1e3a8a;font-weight:700">${r.id_req}</td>
+                            <td style="color:#6b7280">${r.fecha_registro}</td>
+                            <td style="font-weight:600">${r.empresa}</td>
+                            <td>
+                                <span style="padding:2px 8px;border-radius:999px;font-size:0.72rem;font-weight:700;
+                                    background:${r.tipo_orden==='OC'?'#fce7f3':'#f5f3ff'};
+                                    color:${r.tipo_orden==='OC'?'#9d174d':'#6d28d9'}">
+                                    ${r.tipo_orden}
+                                </span>
+                            </td>
+                            <td style="color:#6b7280">${r.numero_orden}</td>
+                            <td style="color:#6b7280;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"
+                                title="${r.descripcion}">${r.descripcion}</td>
+                            <td style="text-align:right;font-weight:700;color:#1f2937">${_mon(r.precio_total)}</td>
+                            <td style="text-align:center">
+                                <span class="${badgeClass(r.estado)}">${r.estado}</span>
+                            </td>
+                        </tr>`).join('');
+                }
+
+                } catch(eChart) {
+                    console.error('Error inicializando gráficos:', eChart);
+                    showToast('Error al renderizar los gráficos: ' + eChart.message, 'warning');
+                }
+
             } catch(e) {
                 console.error('Error cargando métricas:', e);
+                showToast('Error al cargar métricas: ' + e.message, 'error');
             }
         }
 

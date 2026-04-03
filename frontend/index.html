@@ -7,7 +7,16 @@
     <title> PRECOTI - Sistema de Gestión</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+        // Fallback: si Chart.js no cargó desde jsdelivr, intenta cdnjs
+        if (typeof Chart === 'undefined') {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.3/chart.umd.min.js';
+            document.head.appendChild(s);
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body>
 
@@ -181,161 +190,181 @@
                     <button class="icon-btn" onclick="abrirBusqueda()" title="Buscar (Ctrl+/)">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="icon-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">4</span>
-                    </button>
-                    <div class="user-avatar" onclick="logout()">TN</div>
+                    <div class="user-avatar" id="userName" onclick="logout()">TN</div>
                 </div>
             </div>
 
             <!-- SECTION: GENERAL -->
             <div id="section-general" class="content-section active">
-                <div class="dashboard-grid">
-                    <div class="welcome-card">
-                        <div class="welcome-text">
-                            <h1>¡Hola <span id="userName">Tu Nombre</span>! 👋</h1>
-                            <p>Que tengas un excelente día :)</p>
-                            <p style="color: #9ca3af; margin-bottom: 20px;">¿Qué haremos hoy?</p>
-                            <div class="welcome-actions">
-                                <button class="btn-outline">
-                                    <i class="fas fa-folder-open"></i> Ir a Requerimientos
-                                </button>
-                                <button class="btn-outline">
-                                    <i class="fas fa-file-invoice"></i> Ver mis pedidos
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mascot">🦫</div>
-                    </div>
 
+                <!-- Saludo + fecha -->
+                <div class="gen-welcome">
                     <div>
-                        <div class="pending-card" style="margin-bottom: 20px;">
-                            <div class="card-header">
-                                <div>
-                                    <div class="card-title">Actividades Pendientes</div>
-                                    <div class="card-subtitle">Tienes 02 actividades pendientes</div>
-                                </div>
-                                <span style="font-size: 1.5rem;">😟</span>
-                            </div>
-
-                            <div class="pending-item">
-                                <div class="pending-info">
-                                    <div class="pending-icon">
-                                        <i class="fas fa-tasks"></i>
-                                    </div>
-                                    <span class="pending-text">PEDIDO #1024 - Pendiente</span>
-                                </div>
-                                <button class="btn-view">Ver</button>
-                            </div>
-
-                            <div class="pending-item debate">
-                                <div class="pending-info">
-                                    <div class="pending-icon debate">
-                                        <i class="fas fa-comments"></i>
-                                    </div>
-                                    <span class="pending-text">REUNIÓN - Cliente XYZ</span>
-                                </div>
-                                <button class="btn-view">Ver</button>
-                            </div>
-                        </div>
-
-                        <div class="notifications-card">
-                            <div class="card-header">
-                                <div class="card-title">Notificaciones</div>
-                                <a href="#" style="font-size: 0.8rem; color: var(--secondary);">Marcar como leído</a>
-                            </div>
-
-                            <div class="notification-item">
-                                <div class="notification-dot"></div>
-                                <div class="notification-content">
-                                    <div class="notification-text">Se actualizó el estado del pedido #1024 a "En
-                                        proceso"</div>
-                                    <div class="notification-time">01/10/2025 12:30 p.m.</div>
-                                </div>
-                            </div>
-
-                            <div class="notification-item">
-                                <div class="notification-dot"></div>
-                                <div class="notification-content">
-                                    <div class="notification-text">Nueva factura generada para el cliente ABC</div>
-                                    <div class="notification-time">01/10/2025 11:15 a.m.</div>
-                                </div>
-                            </div>
-                        </div>
+                        <h1 class="gen-saludo" id="gen-saludo-texto">¡Bienvenido!</h1>
+                        <p class="gen-fecha" id="gen-fecha-hoy"></p>
+                    </div>
+                    <div class="gen-accesos">
+                        <button class="btn-primary" onclick="showSection('documentos', event)">
+                            <i class="fas fa-plus"></i> Nuevo Requerimiento
+                        </button>
+                        <button class="btn-outline" onclick="showSection('no-llego', event)">
+                            <i class="fas fa-inbox"></i> Bandeja Propio
+                        </button>
+                        <button class="btn-outline" onclick="showSection('noexterOrden', event)">
+                            <i class="fas fa-inbox"></i> Bandeja Externo
+                        </button>
                     </div>
                 </div>
 
-                <div class="courses-section">
-                    <div class="courses-list">
-                        <div class="course-card">
-                            <div class="course-image">
-                                <i class="fas fa-file-contract"></i>
+                <!-- KPIs rápidos -->
+                <div class="gen-kpi-grid">
+                    <div class="gen-kpi" style="border-top:3px solid #3b82f6">
+                        <div class="gen-kpi-val" id="gen-k-total">—</div>
+                        <div class="gen-kpi-lbl">Total Requerimientos</div>
+                        <div class="gen-kpi-sub" id="gen-k-total-sub"></div>
+                    </div>
+                    <div class="gen-kpi" style="border-top:3px solid #22c55e">
+                        <div class="gen-kpi-val" id="gen-k-con">—</div>
+                        <div class="gen-kpi-lbl">Con Orden Asignada</div>
+                        <div class="gen-kpi-sub" id="gen-k-con-sub"></div>
+                    </div>
+                    <div class="gen-kpi" style="border-top:3px solid #f97316">
+                        <div class="gen-kpi-val" id="gen-k-sin">—</div>
+                        <div class="gen-kpi-lbl">Sin Orden (Pendientes)</div>
+                        <div class="gen-kpi-sub" id="gen-k-sin-sub"></div>
+                    </div>
+                    <div class="gen-kpi" style="border-top:3px solid #f59e0b">
+                        <div class="gen-kpi-val" id="gen-k-espera">—</div>
+                        <div class="gen-kpi-lbl">Espera Pago</div>
+                        <div class="gen-kpi-sub" id="gen-k-espera-sub"></div>
+                    </div>
+                    <div class="gen-kpi" style="border-top:3px solid #14b8a6">
+                        <div class="gen-kpi-val" id="gen-k-monto">—</div>
+                        <div class="gen-kpi-lbl">Monto Total</div>
+                        <div class="gen-kpi-sub" id="gen-k-monto-sub"></div>
+                    </div>
+                </div>
+
+                <!-- Cuerpo: Alertas + Resumen -->
+                <div class="gen-body">
+
+                    <!-- COLUMNA IZQ: Alertas de vencimiento -->
+                    <div class="gen-col-left">
+                        <div class="gen-card">
+                            <div class="gen-card-header">
+                                <span><i class="fas fa-exclamation-triangle" style="color:#ef4444"></i> Alertas de Vencimiento</span>
+                                <button class="btn-view" onclick="showSection('mensajes', event)">Ver todas</button>
                             </div>
-                            <div class="course-info">
-                                <span class="course-badge live">
-                                    <span class="pulse"></span> EN VIVO
-                                </span>
-                                <div class="course-title">Gestión de Documentos Comerciales</div>
-                                <div class="course-teacher">Responsable: Nevardo Alcides Alzamora Lara</div>
-                                <div class="course-meta">
-                                    <span><i class="fas fa-users"></i> 14 documentos</span>
-                                    <span><i class="fas fa-clock"></i> Último: hace 2h</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%;"></div>
-                                </div>
-                            </div>
-                            <button class="btn-outline" style="align-self: center;">
-                                <i class="fas fa-arrow-right"></i> Continuar
-                            </button>
-                            <div class="whatsapp-btn">
-                                <i class="fab fa-whatsapp"></i>
+                            <div id="gen-alertas">
+                                <p style="color:#9ca3af;text-align:center;padding:20px;font-size:0.85rem">Cargando…</p>
                             </div>
                         </div>
 
-                        <div class="course-card">
-                            <div class="course-image grabado">
-                                <i class="fas fa-chart-bar"></i>
+                        <!-- Últimos requerimientos -->
+                        <div class="gen-card" style="margin-top:16px">
+                            <div class="gen-card-header">
+                                <span><i class="fas fa-clock" style="color:#6366f1"></i> Últimos Requerimientos</span>
+                                <button class="btn-view" onclick="showSection('documentos', event)">Ver todos</button>
                             </div>
-                            <div class="course-info">
-                                <span class="course-badge recorded">ARCHIVADO</span>
-                                <div class="course-title">Evaluación de Desempeño Anual</div>
-                                <div class="course-teacher">Responsable: Nevardo Alcides Alzamora Lara</div>
-                                <div class="course-meta">
-                                    <span><i class="fas fa-check-circle"></i> Completado</span>
-                                    <span><i class="fas fa-calendar"></i> 2024</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%;"></div>
-                                </div>
-                            </div>
-                            <button class="btn-outline" style="align-self: center;">
-                                <i class="fas fa-eye"></i> Ver reporte
-                            </button>
+                            <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+                                <thead>
+                                    <tr style="background:#f8fafc;color:#6b7280;font-size:0.72rem;text-transform:uppercase">
+                                        <th style="padding:8px 10px;text-align:left;font-weight:600">ID Req.</th>
+                                        <th style="padding:8px 10px;text-align:left;font-weight:600">Descripción</th>
+                                        <th style="padding:8px 10px;text-align:left;font-weight:600">Empresa</th>
+                                        <th style="padding:8px 10px;text-align:right;font-weight:600">Total</th>
+                                        <th style="padding:8px 10px;text-align:center;font-weight:600">Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gen-ultimos-tbody">
+                                    <tr><td colspan="5" style="text-align:center;padding:20px;color:#9ca3af">Cargando…</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
-                    <div class="promo-card">
-                        <span class="promo-badge">MÁS INFORMACIÓN AQUÍ</span>
-                        <div class="promo-price">
-                            <div class="price-tag">S/ 59.00</div>
-                            <div class="price-note">a solo</div>
+                    <!-- COLUMNA DER: Resumen bandejas + Accesos rápidos -->
+                    <div class="gen-col-right">
+
+                        <!-- Resumen bandejas -->
+                        <div class="gen-card">
+                            <div class="gen-card-header">
+                                <span><i class="fas fa-layer-group" style="color:#1e3a8a"></i> Estado de Bandejas</span>
+                            </div>
+                            <div class="gen-bandeja-list">
+                                <div class="gen-bandeja-item" onclick="showSection('no-llego', event)" style="cursor:pointer">
+                                    <div class="gen-bandeja-dot" style="background:#f97316"></div>
+                                    <div class="gen-bandeja-info">
+                                        <span class="gen-bandeja-nombre">No llegó Orden — Propio</span>
+                                        <span class="gen-bandeja-cnt" id="gen-b-nollego-p">—</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color:#d1d5db;font-size:0.75rem"></i>
+                                </div>
+                                <div class="gen-bandeja-item" onclick="showSection('noexterOrden', event)" style="cursor:pointer">
+                                    <div class="gen-bandeja-dot" style="background:#f97316"></div>
+                                    <div class="gen-bandeja-info">
+                                        <span class="gen-bandeja-nombre">No llegó Orden — Externo</span>
+                                        <span class="gen-bandeja-cnt" id="gen-b-nollego-e">—</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color:#d1d5db;font-size:0.75rem"></i>
+                                </div>
+                                <div class="gen-bandeja-item" onclick="showSection('llego', event)" style="cursor:pointer">
+                                    <div class="gen-bandeja-dot" style="background:#22c55e"></div>
+                                    <div class="gen-bandeja-info">
+                                        <span class="gen-bandeja-nombre">Llegó Orden — Propio</span>
+                                        <span class="gen-bandeja-cnt" id="gen-b-llego-p">—</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color:#d1d5db;font-size:0.75rem"></i>
+                                </div>
+                                <div class="gen-bandeja-item" onclick="showSection('exterOrden', event)" style="cursor:pointer">
+                                    <div class="gen-bandeja-dot" style="background:#22c55e"></div>
+                                    <div class="gen-bandeja-info">
+                                        <span class="gen-bandeja-nombre">Llegó Orden — Externo</span>
+                                        <span class="gen-bandeja-cnt" id="gen-b-llego-e">—</span>
+                                    </div>
+                                    <i class="fas fa-chevron-right" style="color:#d1d5db;font-size:0.75rem"></i>
+                                </div>
+                                <div class="gen-bandeja-item">
+                                    <div class="gen-bandeja-dot" style="background:#ef4444"></div>
+                                    <div class="gen-bandeja-info">
+                                        <span class="gen-bandeja-nombre">De Baja</span>
+                                        <span class="gen-bandeja-cnt" id="gen-b-baja">—</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="promo-title">¡Optimiza tu Gestión!</div>
-                        <div class="promo-subtitle">PACK EMPRESARIAL</div>
-
-                        <ul class="promo-list">
-                            <li>Gestión de Documentos Electrónicos</li>
-                            <li>Facturación y Boletas Automáticas</li>
-                            <li>Control de Inventario en Tiempo Real</li>
-                            <li>Reportes Financieros Avanzados</li>
-                        </ul>
-
-                        <div class="promo-offer">
-                            <div class="offer-big">4X1</div>
-                            <div class="offer-text">04 MÓDULOS<br>INCLUIDOS</div>
+                        <!-- Accesos directos -->
+                        <div class="gen-card" style="margin-top:16px">
+                            <div class="gen-card-header">
+                                <span><i class="fas fa-th" style="color:#6366f1"></i> Accesos Directos</span>
+                            </div>
+                            <div class="gen-shortcuts">
+                                <div class="gen-shortcut" onclick="showSection('documentos', event)">
+                                    <i class="fas fa-file-alt" style="color:#3b82f6"></i>
+                                    <span>Requerimientos</span>
+                                </div>
+                                <div class="gen-shortcut" onclick="showSection('calendario', event)">
+                                    <i class="fas fa-calendar-alt" style="color:#22c55e"></i>
+                                    <span>Calendario</span>
+                                </div>
+                                <div class="gen-shortcut" onclick="showSection('financiero', event)">
+                                    <i class="fas fa-chart-pie" style="color:#6366f1"></i>
+                                    <span>Dashboard</span>
+                                </div>
+                                <div class="gen-shortcut" onclick="showSection('pedidos', event)">
+                                    <i class="fas fa-file-excel" style="color:#16a34a"></i>
+                                    <span>Reportes</span>
+                                </div>
+                                <div class="gen-shortcut" onclick="showSection('empresas', event)">
+                                    <i class="fas fa-building" style="color:#f59e0b"></i>
+                                    <span>Empresas</span>
+                                </div>
+                                <div class="gen-shortcut" onclick="showSection('mensajes', event)">
+                                    <i class="fas fa-bell" style="color:#ef4444"></i>
+                                    <span>Alertas</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -348,41 +377,47 @@
                 </h2>
 
                 <!-- Botón nuevo requerimiento + filtro búsqueda -->
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:15px">
+                <div style="display:flex;align-items:center;margin-bottom:20px;gap:10px;flex-wrap:wrap">
                     <button class="btn-primary" style="width:auto;padding:10px 24px"
                         onclick="abrirModalNuevoReq()">
                         <i class="fas fa-plus"></i> Nuevo Requerimiento
                     </button>
                     <input type="text" id="buscador-docs" placeholder="Buscar por descripción o área..."
                         oninput="filtrarDocumentos()"
-                        style="padding:10px 15px;border:2px solid #e5e7eb;border-radius:10px;
-                            font-size:0.9rem;width:300px;outline:none">
+                        style="padding:9px 15px;border:2px solid #e5e7eb;border-radius:8px;
+                            font-size:0.85rem;flex:1;min-width:200px;outline:none">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Desde</span>
+                    <input type="date" id="desde-docs" onchange="filtrarDocumentos()"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Hasta</span>
+                    <input type="date" id="hasta-docs" onchange="filtrarDocumentos()"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
                 </div>
 
                 <!-- Métricas -->
                 <div class="stats-grid" style="margin-bottom:20px">
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-docs-total" onclick="filtroCardDocs('all')">
                         <div class="stat-icon blue"><i class="fas fa-file-alt"></i></div>
                         <div class="stat-info">
                             <h3 id="docs-total">0</h3>
                             <p>Total requerimientos</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-docs-propio" onclick="filtroCardDocs('Propio')">
                         <div class="stat-icon green"><i class="fas fa-building"></i></div>
                         <div class="stat-info">
                             <h3 id="docs-propios">0</h3>
                             <p>Propios</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-docs-externo" onclick="filtroCardDocs('Externo')">
                         <div class="stat-icon yellow"><i class="fas fa-globe"></i></div>
                         <div class="stat-info">
                             <h3 id="docs-externos">0</h3>
                             <p>Externos</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-docs-sin-orden" onclick="filtroCardDocs('sin-orden')">
                         <div class="stat-icon red"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="docs-sin-orden">0</h3>
@@ -657,28 +692,34 @@
                 </h2>
 
                 <!-- Métricas -->
-                <div class="stats-grid" style="margin-bottom:20px">
-                    <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                <div class="stats-grid" style="flex:1;margin-bottom:0">
+                    <div class="stat-card clickable" id="card-nollego-p-total" onclick="filtroCardBandeja('nollego-p','all')">
                         <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-p-total">0</h3>
-                            <p>Sin orden asignada</p>
+                            <p>Total</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-nollego-p-baja" onclick="filtroCardBandeja('nollego-p','baja')">
                         <div class="stat-icon yellow"><i class="fas fa-arrow-down"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-p-baja">0</h3>
                             <p>De baja</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-nollego-p-activo" onclick="filtroCardBandeja('nollego-p','activo')">
                         <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-p-activos">0</h3>
                             <p>Activos</p>
                         </div>
                     </div>
+                </div>
+                <button onclick="exportarFiltrado('nollego-p')" class="btn-export-filtro" title="Exportar registros con filtros aplicados">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Exportar</span>
+                </button>
                 </div>
 
                 <!-- Filtros -->
@@ -688,13 +729,12 @@
                         oninput="filtrarBandeja('nollego-p')"
                         style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
                             font-size:0.85rem;flex:1;min-width:200px;outline:none">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;
-                                color:#6b7280;cursor:pointer;white-space:nowrap">
-                        <input type="checkbox" id="filtro-baja-p"
-                            onchange="filtrarBandeja('nollego-p')"
-                            style="accent-color:var(--danger)">
-                        Solo de baja
-                    </label>
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Desde</span>
+                    <input type="date" id="desde-nollego-p" onchange="filtrarBandeja('nollego-p')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Hasta</span>
+                    <input type="date" id="hasta-nollego-p" onchange="filtrarBandeja('nollego-p')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
                     <button onclick="cargarBandeja('nollego-p')"
                         style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
                             background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
@@ -703,8 +743,9 @@
                 </div>
 
                 <!-- Tabla -->
-                <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1100px">
+                <div class="orders-table">
+                    <div class="scroll-wrapper">
+                    <table style="min-width:1100px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
@@ -726,6 +767,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    </div>
                     <div id="paginacion-nollego-p" class="paginacion-controls"></div>
                 </div>
             </div>
@@ -736,28 +778,34 @@
                     <i class="fas fa-times-circle"></i> No llegó Orden — Externo
                 </h2>
 
-                <div class="stats-grid" style="margin-bottom:20px">
-                    <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                <div class="stats-grid" style="flex:1;margin-bottom:0">
+                    <div class="stat-card clickable" id="card-nollego-e-total" onclick="filtroCardBandeja('nollego-e','all')">
                         <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-e-total">0</h3>
-                            <p>Sin orden asignada</p>
+                            <p>Total</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-nollego-e-baja" onclick="filtroCardBandeja('nollego-e','baja')">
                         <div class="stat-icon yellow"><i class="fas fa-arrow-down"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-e-baja">0</h3>
                             <p>De baja</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-nollego-e-activo" onclick="filtroCardBandeja('nollego-e','activo')">
                         <div class="stat-icon blue"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="nollego-e-activos">0</h3>
                             <p>Activos</p>
                         </div>
                     </div>
+                </div>
+                <button onclick="exportarFiltrado('nollego-e')" class="btn-export-filtro" title="Exportar registros con filtros aplicados">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Exportar</span>
+                </button>
                 </div>
 
                 <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
@@ -766,13 +814,12 @@
                         oninput="filtrarBandeja('nollego-e')"
                         style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
                             font-size:0.85rem;flex:1;min-width:200px;outline:none">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;
-                                color:#6b7280;cursor:pointer;white-space:nowrap">
-                        <input type="checkbox" id="filtro-baja-e"
-                            onchange="filtrarBandeja('nollego-e')"
-                            style="accent-color:var(--danger)">
-                        Solo de baja
-                    </label>
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Desde</span>
+                    <input type="date" id="desde-nollego-e" onchange="filtrarBandeja('nollego-e')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Hasta</span>
+                    <input type="date" id="hasta-nollego-e" onchange="filtrarBandeja('nollego-e')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
                     <button onclick="cargarBandeja('nollego-e')"
                         style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
                             background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
@@ -780,8 +827,9 @@
                     </button>
                 </div>
 
-                <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1100px">
+                <div class="orders-table">
+                    <div class="scroll-wrapper">
+                    <table style="min-width:1100px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
@@ -803,6 +851,7 @@
                             </td></tr>
                         </tbody>
                     </table>
+                    </div>
                     <div id="paginacion-nollego-e" class="paginacion-controls"></div>
                 </div>
             </div>
@@ -921,28 +970,34 @@
                 </h2>
 
                 <!-- Métricas -->
-                <div class="stats-grid" style="margin-bottom:20px">
-                    <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                <div class="stats-grid" style="flex:1;margin-bottom:0">
+                    <div class="stat-card clickable" id="card-llego-p-total" onclick="filtroCardLlego('llego-p','all')">
                         <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-p-total">0</h3>
                             <p>Total con orden</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-llego-p-espera" onclick="filtroCardLlego('llego-p','Espera pago')">
                         <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-p-espera">0</h3>
                             <p>Espera pago</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-llego-p-pagado" onclick="filtroCardLlego('llego-p','Llegó pago')">
                         <div class="stat-icon blue"><i class="fas fa-money-bill-wave"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-p-pagado">0</h3>
                             <p>Llegó pago</p>
                         </div>
                     </div>
+                </div>
+                <button onclick="exportarFiltrado('llego-p')" class="btn-export-filtro" title="Exportar registros con filtros aplicados">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Exportar</span>
+                </button>
                 </div>
 
                 <!-- Filtros -->
@@ -952,13 +1007,12 @@
                         oninput="filtrarLlego('llego-p')"
                         style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
                             font-size:0.85rem;flex:1;min-width:200px;outline:none">
-                    <select id="filtro-estado-p" onchange="filtrarLlego('llego-p')"
-                        style="padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
-                            font-size:0.85rem;background:white;cursor:pointer">
-                        <option value="">Todos los estados</option>
-                        <option value="Espera pago">Espera pago</option>
-                        <option value="Llegó pago">Llegó pago</option>
-                    </select>
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Desde</span>
+                    <input type="date" id="desde-llego-p" onchange="filtrarLlego('llego-p')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Hasta</span>
+                    <input type="date" id="hasta-llego-p" onchange="filtrarLlego('llego-p')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
                     <button onclick="cargarLlego('llego-p')"
                         style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
                             background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
@@ -967,32 +1021,35 @@
                 </div>
 
                 <!-- Tabla -->
-                <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1200px;width:100%">
+                <div class="orders-table">
+                    <div class="scroll-wrapper">
+                    <table style="min-width:1300px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
                                 <th>Fecha Orden</th>
-                                <th>Fecha Registro Orden</th>
+                                <th>Fecha Reg.</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
-                                <th>Tipo Orden</th>
+                                <th>Tipo</th>
                                 <th>N° Orden</th>
                                 <th>SIAF</th>
                                 <th>Descripción</th>
                                 <th>Área</th>
                                 <th>Total</th>
                                 <th>Estado</th>
+                                <th>Documentos</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-llego-p">
-                            <tr><td colspan="14" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="15" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
                     </table>
+                    </div>
                     <div id="paginacion-llego-p" class="paginacion-controls"></div>
                 </div>
             </div>
@@ -1003,28 +1060,34 @@
                     <i class="fas fa-check-circle"></i> Llegó Orden — Externo
                 </h2>
 
-                <div class="stats-grid" style="margin-bottom:20px">
-                    <div class="stat-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                <div class="stats-grid" style="flex:1;margin-bottom:0">
+                    <div class="stat-card clickable" id="card-llego-e-total" onclick="filtroCardLlego('llego-e','all')">
                         <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-e-total">0</h3>
                             <p>Total con orden</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-llego-e-espera" onclick="filtroCardLlego('llego-e','Espera pago')">
                         <div class="stat-icon yellow"><i class="fas fa-clock"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-e-espera">0</h3>
                             <p>Espera pago</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-llego-e-pagado" onclick="filtroCardLlego('llego-e','Llegó pago')">
                         <div class="stat-icon blue"><i class="fas fa-money-bill-wave"></i></div>
                         <div class="stat-info">
                             <h3 id="llego-e-pagado">0</h3>
                             <p>Llegó pago</p>
                         </div>
                     </div>
+                </div>
+                <button onclick="exportarFiltrado('llego-e')" class="btn-export-filtro" title="Exportar registros con filtros aplicados">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Exportar</span>
+                </button>
                 </div>
 
                 <div style="display:flex;gap:10px;align-items:center;margin-bottom:15px;flex-wrap:wrap">
@@ -1033,13 +1096,12 @@
                         oninput="filtrarLlego('llego-e')"
                         style="padding:8px 15px;border:2px solid #e5e7eb;border-radius:8px;
                             font-size:0.85rem;flex:1;min-width:200px;outline:none">
-                    <select id="filtro-estado-e" onchange="filtrarLlego('llego-e')"
-                        style="padding:8px 12px;border:2px solid #e5e7eb;border-radius:8px;
-                            font-size:0.85rem;background:white;cursor:pointer">
-                        <option value="">Todos los estados</option>
-                        <option value="Espera pago">Espera pago</option>
-                        <option value="Llegó pago">Llegó pago</option>
-                    </select>
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Desde</span>
+                    <input type="date" id="desde-llego-e" onchange="filtrarLlego('llego-e')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
+                    <span style="font-size:0.8rem;color:#6b7280;white-space:nowrap">Hasta</span>
+                    <input type="date" id="hasta-llego-e" onchange="filtrarLlego('llego-e')"
+                        style="padding:7px 10px;border:2px solid #e5e7eb;border-radius:8px;font-size:0.82rem;outline:none;background:white">
                     <button onclick="cargarLlego('llego-e')"
                         style="padding:8px 14px;border:2px solid #e5e7eb;border-radius:8px;
                             background:white;cursor:pointer;font-size:0.85rem;color:#6b7280">
@@ -1047,32 +1109,35 @@
                     </button>
                 </div>
 
-                <div class="orders-table" style="overflow-x:auto">
-                    <table style="min-width:1200px;width:100%">
+                <div class="orders-table">
+                    <div class="scroll-wrapper">
+                    <table style="min-width:1300px;width:100%">
                         <thead>
                             <tr>
                                 <th>ID Req.</th>
                                 <th>Fecha Orden</th>
-                                <th>Fecha Registro Orden</th>
+                                <th>Fecha Reg.</th>
                                 <th>Empresa</th>
                                 <th>Plazo</th>
                                 <th>Pedido</th>
-                                <th>Tipo Orden</th>
+                                <th>Tipo</th>
                                 <th>N° Orden</th>
                                 <th>SIAF</th>
                                 <th>Descripción</th>
                                 <th>Área</th>
                                 <th>Total</th>
                                 <th>Estado</th>
+                                <th>Documentos</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-llego-e">
-                            <tr><td colspan="14" style="text-align:center;padding:30px;color:#9ca3af">
+                            <tr><td colspan="15" style="text-align:center;padding:30px;color:#9ca3af">
                                 <i class="fas fa-spinner fa-spin"></i> Cargando...
                             </td></tr>
                         </tbody>
                     </table>
+                    </div>
                     <div id="paginacion-llego-e" class="paginacion-controls"></div>
                 </div>
             </div>
@@ -1286,51 +1351,161 @@
                 <h2 class="section-title">
                     <i class="fas fa-chart-pie"></i> Dashboard Financiero
                 </h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="fin-total">—</h3>
-                            <p>Total requerimientos</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon green">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="fin-con">—</h3>
-                            <p>Con orden asignada</p>
+
+                <!-- FILA 1: KPIs -->
+                <div class="fin-kpi-grid">
+                    <div class="fin-kpi-card" style="border-left-color:#3b82f6">
+                        <p class="fin-kpi-label">Total Requerimientos</p>
+                        <div class="fin-kpi-value" id="fin-total">—</div>
+                        <div class="fin-kpi-sub">
+                            <span class="fin-badge blue" id="fin-kpi-propio">Propio: —</span>
+                            <span class="fin-badge indigo" id="fin-kpi-externo">Externo: —</span>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon yellow">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="fin-sin">—</h3>
-                            <p>Sin orden (pendientes)</p>
+                    <div class="fin-kpi-card" style="border-left-color:#22c55e">
+                        <p class="fin-kpi-label">Con Orden Asignada</p>
+                        <div class="fin-kpi-value" id="fin-con">—</div>
+                        <div class="fin-kpi-sub" id="fin-con-sub" style="color:#16a34a;font-size:0.78rem"></div>
+                    </div>
+                    <div class="fin-kpi-card" style="border-left-color:#f97316">
+                        <p class="fin-kpi-label">Sin Orden Asignada</p>
+                        <div class="fin-kpi-value" id="fin-sin">—</div>
+                        <div class="fin-kpi-sub" style="color:#dc2626;font-size:0.78rem">
+                            <i class="fas fa-exclamation-triangle"></i> Pendientes críticos
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background:linear-gradient(135deg,#10b981,#059669);">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3 id="fin-pagados">—</h3>
-                            <p>Pagados</p>
+                    <div class="fin-kpi-card" style="border-left-color:#14b8a6">
+                        <p class="fin-kpi-label">Monto Total Comprometido</p>
+                        <div class="fin-kpi-value" id="fin-monto" style="font-size:1.3rem">—</div>
+                        <div class="fin-kpi-sub">
+                            <span style="color:#d97706;font-size:0.75rem">Espera: <strong id="fin-monto-espera">—</strong></span>
+                            <span style="color:#16a34a;font-size:0.75rem;margin-left:8px">Cobrado: <strong id="fin-monto-pagado">—</strong></span>
                         </div>
                     </div>
-                    <div class="stat-card" style="grid-column:span 2;">
-                        <div class="stat-icon" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6);">
-                            <i class="fas fa-coins"></i>
+                </div>
+
+                <!-- FILA 2: Barras agrupadas + Donut pagos -->
+                <div class="fin-row-2">
+                    <div class="fin-chart-card fin-col-2">
+                        <div class="fin-chart-header">
+                            <span class="fin-chart-title">Requerimientos por Estado y Tipo</span>
+                            <div class="fin-legend">
+                                <span class="fin-legend-dot" style="background:#3b82f6"></span>Propio
+                                <span class="fin-legend-dot" style="background:#6366f1;margin-left:8px"></span>Externo
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <h3 id="fin-monto" style="font-size:1.4rem;">—</h3>
-                            <p>Monto total comprometido</p>
+                        <div style="height:260px;position:relative">
+                            <canvas id="chart-estado-tipo"></canvas>
                         </div>
+                    </div>
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">Estado de Pagos</span>
+                        <div style="height:180px;position:relative;margin-top:12px">
+                            <canvas id="chart-pagos-donut"></canvas>
+                        </div>
+                        <div class="fin-donut-legend" id="fin-pagos-legend"></div>
+                    </div>
+                </div>
+
+                <!-- FILA 3: Monto por empresa + Evolución mensual -->
+                <div class="fin-row-2">
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">Monto Total por Empresa (S/)</span>
+                        <div style="height:260px;position:relative;margin-top:12px">
+                            <canvas id="chart-empresa-monto"></canvas>
+                        </div>
+                    </div>
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">Evolución de Requerimientos · <span id="fin-anio-evol"></span></span>
+                        <p style="font-size:0.75rem;color:#9ca3af;margin:2px 0 10px">Propio vs Externo por mes</p>
+                        <div style="height:240px;position:relative">
+                            <canvas id="chart-evolucion"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILA 4: No llegó detalle + OC/OS + Por área -->
+                <div class="fin-row-3">
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">No Llegó Orden — Detalle</span>
+                        <div class="fin-mini-kpis">
+                            <div class="fin-mini-kpi" style="background:#fef2f2">
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280">Sin orden asignada</div>
+                                    <div class="fin-mini-val" id="fin-mk-sin" style="color:#dc2626">—</div>
+                                </div>
+                                <div class="fin-mini-icon" style="background:#fee2e2;color:#ef4444">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                            </div>
+                            <div class="fin-mini-kpi" style="background:#fffbeb">
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280">De baja</div>
+                                    <div class="fin-mini-val" id="fin-mk-baja" style="color:#d97706">—</div>
+                                </div>
+                                <div class="fin-mini-icon" style="background:#fef3c7;color:#f59e0b">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                            </div>
+                            <div class="fin-mini-kpi" style="background:#eff6ff">
+                                <div>
+                                    <div style="font-size:0.75rem;color:#6b7280">Activos</div>
+                                    <div class="fin-mini-val" id="fin-mk-activos" style="color:#2563eb">—</div>
+                                </div>
+                                <div class="fin-mini-icon" style="background:#dbeafe;color:#3b82f6">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">Tipo de Orden</span>
+                        <div style="height:180px;position:relative;margin-top:10px">
+                            <canvas id="chart-tipo-orden"></canvas>
+                        </div>
+                        <div class="fin-tipo-grid">
+                            <div class="fin-tipo-item" style="background:#fdf2f8">
+                                <div style="font-size:1.3rem;font-weight:800;color:#db2777" id="fin-oc">—</div>
+                                <div style="font-size:0.72rem;color:#6b7280">OC · Orden de Compra</div>
+                            </div>
+                            <div class="fin-tipo-item" style="background:#f5f3ff">
+                                <div style="font-size:1.3rem;font-weight:800;color:#7c3aed" id="fin-os">—</div>
+                                <div style="font-size:0.72rem;color:#6b7280">OS · Orden de Servicio</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fin-chart-card">
+                        <span class="fin-chart-title">Requerimientos por Área</span>
+                        <div style="height:280px;position:relative;margin-top:10px">
+                            <canvas id="chart-area"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FILA 5: Tabla últimos requerimientos -->
+                <div class="fin-chart-card" style="margin-top:0">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+                        <span class="fin-chart-title">Últimos Requerimientos Registrados</span>
+                        <span style="font-size:0.75rem;color:#9ca3af" id="fin-tabla-count"></span>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table style="width:100%;border-collapse:collapse;font-size:0.8rem">
+                            <thead>
+                                <tr style="background:#0f2340;color:#fff">
+                                    <th style="text-align:left;padding:8px 10px;border-radius:6px 0 0 6px">ID Req.</th>
+                                    <th style="text-align:left;padding:8px 10px">Fecha Reg.</th>
+                                    <th style="text-align:left;padding:8px 10px">Empresa</th>
+                                    <th style="text-align:left;padding:8px 10px">Tipo</th>
+                                    <th style="text-align:left;padding:8px 10px">N° Orden</th>
+                                    <th style="text-align:left;padding:8px 10px">Descripción</th>
+                                    <th style="text-align:right;padding:8px 10px">Total</th>
+                                    <th style="text-align:center;padding:8px 10px;border-radius:0 6px 6px 0">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fin-tabla-body">
+                                <tr><td colspan="8" style="text-align:center;padding:24px;color:#9ca3af">Cargando…</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1441,7 +1616,7 @@
 
                 <!-- Tarjetas resumen -->
                 <div class="stats-grid" style="grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-msg-critico" onclick="filtroCardMensajes('critico')">
                         <div class="stat-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
                             <i class="fas fa-fire"></i>
                         </div>
@@ -1450,7 +1625,7 @@
                             <p>Crítico (≤7 días)</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-msg-proximo" onclick="filtroCardMensajes('proximo')">
                         <div class="stat-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);">
                             <i class="fas fa-exclamation-triangle"></i>
                         </div>
@@ -1459,7 +1634,7 @@
                             <p>Próximo (≤30 días)</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card clickable" id="card-msg-ok" onclick="filtroCardMensajes('ok')">
                         <div class="stat-icon green">
                             <i class="fas fa-check-circle"></i>
                         </div>
@@ -1653,7 +1828,7 @@
 
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=14"></script>
 </body>
 
 </html>
