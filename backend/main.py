@@ -11,11 +11,7 @@ app.include_router(auth.router, prefix="/auth", tags=["Autenticación"])
 # Permite que el frontend (React) se comunique con el backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-                    "http://localhost:5173", # Puerto por defecto de React/Vite
-                    "http://localhost:5500", # HTML directo con Python server
-                    "http://127.0.0.1:5500", # Alternativa con 127.0.0.1
-                   ],  
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
